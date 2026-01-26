@@ -34,6 +34,15 @@ def explain(ctx: click.Context, topic: str, persona: str):
     
     Output: personas/{PERSONA}/output/explain_{timestamp}.md
     """
+    import logging
+    
+    verbose = ctx.obj.get("verbose", False)
+    if verbose:
+        logging.basicConfig(
+            level=logging.INFO,
+            format='%(name)s - %(levelname)s - %(message)s'
+        )
+    
     from research_assistant.workflows import WorkflowInvoker
     
     result = WorkflowInvoker.invoke(
@@ -44,6 +53,8 @@ def explain(ctx: click.Context, topic: str, persona: str):
     
     if result.success:
         click.echo(click.style(f"✅ Output: {result.output_path}", fg="green"))
+        click.echo(f"   Score: {result.final_score}/10 | Reasoning iterations: {result.reasoning_iterations} | Validation: {result.validation_iterations}")
+        click.echo(f"   Time: {result.execution_time_ms}ms | KB files: {result.artifacts.get('extracted_files', 0)}")
     else:
         click.echo(click.style(f"❌ Error: {result.error}", fg="red"), err=True)
         ctx.exit(1)

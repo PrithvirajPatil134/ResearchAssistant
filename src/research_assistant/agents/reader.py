@@ -160,35 +160,92 @@ class ReaderAgent(BaseAgent):
             return None
     
     def _read_xlsx(self, filepath: Path) -> Optional[ExtractedContent]:
-        """Read Excel file by extracting shared strings and sheet data."""
+        """Read Excel file - extracts all content for LLM comprehension."""
         try:
-            text_parts = []
             with zipfile.ZipFile(filepath) as z:
-                # Read shared strings
+                # Read shared strings (cell text values) - these contain ALL text data
                 shared_strings = []
                 if 'xl/sharedStrings.xml' in z.namelist():
                     ss_xml = z.read('xl/sharedStrings.xml')
                     ss_tree = ET.fromstring(ss_xml)
-                    for si in ss_tree.iter():
-                        if si.text:
-                            shared_strings.append(si.text)
+                    ns_ss = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'
+                    for t_elem in ss_tree.iter(f'{{{ns_ss}}}t'):
+                        if t_elem.text:
+                            shared_strings.append(t_elem.text)
                 
-                text_parts.extend(shared_strings)
-                
-                # Read sheet1 if exists
+                # Read sheet1 data with row structure
+                rows_data = []
                 if 'xl/worksheets/sheet1.xml' in z.namelist():
                     sheet_xml = z.read('xl/worksheets/sheet1.xml')
                     sheet_tree = ET.fromstring(sheet_xml)
-                    for v in sheet_tree.iter():
-                        if v.text and v.tag.endswith('}v'):
-                            text_parts.append(v.text)
+                    ns_sheet = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'
+                    
+                    for row in sheet_tree.iter(f'{{{ns_sheet}}}row'):
+                        row_values = []
+                        for cell in row.iter(f'{{{ns_sheet}}}c'):
+                            cell_value = ""
+                            cell_type = cell.get('t', '')
+                            v_elem = cell.find(f'{{{ns_sheet}}}v')
+                            if v_elem is not None and v_elem.text:
+                                if cell_type == 's':  # Shared string reference
+                                    idx = int(v_elem.text)
+                                    if idx < len(shared_strings):
+                                        cell_value = shared_strings[idx]
+                                else:
+                                    cell_value = v_elem.text
+                            row_values.append(cell_value)
+                        if any(row_values):
+                            rows_data.append(row_values)
+                
+                # Check if we have meaningful row data (more than sparse form data)
+                meaningful_rows = len(rows_data) > 3 and len(rows_data[0]) > 3 if rows_data else False
+                
+                # Format as structured content for LLM
+                if meaningful_rows:
+                    # Traditional tabular data
+                    headers = rows_data[0]
+                    lines = [f"## Excel Data: {filepath.name}"]
+                    lines.append(f"**Columns**: {' | '.join(h for h in headers if h)}")
+                    lines.append("")
+                    
+                    for row in rows_data[1:60]:
+                        row_parts = []
+                        for i, val in enumerate(row):
+                            if val and i < len(headers) and headers[i]:
+                                row_parts.append(f"**{headers[i]}**: {val}")
+                        if row_parts:
+                            lines.append("- " + " | ".join(row_parts))
+                    
+                    content = '\n'.join(lines)
+                else:
+                    # Form-based or sparse data - use ALL shared strings
+                    # This captures questionnaires, surveys, and structured forms
+                    lines = [f"## Excel Content: {filepath.name}"]
+                    lines.append(f"**Total items**: {len(shared_strings)}")
+                    lines.append("")
+                    
+                    # Group content by detecting section headers
+                    current_section = "Content"
+                    for i, s in enumerate(shared_strings):
+                        # Detect section headers (often short, capitalized)
+                        if len(s) < 50 and s.strip() and not any(c.isdigit() for c in s[:3]):
+                            if s in ['Demographics', 'Antecedents', 'Mediators', 'Moderators', 
+                                    'Outcomes', 'Control Variables', 'Survey', 'Questions']:
+                                current_section = s
+                                lines.append(f"\n### {current_section}")
+                                continue
+                        
+                        # Format each entry
+                        if s.strip():
+                            lines.append(f"- {s}")
+                    
+                    content = '\n'.join(lines)
             
-            content = '\n'.join(text_parts[:500])  # Limit rows
             return ExtractedContent(
                 source_file=str(filepath.name),
                 content_type="table",
                 content=content,
-                metadata={"format": "xlsx"}
+                metadata={"format": "xlsx", "shared_strings": len(shared_strings), "rows": len(rows_data)}
             )
         except Exception as e:
             logger.warning(f"XLSX read error: {e}")

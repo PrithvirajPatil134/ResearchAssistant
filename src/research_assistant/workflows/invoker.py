@@ -449,23 +449,31 @@ Your explanations should:
 
 Write in a professional academic style that is accessible but rigorous."""
 
-        # Build the prompt with knowledge base content
+        # Build the prompt with knowledge base content as PRIMARY source
         kb_context = ""
         if extracted_content:
-            kb_context = "\n\n## Knowledge Base Materials:\n"
+            kb_context = "\n\n## PRIMARY SOURCE - Course Knowledge Base (MUST USE):\n"
+            kb_context += "**IMPORTANT**: The following materials are from the professor's course. "
+            kb_context += "Use these as your PRIMARY reference. Define terms EXACTLY as they appear in these materials.\n"
             for i, content in enumerate(extracted_content[:5], 1):
                 # Include more content for LLM context
-                excerpt = content[:1500].strip()
-                kb_context += f"\n### Source {i}:\n{excerpt}\n"
+                excerpt = content[:2500].strip()
+                kb_context += f"\n### Course Material {i}:\n{excerpt}\n"
         
-        # Build main prompt
+        # Build main prompt with explicit KB grounding instructions
         prompt = f"""Topic: {query}
+
+**CRITICAL INSTRUCTION**: You MUST base your explanation primarily on the Course Knowledge Base materials provided below. 
+These are the professor's actual course materials. Use the EXACT definitions and frameworks from these materials.
+You may supplement with web search for additional context, but the KB materials are your PRIMARY source.
+
+If the KB materials define a term (like "DRO" = Digital Resource Orchestration), use THAT definition, not web search results.
 
 Please provide a comprehensive explanation of "{query}" using the following structure:
 
-1. **Conceptual Definition** - What is this concept?
-2. **Theoretical Foundation** - What theories/frameworks support it?
-3. **Key Components** - What are the main elements?
+1. **Conceptual Definition** - What is this concept? (Use KB definition FIRST)
+2. **Theoretical Foundation** - What theories/frameworks support it? (Reference KB materials)
+3. **Key Components** - What are the main elements? (From KB)
 4. **Practical Application** - How is it applied in practice?
 5. **Research Considerations** - How should researchers approach this topic?
 {kb_context}"""

@@ -259,11 +259,12 @@ class WorkflowInvoker:
             # =========================================================
             reasoning_content = ""
             analyst_feedback = ""
+            previous_output = ""
             
             for iteration in range(cls.MAX_REASONING_ITERATIONS):
                 reasoning_iterations = iteration + 1
                 
-                # Generate reasoning with thinking module
+                # Generate reasoning with LLM
                 reasoning_content = cls._generate_reasoning(
                     query=query,
                     persona=persona,
@@ -272,6 +273,7 @@ class WorkflowInvoker:
                     previous_feedback=analyst_feedback,
                     iteration=iteration,
                     thinking=thinking,
+                    previous_output=previous_output,
                 )
                 
                 # Score with analyst
@@ -293,7 +295,8 @@ class WorkflowInvoker:
                 if score.passed:
                     break
                 
-                # Get feedback for next iteration
+                # Save current output and get feedback for next iteration
+                previous_output = reasoning_content
                 analyst_feedback = score.feedback
             
             # =========================================================
@@ -417,11 +420,13 @@ class WorkflowInvoker:
         previous_feedback: str,
         iteration: int,
         thinking: Any,
+        previous_output: str = "",
     ) -> str:
-        """Generate reasoning content using persona and feedback."""
+        """Generate reasoning content using LLM with persona context."""
+        from research_assistant.core import get_llm_client
         from research_assistant.core.thinking import ReasoningType
         
-        # Start reasoning chain
+        # Start reasoning chain for tracking
         chain = thinking.start_reasoning(query)
         
         # Get persona context
@@ -430,145 +435,106 @@ class WorkflowInvoker:
         institution = identity.get("institution", "University")
         expertise = identity.get("expertise", [])
         
-        # Build content sections
-        sections = []
-        
-        # Title
-        sections.append(f"# {query}")
-        sections.append("")
-        sections.append(f"**Explained by: {prof_name}**")
-        sections.append(f"*{institution} | Expertise: {', '.join(expertise[:3])}*")
-        sections.append("")
-        sections.append("---")
-        sections.append("")
-        
-        # Add reasoning step for context
-        thinking.add_thought(
-            thought=f"Addressing query about {query}",
-            reasoning_type=ReasoningType.ANALYTICAL,
-            grounded_in=[f"persona:{persona.name}"],
-            confidence=0.9,
-        )
-        
-        # Definition section
-        sections.append("## Conceptual Definition")
-        sections.append("")
-        sections.append(
-            f"{query} refers to the strategic coordination and alignment of "
-            f"resources, capabilities, and processes to achieve organizational objectives. "
-            f"In the context of {expertise[0] if expertise else 'business management'}, "
-            f"this concept encompasses systematic approaches to value creation."
-        )
-        sections.append("")
-        
-        # Theoretical foundation
-        thinking.add_thought(
-            thought="Building theoretical framework",
-            reasoning_type=ReasoningType.SYNTHESIS,
-            grounded_in=["literature", "course_materials"],
-            confidence=0.85,
-        )
-        
-        sections.append("## Theoretical Foundation")
-        sections.append("")
-        sections.append(
-            f"From my research and teaching experience at {institution}, "
-            f"I've observed that {query} follows a systematic approach:"
-        )
-        sections.append("")
-        sections.append("1. **Resource Identification**: Mapping available assets and capabilities")
-        sections.append("2. **Capability Assessment**: Evaluating current competencies and gaps")
-        sections.append("3. **Strategic Alignment**: Connecting resources to business outcomes")
-        sections.append("4. **Continuous Optimization**: Iterative improvement based on metrics")
-        sections.append("")
-        
-        # Add knowledge base content if available
+        # Build system prompt with persona context
+        system_prompt = f"""You are {prof_name}, a professor at {institution}.
+Your areas of expertise: {', '.join(expertise[:5])}.
+
+You are explaining academic concepts to doctoral/research students.
+Your explanations should:
+1. Be grounded in the provided knowledge base materials
+2. Use proper academic terminology and frameworks
+3. Include theoretical foundations and practical applications
+4. Be structured with clear sections and headings
+5. Reference source materials when applicable
+
+Write in a professional academic style that is accessible but rigorous."""
+
+        # Build the prompt with knowledge base content
+        kb_context = ""
         if extracted_content:
-            sections.append("### Source Materials Referenced")
-            sections.append("")
-            sections.append(f"Based on {prof_name}'s course materials:")
-            for i, content in enumerate(extracted_content[:3], 1):
-                # Extract a meaningful excerpt
-                excerpt = content[:150].replace('\n', ' ').strip()
-                if len(content) > 150:
-                    excerpt += "..."
-                sections.append(f"- Source {i}: {excerpt}")
-            sections.append("")
+            kb_context = "\n\n## Knowledge Base Materials:\n"
+            for i, content in enumerate(extracted_content[:5], 1):
+                # Include more content for LLM context
+                excerpt = content[:1500].strip()
+                kb_context += f"\n### Source {i}:\n{excerpt}\n"
         
-        # Framework section
-        sections.append("## Analytical Framework")
-        sections.append("")
-        sections.append("The effectiveness of this approach can be modeled as:")
-        sections.append("")
-        sections.append("```")
-        sections.append("Effectiveness = f(Resources × Capabilities × Alignment)")
-        sections.append("               ─────────────────────────────────────────")
-        sections.append("                        Implementation Complexity")
-        sections.append("```")
-        sections.append("")
-        sections.append("Where:")
-        sections.append("- **Resources** = Available assets + Infrastructure")
-        sections.append("- **Capabilities** = Skills + Processes")
-        sections.append("- **Alignment** = Strategic fit score")
-        sections.append("- **Complexity** = Coordination overhead")
-        sections.append("")
-        
-        # Practical application
-        thinking.add_thought(
-            thought="Connecting theory to practice",
-            reasoning_type=ReasoningType.DEDUCTIVE,
-            grounded_in=["teaching_experience", "industry_cases"],
-            confidence=0.88,
-        )
-        
-        sections.append("## Practical Application")
-        sections.append("")
-        sections.append(f"In my classes at {institution}, I emphasize three key applications:")
-        sections.append("")
-        sections.append("1. **Strategic Context**: How this concept supports strategic decision-making")
-        sections.append("2. **Operational Integration**: Embedding within existing processes")
-        sections.append("3. **Performance Measurement**: Tracking and optimizing outcomes")
-        sections.append("")
-        
-        # Apply warm start strategies if available
+        # Build main prompt
+        prompt = f"""Topic: {query}
+
+Please provide a comprehensive explanation of "{query}" using the following structure:
+
+1. **Conceptual Definition** - What is this concept?
+2. **Theoretical Foundation** - What theories/frameworks support it?
+3. **Key Components** - What are the main elements?
+4. **Practical Application** - How is it applied in practice?
+5. **Research Considerations** - How should researchers approach this topic?
+{kb_context}"""
+
+        # Add warm start strategies if available
         if warm_start_prompt:
-            sections.append("## Research Methodology Notes")
-            sections.append("")
-            sections.append("For rigorous analysis, consider:")
-            sections.append("- Use validated measurement scales")
-            sections.append("- Apply appropriate statistical methods (SEM, regression)")
-            sections.append("- Reference established frameworks from the literature")
-            sections.append("")
+            prompt += f"\n\n## Suggested Approach (from similar queries):\n{warm_start_prompt}"
         
-        # Incorporate feedback if provided
-        if previous_feedback and iteration > 0:
-            sections.append("## Additional Considerations")
-            sections.append("")
-            sections.append(
-                "Building on refined analysis, this explanation incorporates "
-                "enhanced grounding in source materials and improved structural clarity."
+        # Get LLM client and generate
+        llm = get_llm_client()
+        
+        if iteration > 0 and previous_feedback and previous_output:
+            # Use feedback-based improvement
+            thinking.add_thought(
+                thought=f"Iteration {iteration + 1}: Improving based on feedback",
+                reasoning_type=ReasoningType.ANALYTICAL,
+                grounded_in=["analyst_feedback"],
+                confidence=0.85,
             )
-            sections.append("")
+            
+            response = llm.generate_with_feedback(
+                prompt=prompt,
+                previous_output=previous_output,
+                feedback=previous_feedback,
+                system_prompt=system_prompt,
+            )
+        else:
+            # First iteration - fresh generation
+            thinking.add_thought(
+                thought=f"Generating initial explanation for {query}",
+                reasoning_type=ReasoningType.SYNTHESIS,
+                grounded_in=[f"persona:{persona.name}", "knowledge_base"],
+                confidence=0.9,
+            )
+            
+            response = llm.generate(prompt, system_prompt)
         
-        # Conclusion
+        # Log the result
+        if response.success:
+            logger.info(f"[WORKFLOW] LLM generated {response.tokens_used} tokens via {response.model}")
+        else:
+            logger.warning(f"[WORKFLOW] LLM error: {response.error}, using fallback")
+        
+        # Conclude reasoning
         chain_result = thinking.conclude(
-            f"Provided comprehensive explanation of {query} grounded in "
-            f"academic literature and practical application."
+            f"Generated explanation for {query} (iteration {iteration + 1})"
         )
         
-        sections.append("---")
-        sections.append("")
-        sections.append(
-            f"*This explanation follows {prof_name}'s teaching approach at "
-            f"{institution}, emphasizing both theoretical rigor and practical application.*"
-        )
-        sections.append("")
-        sections.append(
-            f"**Next Steps**: Review course materials for deeper exploration "
-            f"and develop your own analytical framework."
-        )
+        # Format the output with persona header
+        header = f"""# {query}
+
+**Explained by: {prof_name}**
+*{institution} | Expertise: {', '.join(expertise[:3])}*
+
+---
+
+"""
         
-        return "\n".join(sections)
+        footer = f"""
+
+---
+
+*This explanation follows {prof_name}'s teaching approach at {institution}, 
+emphasizing both theoretical rigor and practical application.*
+
+**Next Steps**: Review course materials for deeper exploration and develop your own analytical framework.
+"""
+        
+        return header + response.content + footer
     
     @classmethod
     def _format_output(

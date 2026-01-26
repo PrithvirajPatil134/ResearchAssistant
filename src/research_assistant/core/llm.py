@@ -1,11 +1,14 @@
 """
 LLM Integration Module for Research Assistant.
 
-Provides unified interface to Claude (Anthropic) or GPT (OpenAI).
-Falls back to template-based generation if no API key is configured.
+Uses kiro-cli for LLM execution (same as adw-core-ws reference).
+Falls back to direct Anthropic API if kiro-cli not available.
 """
 
 import os
+import re
+import subprocess
+import time
 import logging
 from typing import Optional, List, Dict, Any
 from dataclasses import dataclass
@@ -21,57 +24,93 @@ class LLMResponse:
     tokens_used: int
     success: bool
     error: Optional[str] = None
+    execution_time_ms: int = 0
+
+
+# Kiro CLI path from environment
+KIRO_CLI_PATH = os.getenv("KIRO_CLI_PATH", "kiro-cli")
+
+
+def strip_ansi_codes(text: str) -> str:
+    """Remove ANSI escape codes from text."""
+    if not text:
+        return text
+    ansi_pattern = re.compile(r"\x1b\[[0-9;]*[a-zA-Z]|\x1b\].*?\x07|\x1b\[[\d;]*m")
+    return ansi_pattern.sub("", text)
+
+
+def check_kiro_installed() -> bool:
+    """Check if kiro-cli is installed and working."""
+    try:
+        result = subprocess.run(
+            [KIRO_CLI_PATH, "--version"],
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+        return result.returncode == 0
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        return False
 
 
 class LLMClient:
     """
-    Unified LLM client supporting Anthropic Claude and OpenAI.
+    LLM client using kiro-cli (same approach as adw-core-ws).
     
     Priority:
-    1. Anthropic Claude (if ANTHROPIC_API_KEY set)
-    2. OpenAI (if OPENAI_API_KEY set)
-    3. Local fallback (template-based)
+    1. kiro-cli (if installed) - uses Claude via CLI
+    2. Anthropic Python SDK (if ANTHROPIC_API_KEY set)
+    3. OpenAI Python SDK (if OPENAI_API_KEY set)
     """
     
     def __init__(
         self,
-        model: str = "claude-3-haiku-20240307",
+        model: str = "claude-sonnet-4",
         temperature: float = 0.7,
         max_tokens: int = 4000,
+        timeout_seconds: int = 120,
     ):
         self.model = model
         self.temperature = temperature
         self.max_tokens = max_tokens
+        self.timeout_seconds = timeout_seconds
         
+        self._provider = self._detect_provider()
         self._anthropic_client = None
         self._openai_client = None
-        self._provider = self._detect_provider()
         
         logger.info(f"[LLM] Initialized with provider: {self._provider}, model: {self.model}")
     
     def _detect_provider(self) -> str:
         """Detect available LLM provider."""
-        # Check for Anthropic
+        # Check for kiro-cli first (preferred)
+        if check_kiro_installed():
+            logger.info("[LLM] kiro-cli detected, using CLI provider")
+            return "kiro"
+        
+        # Check for Anthropic SDK
         if os.getenv("ANTHROPIC_API_KEY"):
             try:
                 import anthropic
                 self._anthropic_client = anthropic.Anthropic()
+                logger.info("[LLM] Using Anthropic API provider")
                 return "anthropic"
             except ImportError:
                 logger.warning("ANTHROPIC_API_KEY set but anthropic package not installed")
         
-        # Check for OpenAI
+        # Check for OpenAI SDK
         if os.getenv("OPENAI_API_KEY"):
             try:
                 import openai
                 self._openai_client = openai.OpenAI()
+                logger.info("[LLM] Using OpenAI API provider")
                 return "openai"
             except ImportError:
                 logger.warning("OPENAI_API_KEY set but openai package not installed")
         
-        # Fallback to local
-        logger.info("[LLM] No API keys found, using local template generation")
-        return "local"
+        # No LLM available
+        logger.warning("[LLM] No LLM provider available - install kiro-cli or set API keys")
+        return "none"
     
     def generate(
         self,
@@ -79,23 +118,113 @@ class LLMClient:
         system_prompt: Optional[str] = None,
         context: Optional[List[Dict[str, str]]] = None,
     ) -> LLMResponse:
-        """
-        Generate response from LLM.
-        
-        Args:
-            prompt: The user prompt/question
-            system_prompt: Optional system instructions
-            context: Optional conversation context
-            
-        Returns:
-            LLMResponse with generated content
-        """
-        if self._provider == "anthropic":
+        """Generate response from LLM."""
+        if self._provider == "kiro":
+            return self._generate_kiro(prompt, system_prompt)
+        elif self._provider == "anthropic":
             return self._generate_anthropic(prompt, system_prompt, context)
         elif self._provider == "openai":
             return self._generate_openai(prompt, system_prompt, context)
         else:
-            return self._generate_local(prompt, system_prompt, context)
+            return LLMResponse(
+                content="Error: No LLM provider available. Install kiro-cli or set ANTHROPIC_API_KEY/OPENAI_API_KEY",
+                model="none",
+                tokens_used=0,
+                success=False,
+                error="No LLM provider configured",
+            )
+    
+    def _generate_kiro(
+        self,
+        prompt: str,
+        system_prompt: Optional[str],
+    ) -> LLMResponse:
+        """Generate using kiro-cli (same as adw-core-ws)."""
+        start_time = time.time()
+        
+        # Build full prompt with system context
+        full_prompt = prompt
+        if system_prompt:
+            full_prompt = f"{system_prompt}\n\n---\n\n{prompt}"
+        
+        # Build command
+        cmd = [
+            KIRO_CLI_PATH,
+            "chat",
+            "--no-interactive",
+            "--trust-all-tools",
+            "--model", self.model,
+            full_prompt,
+        ]
+        
+        # Set up environment
+        env = self._get_safe_env()
+        
+        logger.debug(f"[LLM] Executing kiro-cli with model {self.model}")
+        
+        try:
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                env=env,
+                timeout=self.timeout_seconds,
+            )
+            
+            execution_time_ms = int((time.time() - start_time) * 1000)
+            
+            if result.returncode == 0:
+                output = strip_ansi_codes(result.stdout.strip())
+                # Estimate tokens (rough approximation)
+                tokens_used = len(output) // 4
+                
+                logger.info(f"[LLM] kiro-cli success: ~{tokens_used} tokens in {execution_time_ms}ms")
+                
+                return LLMResponse(
+                    content=output,
+                    model=self.model,
+                    tokens_used=tokens_used,
+                    success=True,
+                    execution_time_ms=execution_time_ms,
+                )
+            else:
+                error_msg = result.stderr.strip() if result.stderr else f"Exit code {result.returncode}"
+                logger.error(f"[LLM] kiro-cli error: {error_msg}")
+                
+                return LLMResponse(
+                    content="",
+                    model=self.model,
+                    tokens_used=0,
+                    success=False,
+                    error=error_msg,
+                    execution_time_ms=execution_time_ms,
+                )
+                
+        except subprocess.TimeoutExpired:
+            execution_time_ms = int((time.time() - start_time) * 1000)
+            error_msg = f"Timeout after {self.timeout_seconds}s"
+            logger.error(f"[LLM] kiro-cli timeout")
+            
+            return LLMResponse(
+                content="",
+                model=self.model,
+                tokens_used=0,
+                success=False,
+                error=error_msg,
+                execution_time_ms=execution_time_ms,
+            )
+        except Exception as e:
+            execution_time_ms = int((time.time() - start_time) * 1000)
+            logger.error(f"[LLM] kiro-cli exception: {e}")
+            
+            return LLMResponse(
+                content="",
+                model=self.model,
+                tokens_used=0,
+                success=False,
+                error=str(e),
+                execution_time_ms=execution_time_ms,
+            )
     
     def _generate_anthropic(
         self,
@@ -103,11 +232,12 @@ class LLMClient:
         system_prompt: Optional[str],
         context: Optional[List[Dict[str, str]]],
     ) -> LLMResponse:
-        """Generate using Anthropic Claude."""
+        """Generate using Anthropic Claude API."""
+        start_time = time.time()
+        
         try:
             messages = []
             
-            # Add context if provided
             if context:
                 for msg in context:
                     messages.append({
@@ -115,37 +245,40 @@ class LLMClient:
                         "content": msg.get("content", ""),
                     })
             
-            # Add current prompt
             messages.append({"role": "user", "content": prompt})
             
-            # Make API call
             response = self._anthropic_client.messages.create(
-                model=self.model,
+                model=self.model if "claude" in self.model else "claude-3-haiku-20240307",
                 max_tokens=self.max_tokens,
                 system=system_prompt or "You are a helpful research assistant.",
                 messages=messages,
             )
             
+            execution_time_ms = int((time.time() - start_time) * 1000)
             content = response.content[0].text
             tokens_used = response.usage.input_tokens + response.usage.output_tokens
             
-            logger.info(f"[LLM] Anthropic response: {tokens_used} tokens")
+            logger.info(f"[LLM] Anthropic success: {tokens_used} tokens in {execution_time_ms}ms")
             
             return LLMResponse(
                 content=content,
                 model=self.model,
                 tokens_used=tokens_used,
                 success=True,
+                execution_time_ms=execution_time_ms,
             )
             
         except Exception as e:
+            execution_time_ms = int((time.time() - start_time) * 1000)
             logger.error(f"[LLM] Anthropic error: {e}")
+            
             return LLMResponse(
                 content="",
                 model=self.model,
                 tokens_used=0,
                 success=False,
                 error=str(e),
+                execution_time_ms=execution_time_ms,
             )
     
     def _generate_openai(
@@ -154,15 +287,15 @@ class LLMClient:
         system_prompt: Optional[str],
         context: Optional[List[Dict[str, str]]],
     ) -> LLMResponse:
-        """Generate using OpenAI."""
+        """Generate using OpenAI API."""
+        start_time = time.time()
+        
         try:
             messages = []
             
-            # Add system prompt
             if system_prompt:
                 messages.append({"role": "system", "content": system_prompt})
             
-            # Add context if provided
             if context:
                 for msg in context:
                     messages.append({
@@ -170,110 +303,65 @@ class LLMClient:
                         "content": msg.get("content", ""),
                     })
             
-            # Add current prompt
             messages.append({"role": "user", "content": prompt})
             
-            # Make API call
             response = self._openai_client.chat.completions.create(
-                model=self.model if "gpt" in self.model else "gpt-4o-mini",
+                model="gpt-4o-mini" if "claude" in self.model else self.model,
                 messages=messages,
                 max_tokens=self.max_tokens,
                 temperature=self.temperature,
             )
             
+            execution_time_ms = int((time.time() - start_time) * 1000)
             content = response.choices[0].message.content
             tokens_used = response.usage.total_tokens
             
-            logger.info(f"[LLM] OpenAI response: {tokens_used} tokens")
+            logger.info(f"[LLM] OpenAI success: {tokens_used} tokens in {execution_time_ms}ms")
             
             return LLMResponse(
                 content=content,
                 model=response.model,
                 tokens_used=tokens_used,
                 success=True,
+                execution_time_ms=execution_time_ms,
             )
             
         except Exception as e:
+            execution_time_ms = int((time.time() - start_time) * 1000)
             logger.error(f"[LLM] OpenAI error: {e}")
+            
             return LLMResponse(
                 content="",
                 model=self.model,
                 tokens_used=0,
                 success=False,
                 error=str(e),
+                execution_time_ms=execution_time_ms,
             )
     
-    def _generate_local(
-        self,
-        prompt: str,
-        system_prompt: Optional[str],
-        context: Optional[List[Dict[str, str]]],
-    ) -> LLMResponse:
-        """Generate using local template (fallback when no API)."""
-        logger.info("[LLM] Using local template generation (no API key)")
-        
-        # Extract key information from prompt
-        lines = prompt.split("\n")
-        topic = ""
-        for line in lines:
-            if "Topic:" in line or "Query:" in line:
-                topic = line.split(":", 1)[-1].strip()
-                break
-        
-        if not topic:
-            topic = lines[0][:100] if lines else "the topic"
-        
-        # Generate structured template response
-        content = f"""Based on the available knowledge base materials and academic standards, here is an analysis of {topic}:
-
-## Core Concept
-
-{topic} represents a multifaceted approach that integrates theoretical frameworks with practical applications. This concept has been extensively studied in academic literature and has significant implications for organizational strategy.
-
-## Key Components
-
-1. **Strategic Alignment**: Ensuring resources and capabilities support organizational objectives
-2. **Capability Development**: Building competencies that enable sustained competitive advantage
-3. **Process Integration**: Connecting operational activities with strategic outcomes
-4. **Performance Measurement**: Tracking and optimizing key metrics
-
-## Theoretical Framework
-
-The effectiveness of {topic} can be understood through the lens of resource-based theory and dynamic capabilities. Organizations that successfully implement this approach demonstrate:
-
-- Clear articulation of strategic intent
-- Systematic resource allocation processes
-- Continuous learning and adaptation
-- Strong stakeholder engagement
-
-## Practical Implications
-
-For practitioners, {topic} requires:
-
-1. Comprehensive assessment of current capabilities
-2. Gap analysis against strategic requirements
-3. Development of action plans with clear milestones
-4. Regular review and adjustment cycles
-
-## Research Considerations
-
-When studying {topic}, researchers should consider:
-
-- Appropriate measurement scales and constructs
-- Sample selection and data collection methods
-- Statistical techniques suitable for the research questions
-- Theoretical grounding in established literature
-
----
-
-*This analysis synthesizes available course materials and academic literature. For deeper exploration, consult the referenced knowledge base sources.*"""
-        
-        return LLMResponse(
-            content=content,
-            model="local-template",
-            tokens_used=len(content) // 4,  # Approximate
-            success=True,
-        )
+    def _get_safe_env(self) -> Dict[str, str]:
+        """Get filtered environment for subprocess."""
+        safe_vars = {
+            "HOME": os.getenv("HOME"),
+            "USER": os.getenv("USER"),
+            "PATH": os.getenv("PATH"),
+            "SHELL": os.getenv("SHELL"),
+            "TERM": os.getenv("TERM"),
+            "LANG": os.getenv("LANG"),
+            "LC_ALL": os.getenv("LC_ALL"),
+            "PYTHONPATH": os.getenv("PYTHONPATH"),
+            "PYTHONUNBUFFERED": "1",
+            "PWD": os.getcwd(),
+            # AWS credentials for Bedrock
+            "AWS_ACCESS_KEY_ID": os.getenv("AWS_ACCESS_KEY_ID"),
+            "AWS_SECRET_ACCESS_KEY": os.getenv("AWS_SECRET_ACCESS_KEY"),
+            "AWS_SESSION_TOKEN": os.getenv("AWS_SESSION_TOKEN"),
+            "AWS_REGION": os.getenv("AWS_REGION"),
+            "AWS_DEFAULT_REGION": os.getenv("AWS_DEFAULT_REGION"),
+            # Anthropic API key
+            "ANTHROPIC_API_KEY": os.getenv("ANTHROPIC_API_KEY"),
+        }
+        return {k: v for k, v in safe_vars.items() if v is not None}
     
     def generate_with_feedback(
         self,
@@ -282,18 +370,13 @@ When studying {topic}, researchers should consider:
         feedback: str,
         system_prompt: Optional[str] = None,
     ) -> LLMResponse:
-        """
-        Generate improved output based on feedback.
-        
-        This is the key method for the reasoning loop - it takes previous
-        output and feedback to generate an improved version.
-        """
+        """Generate improved output based on feedback."""
         improved_prompt = f"""{prompt}
 
 ---
 
 **Previous Attempt:**
-{previous_output[:2000]}
+{previous_output[:3000]}
 
 **Feedback for Improvement:**
 {feedback}

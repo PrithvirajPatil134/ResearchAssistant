@@ -16,8 +16,124 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Type
 import logging
+import sys
+import threading
+import time as time_module
 
 logger = logging.getLogger(__name__)
+
+
+# =============================================================================
+# Progress Indicator
+# =============================================================================
+
+class ProgressIndicator:
+    """Terminal progress indicator for workflow stages."""
+    
+    # Stage indices for update() calls
+    STAGE_READ = 0
+    STAGE_WARM = 1
+    STAGE_REASON = 2
+    STAGE_ANALYZE = 3
+    STAGE_VALIDATE = 4
+    STAGE_SAVE = 5
+    
+    STAGES = [
+        ("📚", "Reading KB", "Extracting knowledge base..."),
+        ("🔍", "Warm Start", "Finding similar patterns..."),
+        ("🧠", "Reasoning", "Generating response..."),
+        ("📊", "Analyzing", "Scoring quality..."),
+        ("✅", "Validating", "Reviewing output..."),
+        ("💾", "Saving", "Writing output file..."),
+    ]
+    
+    SPINNER_CHARS = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
+    
+    def __init__(self, enabled: bool = True):
+        self.enabled = enabled and sys.stdout.isatty()
+        self.current_stage = 0
+        self.current_detail = ""
+        self._spinner_idx = 0
+        self._running = False
+        self._thread: Optional[threading.Thread] = None
+        self._lock = threading.Lock()
+    
+    def start(self, query: str) -> None:
+        """Start the progress display."""
+        if not self.enabled:
+            return
+        
+        # Print header
+        print(f"\n{'─' * 60}")
+        print(f"🎯 Query: {query[:50]}{'...' if len(query) > 50 else ''}")
+        print(f"{'─' * 60}")
+        
+        self._running = True
+        self._thread = threading.Thread(target=self._spinner_loop, daemon=True)
+        self._thread.start()
+    
+    def update(self, stage_idx: int, detail: str = "") -> None:
+        """Update progress to a specific stage."""
+        if not self.enabled:
+            return
+        
+        with self._lock:
+            # Print newline to preserve previous stage before updating
+            if stage_idx > self.current_stage:
+                sys.stdout.write("\n")
+                sys.stdout.flush()
+            self.current_stage = min(stage_idx, len(self.STAGES) - 1)
+            self.current_detail = detail
+    
+    def set_detail(self, detail: str) -> None:
+        """Update just the detail text."""
+        if not self.enabled:
+            return
+        with self._lock:
+            self.current_detail = detail
+    
+    def stop(self, success: bool = True) -> None:
+        """Stop the progress display."""
+        self._running = False
+        if self._thread:
+            self._thread.join(timeout=0.5)
+        
+        if self.enabled:
+            # Clear the line and print final status
+            sys.stdout.write("\r" + " " * 80 + "\r")
+            sys.stdout.flush()
+            if success:
+                print("✨ Workflow complete!")
+            print(f"{'─' * 60}\n")
+    
+    def _spinner_loop(self) -> None:
+        """Background thread for spinner animation."""
+        while self._running:
+            with self._lock:
+                stage_idx = self.current_stage
+                detail = self.current_detail
+            
+            if stage_idx < len(self.STAGES):
+                emoji, name, desc = self.STAGES[stage_idx]
+                spinner = self.SPINNER_CHARS[self._spinner_idx % len(self.SPINNER_CHARS)]
+                
+                # Build status line
+                detail_text = f" [{detail}]" if detail else ""
+                status = f"\r{spinner} [{stage_idx + 1}/{len(self.STAGES)}] {emoji} {name}: {desc}{detail_text}"
+                
+                # Truncate if too long
+                max_len = 78
+                if len(status) > max_len:
+                    status = status[:max_len-3] + "..."
+                
+                # Pad to clear previous content
+                status = status.ljust(80)
+                
+                sys.stdout.write(status)
+                sys.stdout.flush()
+            
+            self._spinner_idx += 1
+            time_module.sleep(0.1)
 
 
 # =============================================================================
@@ -128,6 +244,7 @@ class WorkflowInvoker:
         initial_state: Dict[str, Any],
         output_format: str = "md",
         personas_dir: Optional[Path] = None,
+        show_progress: bool = True,
     ) -> WorkflowResult:
         """
         Invoke a workflow with full agent orchestration.
@@ -146,9 +263,15 @@ class WorkflowInvoker:
         
         cls._ensure_defaults_registered()
         
+        # Initialize progress indicator
+        progress = ProgressIndicator(enabled=show_progress)
+        query = initial_state.get("topic", initial_state.get("task", ""))
+        progress.start(query)
+        
         # Get workflow spec
         spec = cls.WORKFLOWS.get(workflow_name)
         if not spec:
+            progress.stop(success=False)
             return WorkflowResult(
                 success=False,
                 workflow_name=workflow_name,
@@ -159,6 +282,7 @@ class WorkflowInvoker:
         # Validate required inputs
         missing = [k for k in spec.required_inputs if k not in initial_state]
         if missing:
+            progress.stop(success=False)
             return WorkflowResult(
                 success=False,
                 workflow_name=workflow_name,
@@ -174,6 +298,7 @@ class WorkflowInvoker:
             loader = PersonaLoader(personas_path)
             persona = loader.load(persona_name)
         except Exception as e:
+            progress.stop(success=False)
             return WorkflowResult(
                 success=False,
                 workflow_name=workflow_name,
@@ -206,6 +331,7 @@ class WorkflowInvoker:
             thinking = ThinkingModule()
             
         except Exception as e:
+            progress.stop(success=False)
             return WorkflowResult(
                 success=False,
                 workflow_name=workflow_name,
@@ -227,7 +353,8 @@ class WorkflowInvoker:
             # =========================================================
             # STEP 1: READ FILES - Extract content from knowledge base
             # =========================================================
-            query = initial_state.get("topic", initial_state.get("task", ""))
+            progress.update(ProgressIndicator.STAGE_READ, "scanning KB")
+            
             knowledge_dir = persona.persona_dir / "knowledge"
             
             reader.set_knowledge_dir(knowledge_dir)
@@ -240,18 +367,23 @@ class WorkflowInvoker:
                     if hasattr(c, 'content')
                 ]
             
+            progress.set_detail(f"{len(extracted_content)} files")
             logger.info(f"[WORKFLOW] Extracted {len(extracted_content)} content pieces")
             
             # =========================================================
             # STEP 2: WARM START - Get patterns from learner
             # =========================================================
+            progress.update(ProgressIndicator.STAGE_WARM, "checking history")
+            
             patterns = learner.get_patterns(query)
             warm_start_prompt = patterns.get("warm_start_prompt")
             suggested_strategies = patterns.get("suggested_strategies", [])
             
             if patterns.get("found"):
+                progress.set_detail(f"{len(suggested_strategies)} patterns")
                 logger.info(f"[WORKFLOW] Warm start: {len(suggested_strategies)} strategies")
             else:
+                progress.set_detail("cold start")
                 logger.info("[WORKFLOW] No similar patterns found, cold start")
             
             # =========================================================
@@ -263,6 +395,9 @@ class WorkflowInvoker:
             
             for iteration in range(cls.MAX_REASONING_ITERATIONS):
                 reasoning_iterations = iteration + 1
+                
+                # Update progress for reasoning
+                progress.update(ProgressIndicator.STAGE_REASON, f"iter {iteration + 1}/{cls.MAX_REASONING_ITERATIONS}")
                 
                 # Generate reasoning with LLM
                 reasoning_content = cls._generate_reasoning(
@@ -276,6 +411,9 @@ class WorkflowInvoker:
                     previous_output=previous_output,
                 )
                 
+                # Update progress for analysis
+                progress.update(ProgressIndicator.STAGE_ANALYZE, f"scoring iter {iteration + 1}")
+                
                 # Score with analyst
                 score_result = analyst.execute(
                     query=query,
@@ -287,6 +425,7 @@ class WorkflowInvoker:
                 score = score_result.output
                 final_score = score.overall
                 
+                progress.set_detail(f"score: {final_score:.1f}/10")
                 logger.info(
                     f"[WORKFLOW] Reasoning iteration {iteration + 1}: "
                     f"Score {final_score}/10 ({'PASS' if score.passed else 'RETRY'})"
@@ -320,6 +459,8 @@ class WorkflowInvoker:
             for val_iteration in range(cls.MAX_VALIDATION_ITERATIONS):
                 validation_iterations = val_iteration + 1
                 
+                progress.update(ProgressIndicator.STAGE_VALIDATE, f"check {val_iteration + 1}/{cls.MAX_VALIDATION_ITERATIONS}")
+                
                 # Reviewer validates
                 review_result = reviewer.execute(
                     content=final_content,
@@ -343,9 +484,11 @@ class WorkflowInvoker:
                 )
                 
                 if validation_passed:
+                    progress.set_detail("passed")
                     break
                 
                 # Regenerate with reviewer feedback
+                progress.set_detail("revising")
                 reasoning_content = cls._generate_reasoning(
                     query=query,
                     persona=persona,
@@ -368,6 +511,8 @@ class WorkflowInvoker:
             # =========================================================
             # STEP 6: STORE PATTERN - Save for future learning
             # =========================================================
+            progress.update(ProgressIndicator.STAGE_SAVE, "storing pattern")
+            
             learner.store_pattern(
                 query=query,
                 reasoning=reasoning_content,
@@ -378,10 +523,14 @@ class WorkflowInvoker:
             # =========================================================
             # STEP 7: WRITE OUTPUT FILE
             # =========================================================
+            progress.set_detail("writing file")
+            
             output_path = output_dir / f"{workflow_id}.{output_format}"
             output_path.write_text(final_content)
             
             execution_time = int((time.time() - start_time) * 1000)
+            
+            progress.stop(success=True)
             
             return WorkflowResult(
                 success=True,
@@ -401,6 +550,7 @@ class WorkflowInvoker:
             
         except Exception as e:
             logger.exception(f"[WORKFLOW] Error: {e}")
+            progress.stop(success=False)
             return WorkflowResult(
                 success=False,
                 workflow_name=workflow_name,

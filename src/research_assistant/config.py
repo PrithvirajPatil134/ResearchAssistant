@@ -53,7 +53,7 @@ class Config:
     # Directory paths
     workspace_dir: Path = field(default_factory=lambda: Path.cwd())
     data_dir: Path = field(default_factory=lambda: Path("data"))
-    personas_dir: Path = field(default_factory=lambda: Path("src/research_assistant/personas"))
+    spaces_dir: Path = field(default_factory=lambda: Path("src/research_assistant/spaces"))
     
     # Sub-configurations
     tokens: TokenConfig = field(default_factory=TokenConfig)
@@ -146,7 +146,7 @@ class Config:
     
     def get_persona_path(self, persona_name: str) -> Path:
         """Get the path to a persona directory."""
-        return self.personas_dir / persona_name
+        return self.spaces_dir / persona_name
     
     def set_current_persona(self, persona_name: str) -> None:
         """Set the current active persona."""
@@ -160,7 +160,7 @@ class Config:
         return {
             "workspace_dir": str(self.workspace_dir),
             "data_dir": str(self.data_dir),
-            "personas_dir": str(self.personas_dir),
+            "spaces_dir": str(self.spaces_dir),
             "tokens": {
                 "max_tokens": self.tokens.max_tokens,
                 "threshold_percentage": self.tokens.threshold_percentage,

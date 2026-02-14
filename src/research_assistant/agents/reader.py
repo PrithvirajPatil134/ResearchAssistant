@@ -84,6 +84,15 @@ class ReaderAgent(BaseAgent):
         relevant_content = []
         query_terms = [t.lower() for t in query.split() if len(t) > 3]
         
+        # Check if query contains explicit file path
+        explicit_file = self._extract_file_path(query)
+        if explicit_file and explicit_file.exists():
+            logger.info(f"[ReaderAgent] Reading explicit file: {explicit_file}")
+            content = self._read_file(explicit_file)
+            if content:
+                content.relevance_score = 1.0  # Explicit file = max relevance
+                relevant_content.append(content)
+        
         if not knowledge_dir.exists():
             return relevant_content
         
@@ -105,6 +114,55 @@ class ReaderAgent(BaseAgent):
         
         return relevant_content[:10]  # Top 10 most relevant
     
+    def _extract_file_path(self, query: str) -> Optional[Path]:
+        """Extract explicit file path from query (handles spaces and Unicode)."""
+        import re
+        
+        # Pattern: Capture from / to file extension, allowing spaces
+        patterns = [
+            r'(?:at\s+)?(/[^"\']+?\.(?:eml|png|jpg|jpeg|pdf|docx|txt|md|xlsx))\b',
+            r'(?:file|screenshot|image|document|email)(?:\s+is)?\s+(?:at\s+)?([/~][^"\']+?\.(?:eml|png|jpg|jpeg|pdf|docx|txt|md|xlsx))\b',
+            r'["\']([/~][^"\']+?\.(?:eml|png|jpg|jpeg|pdf|docx|txt|md|xlsx))["\']',
+        ]
+        
+        for pattern in patterns:
+            match = re.search(pattern, query, re.IGNORECASE)
+            if match:
+                filepath_str = match.group(1).strip()
+                filepath = Path(filepath_str)
+                
+                # Direct match (exact path)
+                if filepath.exists():
+                    logger.info(f"[ReaderAgent] Found explicit file: {filepath}")
+                    return filepath
+                
+                # Try with ~ expansion
+                if filepath_str.startswith('~'):
+                    filepath = Path(filepath_str).expanduser()
+                    if filepath.exists():
+                        logger.info(f"[ReaderAgent] Found explicit file (expanded ~): {filepath}")
+                        return filepath
+                
+                # Handle Unicode/encoding issues (e.g., narrow no-break space)
+                # Try fuzzy matching in the parent directory
+                parent = filepath.parent
+                if parent.exists():
+                    target_name = filepath.name
+                    logger.debug(f"[ReaderAgent] Trying fuzzy match for: {target_name}")
+                    
+                    for file in parent.iterdir():
+                        # Normalize both names for comparison
+                        import unicodedata
+                        norm_file = unicodedata.normalize('NFKC', file.name)
+                        norm_target = unicodedata.normalize('NFKC', target_name)
+                        
+                        if norm_file == norm_target or file.name == target_name:
+                            logger.info(f"[ReaderAgent] Found explicit file (fuzzy match): {file}")
+                            return file
+        
+        logger.debug(f"[ReaderAgent] No explicit file path found in query")
+        return None
+    
     def _read_file(self, filepath: Path) -> Optional[ExtractedContent]:
         """Read content from a file based on its type."""
         suffix = filepath.suffix.lower()
@@ -112,12 +170,16 @@ class ReaderAgent(BaseAgent):
         try:
             if suffix in ['.txt', '.md']:
                 return self._read_text(filepath)
+            elif suffix == '.eml':
+                return self._read_eml(filepath)
             elif suffix == '.docx':
                 return self._read_docx(filepath)
             elif suffix == '.xlsx':
                 return self._read_xlsx(filepath)
             elif suffix == '.pdf':
                 return self._read_pdf(filepath)
+            elif suffix in ['.png', '.jpg', '.jpeg']:
+                return self._read_image(filepath)
             else:
                 return None
         except Exception as e:
@@ -132,6 +194,53 @@ class ReaderAgent(BaseAgent):
             content_type="text",
             content=content,
         )
+    
+    def _read_eml(self, filepath: Path) -> Optional[ExtractedContent]:
+        """Read EML email file."""
+        try:
+            import email
+            from email import policy
+            
+            with open(filepath, 'rb') as f:
+                msg = email.message_from_binary_file(f, policy=policy.default)
+            
+            # Extract email components
+            parts = []
+            parts.append(f"From: {msg.get('From', 'Unknown')}")
+            parts.append(f"To: {msg.get('To', 'Unknown')}")
+            parts.append(f"Date: {msg.get('Date', 'Unknown')}")
+            parts.append(f"Subject: {msg.get('Subject', 'No Subject')}")
+            parts.append("\n" + "-" * 50 + "\n")
+            
+            # Get email body
+            if msg.is_multipart():
+                for part in msg.walk():
+                    if part.get_content_type() == 'text/plain':
+                        body = part.get_payload(decode=True)
+                        if body:
+                            parts.append(body.decode('utf-8', errors='ignore'))
+                            break
+            else:
+                body = msg.get_payload(decode=True)
+                if body:
+                    parts.append(body.decode('utf-8', errors='ignore'))
+            
+            content = '\n'.join(parts)[:10000]
+            
+            return ExtractedContent(
+                source_file=str(filepath.name),
+                content_type="email",
+                content=content,
+                metadata={
+                    "format": "eml",
+                    "from": msg.get('From'),
+                    "subject": msg.get('Subject'),
+                    "date": msg.get('Date'),
+                }
+            )
+        except Exception as e:
+            logger.warning(f"EML read error: {e}")
+            return None
     
     def _read_docx(self, filepath: Path) -> Optional[ExtractedContent]:
         """Read DOCX file by extracting XML."""
@@ -261,6 +370,101 @@ class ReaderAgent(BaseAgent):
             content=f"[PDF Document: {filepath.name}]",
             metadata={"format": "pdf", "requires_ocr": True}
         )
+    
+    def _read_image(self, filepath: Path) -> Optional[ExtractedContent]:
+        """Read image file using vision model (Anthropic API) for text extraction."""
+        try:
+            import anthropic
+            import base64
+            import os
+            
+            logger.info(f"[ReaderAgent] Reading image with vision: {filepath.name}")
+            
+            # Check for API key
+            api_key = os.getenv("ANTHROPIC_API_KEY")
+            if not api_key:
+                logger.error("[ReaderAgent] ANTHROPIC_API_KEY not set")
+                return ExtractedContent(
+                    source_file=str(filepath.name),
+                    content_type="reference",
+                    content=f"[Image: {filepath.name} - no API key]",
+                    metadata={"format": "image", "error": "ANTHROPIC_API_KEY not set"}
+                )
+            
+            # Read and encode image
+            with open(filepath, 'rb') as f:
+                image_data = base64.standard_b64encode(f.read()).decode('utf-8')
+            
+            # Determine media type
+            suffix = filepath.suffix.lower()
+            media_type_map = {
+                '.png': 'image/png',
+                '.jpg': 'image/jpeg',
+                '.jpeg': 'image/jpeg',
+            }
+            media_type = media_type_map.get(suffix, 'image/png')
+            
+            # Create Anthropic client
+            client = anthropic.Anthropic(api_key=api_key)
+            
+            # Build vision prompt
+            vision_prompt = """Extract ALL text content from this image.
+
+If it's an email or message:
+- Extract sender, recipient, date, subject
+- Extract full message body
+- Preserve formatting and structure
+
+If it's a document or form:
+- Extract all text maintaining logical order
+- Preserve section headers and labels
+- Include any important metadata
+
+Output the extracted text in a clear, readable format."""
+            
+            # Call Claude with vision
+            message = client.messages.create(
+                model="claude-3-5-sonnet-20241022",
+                max_tokens=4000,
+                messages=[
+                    {
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "image",
+                                "source": {
+                                    "type": "base64",
+                                    "media_type": media_type,
+                                    "data": image_data,
+                                },
+                            },
+                            {
+                                "type": "text",
+                                "text": vision_prompt
+                            }
+                        ],
+                    }
+                ],
+            )
+            
+            extracted_text = message.content[0].text
+            logger.info(f"[ReaderAgent] Successfully extracted {len(extracted_text)} chars from image")
+            
+            return ExtractedContent(
+                source_file=str(filepath.name),
+                content_type="image_text",
+                content=extracted_text,
+                metadata={"format": "image", "original_path": str(filepath)}
+            )
+                
+        except Exception as e:
+            logger.error(f"[ReaderAgent] Image read error: {e}")
+            return ExtractedContent(
+                source_file=str(filepath.name),
+                content_type="reference",
+                content=f"[Image: {filepath.name} - error: {e}]",
+                metadata={"format": "image", "error": str(e)}
+            )
     
     def _calculate_relevance(self, content: str, query_terms: List[str]) -> float:
         """Calculate relevance score based on term matching."""

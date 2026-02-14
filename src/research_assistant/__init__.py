@@ -12,18 +12,24 @@ Core Agents:
 - ContextGuard: Monitors tokens, manages context at 70% threshold
 - Learner: Learns from feedback and patterns
 - Reviewer: Validates against standards and examples
+
+Spaces (previously Personas):
+- DBA: Prof. Cardasso's DBA research methods
+- CW: Prof. Kakoli Sen's case writing
+- QNTR: Prof. Atul Prashar's quantitative research
 """
 
 __version__ = "0.1.0"
 __author__ = "propatil"
 
 from .config import Config
-from .personas import PersonaLoader, Persona
+from .spaces import SpaceLoader, PersonaLoader, Persona  # PersonaLoader is alias for SpaceLoader
 from .workflows import WorkflowInvoker, WorkflowSpec, WorkflowResult
 
 __all__ = [
     "Config",
-    "PersonaLoader",
+    "SpaceLoader",
+    "PersonaLoader",  # Backward compatibility alias
     "Persona",
     "WorkflowInvoker",
     "WorkflowSpec",

@@ -1,0 +1,2296 @@
+Delivered-To: ephddba25prithvirajp@iimsambalpur.ac.in
+Received: by 2002:ac8:6ec7:0:b0:501:4bda:d728 with SMTP id f7csp2887718qtv;
+        Sun, 18 Jan 2026 21:48:10 -0800 (PST)
+X-Received: by 2002:a05:690c:d8b:b0:784:ad94:ac70 with SMTP id 00721157ae682-793c523ab14mr80057037b3.9.1768801690496;
+        Sun, 18 Jan 2026 21:48:10 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1768801690; cv=none;
+        d=google.com; s=arc-20240605;
+        b=KzLDWRmTyZkikHKB7YuJQhzFhumNogHOUB/v/vsgOLonJ8S8ltkQaZH3FBskKBHZck
+         Oi/4x3mW4X64BNnNpbBZrfqb9cZXpgkGkUKqYl4/K4xWHpxNjiIsNmmIBglWSXzaqQqO
+         W9bMqDRhreDI/p7KkZIqEYoeOmnT7qWqtfd/pnXu51xNReF25BL14WANpAeOQoYnTQ48
+         POChVgonsDY9nR1qPygFOk5+bCHZf5yyk1VLzBafsjND3yRUeSE4GYz4SXi+m7Xdm3rz
+         RcW9u6xMvb08rTaDl1a25rqf/ZeXF2OgL2/RPhIGFqbEENGk7LU/XCCEk4d++O+YiGyw
+         Dj2Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :dkim-signature;
+        bh=DbEyMHvqIyFUklI82peydCKePvaNDd8TtzEIe4JQac0=;
+        fh=wkoy4xCjQcOGYwQpENw3YMEVOKC5ztkH/8iOWFvTyW8=;
+        b=hDFYJXfXBrLYiVUFJ9LO5AslYApKji9LTTTh3azQBHgUqKXLPb208B03YZJ/Md8YzA
+         /pJFucoDJsAjceXQsrjIEQ+/YCIjsxoV4/z7X5OahPNgXC6herEt86Q0bhA0MrwOYJ9f
+         3rHLuwJytilvFe7D/AazrrHV7+NCC23vV+CXWRKzpNLwcw+7XZB+mlnXXOhOKmjz56ef
+         IyuBUo4WfYT5mdGtY1ae8ECFYUuRKsOv/U/Faer1QBJWat8xtvnThgqcEuEXlo10ia5n
+         DIdlTVL4hI9m6sDHgNeO+91FK4DgBVAw7++myz6wJSHLu4gRNCH+WOTUu2W6n3hYQkrU
+         LMlw==;
+        dara=google.com
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@iimsambalpur-ac-in.20230601.gappssmtp.com header.s=20230601 header.b=1+5iIc7o;
+       spf=pass (google.com: domain of kakolis@iimsambalpur.ac.in designates 209.85.220.41 as permitted sender) smtp.mailfrom=kakolis@iimsambalpur.ac.in;
+       dara=neutral header.i=@iimsambalpur.ac.in
+Return-Path: <kakolis@iimsambalpur.ac.in>
+Received: from mail-sor-f41.google.com (mail-sor-f41.google.com. [209.85.220.41])
+        by mx.google.com with SMTPS id 00721157ae682-793c6713c8esor35044547b3.8.2026.01.18.21.48.10
+        for <ephddba25prithvirajp@iimsambalpur.ac.in>
+        (Google Transport Security);
+        Sun, 18 Jan 2026 21:48:10 -0800 (PST)
+Received-SPF: pass (google.com: domain of kakolis@iimsambalpur.ac.in designates 209.85.220.41 as permitted sender) client-ip=209.85.220.41;
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@iimsambalpur-ac-in.20230601.gappssmtp.com header.s=20230601 header.b=1+5iIc7o;
+       spf=pass (google.com: domain of kakolis@iimsambalpur.ac.in designates 209.85.220.41 as permitted sender) smtp.mailfrom=kakolis@iimsambalpur.ac.in;
+       dara=neutral header.i=@iimsambalpur.ac.in
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=iimsambalpur-ac-in.20230601.gappssmtp.com; s=20230601; t=1768801690; x=1769406490; darn=iimsambalpur.ac.in;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DbEyMHvqIyFUklI82peydCKePvaNDd8TtzEIe4JQac0=;
+        b=1+5iIc7oDerV/JzcCdLnCWHNKy+yLfITGHlCEdBM3krO1It2icTbWOpqimWlNyWEE5
+         B5sefNaD9wrGUjEIb5w4Ow6NmkT6UOQfuGUYEUiFhEgCp7+vh2xMIU7qNXjRCuZtuhlS
+         67o/vq44GepLrbXgkwofINTbM6zer/HF5vw7pcxJ+HjONLk4u/kTJ6xBd156kvxw8xd9
+         NQR6LdQGgGy6DPsBRVFBKAUS+XrFbrFMqNiMzPxnTq46SGkyUN7czSGesp7848NDJ8YB
+         73cP5yw6lbXuTHyMSpqdsD9QxrPktqx4DISPT/L0Z9uQIRx4Ud0rwqZZZtAnA5MJ455t
+         3GFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768801690; x=1769406490;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DbEyMHvqIyFUklI82peydCKePvaNDd8TtzEIe4JQac0=;
+        b=i0oRu+YTibFamej61cOKPgWtgYYlgzq4Oc5vKfo+7bdvQLFTO1TF32yQ7mJ8RTMBwk
+         bFZiurJ+luArWAKD8yhMXqVopXWG5gRQCw/zryeNFSlfXfV7DHLDrpXYk/BYyuv/WQ/n
+         jrsexppW+yHsJNEDzw9Z8huAVZmPnCXYSAuGcSi7zKt685LLTaxcM9KROrzjyG0ozs4p
+         /92KVaNFiOj1iQPJDskfgc7licQAeH73oizYQdfcglLUjPnWJpWZkQD0nkPqfQuFa9UK
+         QONFijg6h8VqCbKdZ3IMq5n3fMDzl6C+nQ2O8AlG1Nb+LnWZbKEz5dgBZs8Dd/lRA4LI
+         0TvA==
+X-Gm-Message-State: AOJu0YzS8VgAjfh2z0y8exybmQsvJ99ANBZPlgyt+jxqQrJcV6kUnU83
+	lLeWEepj3k2YSEqwrl2vUdDKCJ2/yNCiMKSL/ndeDEDXkOaQg5LB6vbc4Ow/cvqG5Qs1Qv6Qk5r
+	P9ZtHx+++952oxRiCFDQ62GZB4DaaZcOZ5blqHUrd3eh9vJGm+p6V34UrZg==
+X-Gm-Gg: AZuq6aIYLK5+cCcoBKKVfpeOHcLX92NeH9PmsKQYJh922BYWoPQNZzUq2Z6Zt7v69Om
+	95gHzPESCq9W79zw9hlxqtq93ogHT2na6FGDELYxmFkIcIuQ3dduYMzECv8EA1qJ6qC3BcLTttb
+	rsUQ81fxD9pd5KgwkfApOogX6TXZO4/HLTHg4Glamptx02RxncCQfYRQ71oYwqnEorJFNeRFOJa
+	m+YkHjwkQYqpumMK2XarfgJs6aAxZi7jJaCY1oIrcrQdbQHuHyvE3M4boeo4ZSS0yktvLueULNO
+	d7DBlDceppZyPANSrnpXgYkhZmNmQg==
+X-Received: by 2002:a05:690c:dc2:b0:786:4860:21fd with SMTP id
+ 00721157ae682-793c536b2c4mr70444427b3.39.1768801688890; Sun, 18 Jan 2026
+ 21:48:08 -0800 (PST)
+MIME-Version: 1.0
+References: <CACqgw3bKLpOJOkvW2AgcZG_+txQ7wjBi6njMPmuxurf+NsZdfw@mail.gmail.com>
+ <CAANRYCoqQp=TGJSBKOie0st_m+0UrPm=ek6D2OBFipCJc=GisA@mail.gmail.com>
+ <CACqgw3YBVwaBg7GoX==is1ZCvuUYX0Kn1NxQiNAoV0KW=_0mSQ@mail.gmail.com>
+ <CAANRYCqbnBGp-gXwgrvzfaUrXD5EgwYpAcfRf=h1NCu0paOb0w@mail.gmail.com>
+ <CACqgw3b2=fgeDNYPWSCzMev6d_hLEovRnNUdkMBk9AdGqtkwyg@mail.gmail.com>
+ <CAANRYCoZ+qXBFWF5hLThEW0MvqAtzF29YP1ErvTLQ3rFvhAZ5w@mail.gmail.com> <CACqgw3aHMX3+6m5JzzuZeDhxR2sZyRLrxN7JAV8acR1Qf-qLOw@mail.gmail.com>
+In-Reply-To: <CACqgw3aHMX3+6m5JzzuZeDhxR2sZyRLrxN7JAV8acR1Qf-qLOw@mail.gmail.com>
+From: "Dr. Kakoli Sen" <kakolis@iimsambalpur.ac.in>
+Date: Mon, 19 Jan 2026 11:17:36 +0530
+X-Gm-Features: AZwV_QgF57OoyIWZH5EBVqaBk7yUACVheJwSkHygZLnWvTSVoZL10s6LxFuBcAw
+Message-ID: <CAANRYCpfPuL5Ei87on-q289hYZki572+M24h8t-pdG4qaFC-5w@mail.gmail.com>
+Subject: Re: Case Writing Topic Guidance
+To: Prithviraj Patil <ephddba25prithvirajp@iimsambalpur.ac.in>
+Content-Type: multipart/related; boundary="000000000000590a430648b73cf5"
+
+--000000000000590a430648b73cf5
+Content-Type: multipart/alternative; boundary="000000000000590a420648b73cf4"
+
+--000000000000590a420648b73cf4
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Dear Prithviraj,
+Working with a small-medium sized company is always a good experience, they
+will be more open to sharing their problems and getting consent is easier.
+Pls go ahead exploring the same.
+However , pls also note that cases do get published from secondary data
+sources, you may like to explore the International Journal for Case Studies
+in Management (IJCSM) of HEC Montreal (I have shared this in the slides too=
+)
+Thanks
+Kakoli
+
+On Thu, Jan 15, 2026 at 7:50=E2=80=AFAM Prithviraj Patil <
+ephddba25prithvirajp@iimsambalpur.ac.in> wrote:
+
+> Hey Dr. Kakoli,
+> Thank you for pointing out the consent requirement of the protagonist.
+> Getting consent for either of the two cases I proposed would definitely b=
+e
+> a blocker.
+> I was thinking of working on the Tesla Case with you as the mentor but
+> looks like we've hit a roadblock there.
+>
+> I guess, I'd have to pivot to another idea altogether.
+> Maybe working on a small-medium sized company and their problems where
+> getting consent is straightforward.
+>
+> Happy to hear your thoughts/ comments on this.
+>
+> Awaiting your response.
+>
+> Thanks,
+> Prithviraj Patil
+>
+> On Wed, Jan 14, 2026 at 7:17=E2=80=AFAM Dr. Kakoli Sen <kakolis@iimsambal=
+pur.ac.in>
+> wrote:
+>
+>> Dear Prithviraj,
+>> It is not just secondary data sources, the case publishers also need a
+>> real protagonist and their consent to write the case study. Will you be
+>> able to manage these? There are scholars from your senior batch who have
+>> tried to write an analysis case based on publicly available data but cou=
+ld
+>> not get published.
+>> Thanks
+>> Kakoli
+>>
+>> On Wed, Jan 14, 2026 at 8:39=E2=80=AFAM Prithviraj Patil <
+>> ephddba25prithvirajp@iimsambalpur.ac.in> wrote:
+>>
+>>> Hi Dr. Kakoli,
+>>> I was able to identify a few publishers who do accept secondary cases.
+>>> Below is a list of the same:
+>>>
+>>>    1. Business Case Journal (Society for Case Research): link
+>>>    <https://www.ignited.global/scr/submission-guidelines>
+>>>    [image: image.png]
+>>>    2. The CASE Journal (Emerald Publishing) - link
+>>>    <https://www.emeraldgrouppublishing.com/journal/emcs>
+>>>    [image: image.png]
+>>>
+>>> Please can you give it a look and let me know if this works.
+>>>
+>>> Also, isn't there anyone from the prior batch working with secondary
+>>> sourced data that has/had reached out to publishers wrt their case? It'=
+ll
+>>> be helpful to know if there is any reference of such publishers among
+>>> senior scholars for publishing their respective cases (*sourced from
+>>> secondary data sources).*
+>>> Would you happen to know any apart from the ones I've listed above?
+>>> It's very surprising that there aren't many journals that publish cases
+>>> sourced from secondary data.
+>>>
+>>> It'll be super helpful for me to proceed with this case idea once we
+>>> have finalized a journal.
+>>>
+>>> Awaiting your response.
+>>>
+>>> On Fri, Jan 9, 2026 at 2:52=E2=80=AFAM Dr. Kakoli Sen <
+>>> kakolis@iimsambalpur.ac.in> wrote:
+>>>
+>>>> Dear Prithvi,
+>>>> Pls identify the case publishers who accept secondary cases.
+>>>> Thanks
+>>>> Kakoli
+>>>>
+>>>> On Thu, Jan 8, 2026 at 11:17=E2=80=AFAM Prithviraj Patil <
+>>>> ephddba25prithvirajp@iimsambalpur.ac.in> wrote:
+>>>>
+>>>>> Thank you for your thoughtful feedback on the case direction. Your
+>>>>> point about the need for a clear organizational challenge, specific
+>>>>> protagonist, and dilemma among options is precisely what's been
+>>>>> inclining me towards the Tesla case.
+>>>>>
+>>>>> *Our Data & Dilemma Framework (for Tesla Board Governance Case):*
+>>>>>
+>>>>> *1. The Organizational Challenge (Specific to Tesla, Not
+>>>>> Industry-Wide):*
+>>>>>
+>>>>> Rather than a generic "How do boards govern visionary CEOs?"=E2=80=94=
+which
+>>>>> applies to many companies=E2=80=94the Tesla case centers on a unique
+>>>>> corporate governance crisis:
+>>>>>
+>>>>>    -
+>>>>>
+>>>>>    2018: Tesla's Board approved a $55.8B CEO compensation plan
+>>>>>    -
+>>>>>
+>>>>>    Jan 2024: Delaware Court of Chancery rescinded it, finding the
+>>>>>    board lacked independence
+>>>>>    -
+>>>>>
+>>>>>    Dec 2024: The board faces shareholder pressure to ratify it again
+>>>>>    -
+>>>>>
+>>>>>    Dec 2025: Delaware Supreme Court addressed remedy but left
+>>>>>    governance questions unresolved
+>>>>>
+>>>>> The organizational crisis is Tesla-specific: After a public court
+>>>>> ruling that questioned the board's independence, how does the same bo=
+ard
+>>>>> redesign its governance and still retain shareholder confidence?
+>>>>>
+>>>>> *2. The Dilemma (With Clear Options for Student Debate):*
+>>>>>
+>>>>> The board faces multiple competing options without a clear "right
+>>>>> answer":
+>>>>> Option Pros Cons
+>>>>> A: Incremental Reforms (annual elections, voting changes, ethics
+>>>>> policies) Quick to implement; demonstrates responsiveness to
+>>>>> shareholder concerns May be seen as cosmetic; doesn't address
+>>>>> underlying CEO concentration issue
+>>>>> B: Structural Changes (independent chair, CEO limits, mandatory board
+>>>>> refreshment) Genuinely strengthens independence; addresses root cause=
+s May
+>>>>> alienate the CEO; risks losing visionary leadership; board resistance
+>>>>> C: Hybrid Approach (governance reforms + transparent compensation
+>>>>> redesign + expanded independent committees) Balances accountability
+>>>>> with innovation; addresses disclosure concerns Complex to implement;
+>>>>> may not satisfy critics; timeline challenges
+>>>>>
+>>>>> Students must analyze: Which approach best serves shareholders while
+>>>>> preserving Tesla's innovation culture? What are the unintended conseq=
+uences
+>>>>> of each choice?
+>>>>>
+>>>>> *3. The Data (What We're Using):*
+>>>>>
+>>>>> Primary Sources (All Public):
+>>>>>
+>>>>>    -
+>>>>>
+>>>>>    Delaware court opinions (*In re Tesla*, Court of Chancery +
+>>>>>    Supreme Court)
+>>>>>    -
+>>>>>
+>>>>>    SEC filings: 10-K, proxy statements (DEF 14A) 2018=E2=80=932024
+>>>>>    -
+>>>>>
+>>>>>    Tesla board governance documents: committee charters, independence
+>>>>>    disclosures
+>>>>>    -
+>>>>>
+>>>>>    Court testimony transcripts (public record)
+>>>>>
+>>>>> Secondary Sources (All Verified, Credible):
+>>>>>
+>>>>>    -
+>>>>>
+>>>>>    Legal analysis: Harvard Law Corporate Governance Forum, law firm
+>>>>>    memos (Fenwick, Hunton Andrews Kurth)
+>>>>>    -
+>>>>>
+>>>>>    Shareholder activism data: institutional investor proposals,
+>>>>>    voting records (CalPERS, Norges Bank, ARK Invest)
+>>>>>    -
+>>>>>
+>>>>>    News coverage: Reuters, Bloomberg Law, ProMarket=E2=80=94documenti=
+ng
+>>>>>    shareholder concerns and governance responses
+>>>>>    -
+>>>>>
+>>>>>    Financial data: Board compensation benchmarking, shareholder
+>>>>>    voting outcomes
+>>>>>
+>>>>> *The Case Will Include:*
+>>>>>
+>>>>>    -
+>>>>>
+>>>>>    Exhibit 1: Timeline of governance events (2018=E2=80=932025)
+>>>>>    -
+>>>>>
+>>>>>    Exhibit 2: Board composition & director independence analysis
+>>>>>    (court-documented ties to Musk)
+>>>>>    -
+>>>>>
+>>>>>    Exhibit 3: Compensation history & milestones achieved vs. planned
+>>>>>    -
+>>>>>
+>>>>>    Exhibit 4: Shareholder activist proposals & board responses
+>>>>>    -
+>>>>>
+>>>>>    Exhibit 5: Governance reform comparison (Tesla vs. industry peers)
+>>>>>
+>>>>> *4. Why This Resolves the "Clear Dilemma" Requirement:*
+>>>>>
+>>>>> Rather than an abstract governance question, the case presents a
+>>>>> board in crisis mode, facing real stakeholder pressure with measurabl=
+e
+>>>>> consequences (shareholder votes, court rulings, reputational impact).
+>>>>> The dilemma isn't "Should Tesla have better governance?"=E2=80=94it's=
+ "Given the
+>>>>> board's documented independence failures and shareholder distrust, wh=
+at is
+>>>>> the minimum vs. optimal governance overhaul to restore legitimacy?"
+>>>>>
+>>>>> This is high-stakes, decision-focused, and specific to Tesla's
+>>>>> circumstances=E2=80=94exactly what publishers expect.
+>>>>>
+>>>>> *5. Protagonist:*
+>>>>>
+>>>>> Robyn Denholm - Chair of Tesla's Board of Directors (since November
+>>>>> 2018).
+>>>>>
+>>>>> She's the Board Chair, responsible for governance oversight. The
+>>>>> Delaware court scrutinized the board's independence under her leaders=
+hip. After
+>>>>> the Jan 2024 court ruling, she must lead the board's response to
+>>>>> shareholder pressure for governance reforms. She must balance loyalty
+>>>>> to Musk (who appointed her Chair) with fiduciary duty to shareholders
+>>>>>
+>>>>> Here's how I'm thinking of executing the case study:
+>>>>>
+>>>>> We proceed with Tesla Board Governance Case using this data/dilemma
+>>>>> framework, with the understanding that:
+>>>>>
+>>>>>    -
+>>>>>
+>>>>>    The case ends in late 2024 (board faces governance decision after
+>>>>>    shareholder votes)
+>>>>>    -
+>>>>>
+>>>>>    The Dec 2025 Supreme Court ruling is included as a postscript
+>>>>>    (current but non-determinative)
+>>>>>    -
+>>>>>
+>>>>>    Students debate Options A, B, or C (or propose alternatives)
+>>>>>    without a predetermined "correct" answer
+>>>>>    -
+>>>>>
+>>>>>    Teaching note will guide instructors on using the case for OB,
+>>>>>    governance, leadership, and legal frameworks
+>>>>>
+>>>>>
+>>>>> Does this clarity on data specificity and dilemma options align with
+>>>>> your expectations for a publisher-ready case?
+>>>>>
+>>>>> Happy to discuss further or adjust the approach.
+>>>>>
+>>>>> Thanks,
+>>>>>
+>>>>> Prithviraj Patil
+>>>>> -------------
+>>>>> On Wed, Jan 7, 2026 at 2:27=E2=80=AFAM Dr. Kakoli Sen <
+>>>>> kakolis@iimsambalpur.ac.in> wrote:
+>>>>>
+>>>>>> Dear Prithviraj,
+>>>>>> The publishers look for a clear organisational challenge as well as
+>>>>>> dilemma among possible options. It may be pertaining to the entire i=
+ndustry
+>>>>>> but one company with a protagonist and relevant data needs to be the=
+re.
+>>>>>> Regarding the Elon Musk and Governance issue, we can discuss but wha=
+t kind
+>>>>>> of data are you thinking of?
+>>>>>> Thanks
+>>>>>> Kakoli
+>>>>>>
+>>>>>> On Wed, Jan 7, 2026 at 9:46=E2=80=AFAM Prithviraj Patil <
+>>>>>> ephddba25prithvirajp@iimsambalpur.ac.in> wrote:
+>>>>>>
+>>>>>>> Hello Dr. Kakoli,
+>>>>>>> Hope all is well and Happy New Year.
+>>>>>>>
+>>>>>>> Reaching out for some guidance.
+>>>>>>>
+>>>>>>> I've created my case (*attached)* from a real world situational
+>>>>>>> problem that many companies would have experienced at some point ma=
+king it
+>>>>>>> highly teachable. It's new and relevant in today's world (*as you
+>>>>>>> pointed out in the 20th Dec lecture).*
+>>>>>>>
+>>>>>>> Although on re-visiting your lecture, I couldn't help but ponder on
+>>>>>>> the thought of writing a case study around "Board Effectiveness" wr=
+t *Tesla's
+>>>>>>> Elon Musk vs Delaware Court*. Specifically touching on the
+>>>>>>> governance frameworks and the dilemmas it raises. Since my research=
+ paper
+>>>>>>> and thesis topic would be relevant to the governance subject, I'm t=
+hinking
+>>>>>>> of exploring this topic as a case idea so that my PhD focuses on on=
+e niche
+>>>>>>> area within the industry.
+>>>>>>>
+>>>>>>> Please could you let me know your thoughts on whether I should
+>>>>>>> pursue my original case OR explore the alternative that I mentioned=
+ above (*I
+>>>>>>> can present a case writing document for this as well if you feel th=
+at'll **help
+>>>>>>> you with providing the required guidance - let me know)*
+>>>>>>>
+>>>>>>> Eagerly awaiting your response.
+>>>>>>>
+>>>>>>> Thanks,
+>>>>>>> Prithviraj Patil
+>>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> --
+>>>>>>
+>>>>>> *=E0=A4=A1=E0=A5=89. =E0=A4=95=E0=A4=BE=E0=A4=95=E0=A5=8B=E0=A4=B2=
+=E0=A5=80 =E0=A4=B8=E0=A5=87=E0=A4=A8** /* *Dr. Kakoli Sen*
+>>>>>>
+>>>>>> *=E0=A4=AA=E0=A5=8D=E0=A4=B0=E0=A5=8B=E0=A4=AB=E0=A4=BC=E0=A5=87=E0=
+=A4=B8=E0=A4=B0** / Professor*
+>>>>>>
+>>>>>> *=E0=A4=B8=E0=A4=BE=E0=A4=AE=E0=A4=BE=E0=A4=A8=E0=A5=8D=E0=A4=AF =E0=
+=A4=AA=E0=A5=8D=E0=A4=B0=E0=A4=AC=E0=A4=82=E0=A4=A7=E0=A4=A8 =E0=A4=95=E0=
+=A4=BE =E0=A4=95=E0=A5=8D=E0=A4=B7=E0=A5=87=E0=A4=A4=E0=A5=8D=E0=A4=B0* */ =
+**Area of General Management,
+>>>>>> Economics & Public Policy*
+>>>>>>
+>>>>>> *=E0=A4=AD=E0=A4=BE=E0=A4=B0=E0=A4=A4=E0=A5=80=E0=A4=AF* *=E0=A4=AA=
+=E0=A5=8D=E0=A4=B0=E0=A4=AC=E0=A4=82=E0=A4=A7=E0=A4=A8* *=E0=A4=B8=E0=A4=82=
+=E0=A4=B8=E0=A5=8D=E0=A4=A5=E0=A4=BE=E0=A4=A8* *=E0=A4=B8=E0=A4=82=E0=A4=AC=
+=E0=A4=B2=E0=A4=AA=E0=A5=81=E0=A4=B0** /** Indian Institute of
+>>>>>> Management Sambalpur*
+>>>>>>
+>>>>>> *=E0=A4=B8=E0=A4=82=E0=A4=AC=E0=A4=B2=E0=A4=AA=E0=A5=81=E0=A4=B0**, =
+**=E0=A4=93=E0=A4=A1=E0=A4=BF=E0=A4=B6=E0=A4=BE** - **768025 / Sambalpur, O=
+disha - 768025*
+>>>>>>
+>>>>>> *Mobile : 9971797032*
+>>>>>>
+>>>>>>
+>>>>
+>>>> --
+>>>>
+>>>> *=E0=A4=A1=E0=A5=89. =E0=A4=95=E0=A4=BE=E0=A4=95=E0=A5=8B=E0=A4=B2=E0=
+=A5=80 =E0=A4=B8=E0=A5=87=E0=A4=A8** /* *Dr. Kakoli Sen*
+>>>>
+>>>> *=E0=A4=AA=E0=A5=8D=E0=A4=B0=E0=A5=8B=E0=A4=AB=E0=A4=BC=E0=A5=87=E0=A4=
+=B8=E0=A4=B0** / Professor*
+>>>>
+>>>> *=E0=A4=B8=E0=A4=BE=E0=A4=AE=E0=A4=BE=E0=A4=A8=E0=A5=8D=E0=A4=AF =E0=
+=A4=AA=E0=A5=8D=E0=A4=B0=E0=A4=AC=E0=A4=82=E0=A4=A7=E0=A4=A8 =E0=A4=95=E0=
+=A4=BE =E0=A4=95=E0=A5=8D=E0=A4=B7=E0=A5=87=E0=A4=A4=E0=A5=8D=E0=A4=B0* */ =
+**Area of General Management,
+>>>> Economics & Public Policy*
+>>>>
+>>>> *=E0=A4=AD=E0=A4=BE=E0=A4=B0=E0=A4=A4=E0=A5=80=E0=A4=AF* *=E0=A4=AA=E0=
+=A5=8D=E0=A4=B0=E0=A4=AC=E0=A4=82=E0=A4=A7=E0=A4=A8* *=E0=A4=B8=E0=A4=82=E0=
+=A4=B8=E0=A5=8D=E0=A4=A5=E0=A4=BE=E0=A4=A8* *=E0=A4=B8=E0=A4=82=E0=A4=AC=E0=
+=A4=B2=E0=A4=AA=E0=A5=81=E0=A4=B0** /** Indian Institute of
+>>>> Management Sambalpur*
+>>>>
+>>>> *=E0=A4=B8=E0=A4=82=E0=A4=AC=E0=A4=B2=E0=A4=AA=E0=A5=81=E0=A4=B0**, **=
+=E0=A4=93=E0=A4=A1=E0=A4=BF=E0=A4=B6=E0=A4=BE** - **768025 / Sambalpur, Odi=
+sha - 768025*
+>>>>
+>>>> *Mobile : 9971797032*
+>>>>
+>>>>
+>>
+>> --
+>>
+>> *=E0=A4=A1=E0=A5=89. =E0=A4=95=E0=A4=BE=E0=A4=95=E0=A5=8B=E0=A4=B2=E0=A5=
+=80 =E0=A4=B8=E0=A5=87=E0=A4=A8** /* *Dr. Kakoli Sen*
+>>
+>> *=E0=A4=AA=E0=A5=8D=E0=A4=B0=E0=A5=8B=E0=A4=AB=E0=A4=BC=E0=A5=87=E0=A4=
+=B8=E0=A4=B0** / Professor*
+>>
+>> *=E0=A4=B8=E0=A4=BE=E0=A4=AE=E0=A4=BE=E0=A4=A8=E0=A5=8D=E0=A4=AF =E0=A4=
+=AA=E0=A5=8D=E0=A4=B0=E0=A4=AC=E0=A4=82=E0=A4=A7=E0=A4=A8 =E0=A4=95=E0=A4=
+=BE =E0=A4=95=E0=A5=8D=E0=A4=B7=E0=A5=87=E0=A4=A4=E0=A5=8D=E0=A4=B0* */ **A=
+rea of General Management, Economics
+>> & Public Policy*
+>>
+>> *=E0=A4=AD=E0=A4=BE=E0=A4=B0=E0=A4=A4=E0=A5=80=E0=A4=AF* *=E0=A4=AA=E0=
+=A5=8D=E0=A4=B0=E0=A4=AC=E0=A4=82=E0=A4=A7=E0=A4=A8* *=E0=A4=B8=E0=A4=82=E0=
+=A4=B8=E0=A5=8D=E0=A4=A5=E0=A4=BE=E0=A4=A8* *=E0=A4=B8=E0=A4=82=E0=A4=AC=E0=
+=A4=B2=E0=A4=AA=E0=A5=81=E0=A4=B0** /** Indian Institute of
+>> Management Sambalpur*
+>>
+>> *=E0=A4=B8=E0=A4=82=E0=A4=AC=E0=A4=B2=E0=A4=AA=E0=A5=81=E0=A4=B0**, **=
+=E0=A4=93=E0=A4=A1=E0=A4=BF=E0=A4=B6=E0=A4=BE** - **768025 / Sambalpur, Odi=
+sha - 768025*
+>>
+>> *Mobile : 9971797032*
+>>
+>>
+
+--=20
+
+*=E0=A4=A1=E0=A5=89. =E0=A4=95=E0=A4=BE=E0=A4=95=E0=A5=8B=E0=A4=B2=E0=A5=80=
+ =E0=A4=B8=E0=A5=87=E0=A4=A8** /* *Dr. Kakoli Sen*
+
+*=E0=A4=AA=E0=A5=8D=E0=A4=B0=E0=A5=8B=E0=A4=AB=E0=A4=BC=E0=A5=87=E0=A4=B8=
+=E0=A4=B0** / Professor*
+
+*=E0=A4=B8=E0=A4=BE=E0=A4=AE=E0=A4=BE=E0=A4=A8=E0=A5=8D=E0=A4=AF =E0=A4=AA=
+=E0=A5=8D=E0=A4=B0=E0=A4=AC=E0=A4=82=E0=A4=A7=E0=A4=A8 =E0=A4=95=E0=A4=BE =
+=E0=A4=95=E0=A5=8D=E0=A4=B7=E0=A5=87=E0=A4=A4=E0=A5=8D=E0=A4=B0* */ **Area =
+of General Management, Economics &
+Public Policy*
+
+*=E0=A4=AD=E0=A4=BE=E0=A4=B0=E0=A4=A4=E0=A5=80=E0=A4=AF* *=E0=A4=AA=E0=A5=
+=8D=E0=A4=B0=E0=A4=AC=E0=A4=82=E0=A4=A7=E0=A4=A8* *=E0=A4=B8=E0=A4=82=E0=A4=
+=B8=E0=A5=8D=E0=A4=A5=E0=A4=BE=E0=A4=A8* *=E0=A4=B8=E0=A4=82=E0=A4=AC=E0=A4=
+=B2=E0=A4=AA=E0=A5=81=E0=A4=B0** /** Indian Institute of Management
+Sambalpur*
+
+*=E0=A4=B8=E0=A4=82=E0=A4=AC=E0=A4=B2=E0=A4=AA=E0=A5=81=E0=A4=B0**, **=E0=
+=A4=93=E0=A4=A1=E0=A4=BF=E0=A4=B6=E0=A4=BE** - **768025 / Sambalpur, Odisha=
+ - 768025*
+
+*Mobile : 9971797032*
+
+--000000000000590a420648b73cf4
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Dear=C2=A0Prithviraj,<div>Working with a small-medium size=
+d company is always a good experience, they will be more open to sharing th=
+eir problems and getting consent is easier. Pls go ahead exploring the same=
+.=C2=A0<div><div>However , pls also note that cases=C2=A0do get published f=
+rom secondary data sources, you may like to explore the International Journ=
+al for Case Studies in Management (IJCSM) of HEC Montreal (I have shared th=
+is in the slides too)</div></div></div><div>Thanks</div><div>Kakoli=C2=A0</=
+div></div><br><div class=3D"gmail_quote gmail_quote_container"><div dir=3D"=
+ltr" class=3D"gmail_attr">On Thu, Jan 15, 2026 at 7:50=E2=80=AFAM Prithvira=
+j Patil &lt;<a href=3D"mailto:ephddba25prithvirajp@iimsambalpur.ac.in">ephd=
+dba25prithvirajp@iimsambalpur.ac.in</a>&gt; wrote:<br></div><blockquote cla=
+ss=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid =
+rgb(204,204,204);padding-left:1ex"><div dir=3D"ltr">Hey Dr. Kakoli,<br>Than=
+k you for pointing out the consent requirement of the protagonist. Getting =
+consent for either of the two cases I proposed would definitely be a blocke=
+r.<br>I was thinking of working on the Tesla Case with you as the mentor bu=
+t looks like=C2=A0we&#39;ve hit a roadblock there.<br><br><div>I guess, I&#=
+39;d have to pivot to another idea altogether.<br>Maybe working on a small-=
+medium sized company and their problems where getting consent is straightfo=
+rward.<br><br>Happy to hear your thoughts/ comments on this.<br><br>Awaitin=
+g your response.<br><br>Thanks,</div><div>Prithviraj Patil</div></div><br><=
+div class=3D"gmail_quote"><div dir=3D"ltr" class=3D"gmail_attr">On Wed, Jan=
+ 14, 2026 at 7:17=E2=80=AFAM Dr. Kakoli Sen &lt;<a href=3D"mailto:kakolis@i=
+imsambalpur.ac.in" target=3D"_blank">kakolis@iimsambalpur.ac.in</a>&gt; wro=
+te:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px =
+0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex"><div dir=3D"=
+ltr">Dear=C2=A0Prithviraj,<div>It is not just secondary data sources, the c=
+ase publishers=C2=A0also need a real protagonist and their consent to write=
+ the case study. Will you be able to manage these? There are scholars from =
+your senior batch who have tried to write an analysis case based on publicl=
+y available data but could not get published.</div><div>Thanks</div><div>Ka=
+koli</div></div><br><div class=3D"gmail_quote"><div dir=3D"ltr" class=3D"gm=
+ail_attr">On Wed, Jan 14, 2026 at 8:39=E2=80=AFAM Prithviraj Patil &lt;<a h=
+ref=3D"mailto:ephddba25prithvirajp@iimsambalpur.ac.in" target=3D"_blank">ep=
+hddba25prithvirajp@iimsambalpur.ac.in</a>&gt; wrote:<br></div><blockquote c=
+lass=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px soli=
+d rgb(204,204,204);padding-left:1ex"><div dir=3D"ltr">Hi Dr. Kakoli,<br>I w=
+as able to identify a few publishers who do accept secondary cases. Below i=
+s a list of the same:<br><ol><li>Business Case Journal (Society for Case Re=
+search): <a href=3D"https://www.ignited.global/scr/submission-guidelines" t=
+arget=3D"_blank">link</a><br><img src=3D"cid:ii_mkdd74120" alt=3D"image.png=
+" width=3D"491" height=3D"27"><br></li><li>The CASE Journal (Emerald Publis=
+hing) - <a href=3D"https://www.emeraldgrouppublishing.com/journal/emcs" tar=
+get=3D"_blank">link</a><br><img src=3D"cid:ii_mkdd97uw1" alt=3D"image.png" =
+style=3D"margin-right: 0px;" width=3D"862" height=3D"27"><br></li></ol><div=
+>Please can you give it a look and let me know if this works.<br><br>Also, =
+isn&#39;t there anyone from the prior batch working with secondary sourced =
+data that has/had reached out to publishers wrt their case? It&#39;ll be he=
+lpful to know if there is any reference of such publishers among senior=C2=
+=A0scholars for publishing their respective cases (<i>sourced from secondar=
+y data sources).</i><br>Would you happen to know any apart from the ones I&=
+#39;ve listed above?<br>It&#39;s very surprising that there aren&#39;t many=
+ journals that publish cases sourced from secondary data.<br><br>It&#39;ll =
+be super helpful for me to proceed with this case idea once we have finaliz=
+ed a journal.<br><br>Awaiting your response.</div></div><br><div class=3D"g=
+mail_quote"><div dir=3D"ltr" class=3D"gmail_attr">On Fri, Jan 9, 2026 at 2:=
+52=E2=80=AFAM Dr. Kakoli Sen &lt;<a href=3D"mailto:kakolis@iimsambalpur.ac.=
+in" target=3D"_blank">kakolis@iimsambalpur.ac.in</a>&gt; wrote:<br></div><b=
+lockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-le=
+ft:1px solid rgb(204,204,204);padding-left:1ex"><div dir=3D"ltr">Dear Prith=
+vi,<div>Pls identify the case publishers who accept secondary cases.</div><=
+div>Thanks</div><div>Kakoli=C2=A0</div></div><br><div class=3D"gmail_quote"=
+><div dir=3D"ltr" class=3D"gmail_attr">On Thu, Jan 8, 2026 at 11:17=E2=80=
+=AFAM Prithviraj Patil &lt;<a href=3D"mailto:ephddba25prithvirajp@iimsambal=
+pur.ac.in" target=3D"_blank">ephddba25prithvirajp@iimsambalpur.ac.in</a>&gt=
+; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px=
+ 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex"><div di=
+r=3D"ltr"><div dir=3D"ltr"><p style=3D"box-sizing:border-box;border-width:0=
+px;border-style:solid;margin:1rem 0px 0.5rem;font-family:fkGroteskNeue,ui-s=
+ans-serif,system-ui,-apple-system,&quot;system-ui&quot;,&quot;Segoe UI&quot=
+;,Roboto,&quot;Helvetica Neue&quot;,Arial,&quot;Noto Sans&quot;,sans-serif,=
+&quot;Apple Color Emoji&quot;,&quot;Segoe UI Emoji&quot;,&quot;Segoe UI Sym=
+bol&quot;,&quot;Noto Color Emoji&quot;,&quot;Hiragino Sans&quot;,&quot;Ping=
+Fang SC&quot;,&quot;Apple SD Gothic Neo&quot;,&quot;Yu Gothic&quot;,&quot;M=
+icrosoft YaHei&quot;,&quot;Microsoft JhengHei&quot;,Meiryo;letter-spacing:0=
+.16px">Thank you for your thoughtful feedback on the case direction. Your p=
+oint about the need for a=C2=A0<span style=3D"box-sizing:border-box;border-=
+width:0px;border-style:solid">clear organizational challenge, specific prot=
+agonist, and dilemma among options</span>=C2=A0is precisely what&#39;s been=
+ inclining me towards the Tesla case.</p><p style=3D"box-sizing:border-box;=
+border-width:0px;border-style:solid;margin:1rem 0px 0.5rem;font-family:fkGr=
+oteskNeue,ui-sans-serif,system-ui,-apple-system,&quot;system-ui&quot;,&quot=
+;Segoe UI&quot;,Roboto,&quot;Helvetica Neue&quot;,Arial,&quot;Noto Sans&quo=
+t;,sans-serif,&quot;Apple Color Emoji&quot;,&quot;Segoe UI Emoji&quot;,&quo=
+t;Segoe UI Symbol&quot;,&quot;Noto Color Emoji&quot;,&quot;Hiragino Sans&qu=
+ot;,&quot;PingFang SC&quot;,&quot;Apple SD Gothic Neo&quot;,&quot;Yu Gothic=
+&quot;,&quot;Microsoft YaHei&quot;,&quot;Microsoft JhengHei&quot;,Meiryo;le=
+tter-spacing:0.16px"><span style=3D"box-sizing:border-box;border-width:0px;=
+border-style:solid"><b>Our Data &amp; Dilemma Framework (for Tesla Board Go=
+vernance Case):</b></span></p><p style=3D"box-sizing:border-box;border-widt=
+h:0px;border-style:solid;margin:1rem 0px 0.5rem;font-family:fkGroteskNeue,u=
+i-sans-serif,system-ui,-apple-system,&quot;system-ui&quot;,&quot;Segoe UI&q=
+uot;,Roboto,&quot;Helvetica Neue&quot;,Arial,&quot;Noto Sans&quot;,sans-ser=
+if,&quot;Apple Color Emoji&quot;,&quot;Segoe UI Emoji&quot;,&quot;Segoe UI =
+Symbol&quot;,&quot;Noto Color Emoji&quot;,&quot;Hiragino Sans&quot;,&quot;P=
+ingFang SC&quot;,&quot;Apple SD Gothic Neo&quot;,&quot;Yu Gothic&quot;,&quo=
+t;Microsoft YaHei&quot;,&quot;Microsoft JhengHei&quot;,Meiryo;letter-spacin=
+g:0.16px"><span style=3D"box-sizing:border-box;border-width:0px;border-styl=
+e:solid"><u><b>1. The Organizational Challenge (Specific to Tesla, Not Indu=
+stry-Wide):</b></u></span></p><p style=3D"box-sizing:border-box;border-widt=
+h:0px;border-style:solid;margin:1rem 0px 0.5rem;font-family:fkGroteskNeue,u=
+i-sans-serif,system-ui,-apple-system,&quot;system-ui&quot;,&quot;Segoe UI&q=
+uot;,Roboto,&quot;Helvetica Neue&quot;,Arial,&quot;Noto Sans&quot;,sans-ser=
+if,&quot;Apple Color Emoji&quot;,&quot;Segoe UI Emoji&quot;,&quot;Segoe UI =
+Symbol&quot;,&quot;Noto Color Emoji&quot;,&quot;Hiragino Sans&quot;,&quot;P=
+ingFang SC&quot;,&quot;Apple SD Gothic Neo&quot;,&quot;Yu Gothic&quot;,&quo=
+t;Microsoft YaHei&quot;,&quot;Microsoft JhengHei&quot;,Meiryo;letter-spacin=
+g:0.16px">Rather than a generic &quot;How do boards govern visionary CEOs?&=
+quot;=E2=80=94which applies to many companies=E2=80=94the Tesla case center=
+s on a=C2=A0<span style=3D"box-sizing:border-box;border-width:0px;border-st=
+yle:solid">unique corporate governance crisis:</span></p><ul style=3D"box-s=
+izing:border-box;border-width:0px;border-style:solid;list-style-position:in=
+itial;margin:0px;padding:0px;font-family:fkGroteskNeue,ui-sans-serif,system=
+-ui,-apple-system,&quot;system-ui&quot;,&quot;Segoe UI&quot;,Roboto,&quot;H=
+elvetica Neue&quot;,Arial,&quot;Noto Sans&quot;,sans-serif,&quot;Apple Colo=
+r Emoji&quot;,&quot;Segoe UI Emoji&quot;,&quot;Segoe UI Symbol&quot;,&quot;=
+Noto Color Emoji&quot;,&quot;Hiragino Sans&quot;,&quot;PingFang SC&quot;,&q=
+uot;Apple SD Gothic Neo&quot;,&quot;Yu Gothic&quot;,&quot;Microsoft YaHei&q=
+uot;,&quot;Microsoft JhengHei&quot;,Meiryo;letter-spacing:0.16px"><li style=
+=3D"box-sizing:border-box;border-width:0px;border-style:solid;margin-top:0p=
+x;margin-bottom:0px;padding-top:0px;padding-bottom:0px"><p style=3D"box-siz=
+ing:border-box;border-width:0px;border-style:solid;margin:0px 0px 0.5rem;pa=
+dding-top:0px;font-weight:inherit"><span style=3D"box-sizing:border-box;bor=
+der-width:0px;border-style:solid">2018:</span>=C2=A0Tesla&#39;s Board appro=
+ved a $55.8B CEO compensation plan</p></li><li style=3D"box-sizing:border-b=
+ox;border-width:0px;border-style:solid;margin-top:0px;margin-bottom:0px;pad=
+ding-top:0px;padding-bottom:0px"><p style=3D"box-sizing:border-box;border-w=
+idth:0px;border-style:solid;margin:0px 0px 0.5rem;padding-top:0px;font-weig=
+ht:inherit"><span style=3D"box-sizing:border-box;border-width:0px;border-st=
+yle:solid">Jan 2024:</span>=C2=A0Delaware Court of Chancery=C2=A0<span styl=
+e=3D"box-sizing:border-box;border-width:0px;border-style:solid">rescinded</=
+span>=C2=A0it, finding the board lacked independence</p></li><li style=3D"b=
+ox-sizing:border-box;border-width:0px;border-style:solid;margin-top:0px;mar=
+gin-bottom:0px;padding-top:0px;padding-bottom:0px"><p style=3D"box-sizing:b=
+order-box;border-width:0px;border-style:solid;margin:0px 0px 0.5rem;padding=
+-top:0px;font-weight:inherit"><span style=3D"box-sizing:border-box;border-w=
+idth:0px;border-style:solid">Dec 2024:</span>=C2=A0The board faces sharehol=
+der pressure to=C2=A0<span style=3D"box-sizing:border-box;border-width:0px;=
+border-style:solid">ratify</span>=C2=A0it again</p></li><li style=3D"box-si=
+zing:border-box;border-width:0px;border-style:solid;margin-top:0px;margin-b=
+ottom:0px;padding-top:0px;padding-bottom:0px"><p style=3D"box-sizing:border=
+-box;border-width:0px;border-style:solid;margin:0px 0px 0.5rem;padding-top:=
+0px;font-weight:inherit"><span style=3D"box-sizing:border-box;border-width:=
+0px;border-style:solid">Dec 2025:</span>=C2=A0Delaware Supreme Court addres=
+sed remedy but left governance questions unresolved</p></li></ul><p style=
+=3D"box-sizing:border-box;border-width:0px;border-style:solid;margin:0.5rem=
+ 0px;font-family:fkGroteskNeue,ui-sans-serif,system-ui,-apple-system,&quot;=
+system-ui&quot;,&quot;Segoe UI&quot;,Roboto,&quot;Helvetica Neue&quot;,Aria=
+l,&quot;Noto Sans&quot;,sans-serif,&quot;Apple Color Emoji&quot;,&quot;Sego=
+e UI Emoji&quot;,&quot;Segoe UI Symbol&quot;,&quot;Noto Color Emoji&quot;,&=
+quot;Hiragino Sans&quot;,&quot;PingFang SC&quot;,&quot;Apple SD Gothic Neo&=
+quot;,&quot;Yu Gothic&quot;,&quot;Microsoft YaHei&quot;,&quot;Microsoft Jhe=
+ngHei&quot;,Meiryo;letter-spacing:0.16px"><span style=3D"box-sizing:border-=
+box;border-width:0px;border-style:solid">The organizational crisis is Tesla=
+-specific:</span>=C2=A0After a public court ruling that questioned the boar=
+d&#39;s independence, how does the same board redesign its governance and s=
+till retain shareholder confidence?</p><p style=3D"box-sizing:border-box;bo=
+rder-width:0px;border-style:solid;margin:1rem 0px 0.5rem;font-family:fkGrot=
+eskNeue,ui-sans-serif,system-ui,-apple-system,&quot;system-ui&quot;,&quot;S=
+egoe UI&quot;,Roboto,&quot;Helvetica Neue&quot;,Arial,&quot;Noto Sans&quot;=
+,sans-serif,&quot;Apple Color Emoji&quot;,&quot;Segoe UI Emoji&quot;,&quot;=
+Segoe UI Symbol&quot;,&quot;Noto Color Emoji&quot;,&quot;Hiragino Sans&quot=
+;,&quot;PingFang SC&quot;,&quot;Apple SD Gothic Neo&quot;,&quot;Yu Gothic&q=
+uot;,&quot;Microsoft YaHei&quot;,&quot;Microsoft JhengHei&quot;,Meiryo;lett=
+er-spacing:0.16px"><span style=3D"box-sizing:border-box;border-width:0px;bo=
+rder-style:solid"><b><u>2. The Dilemma (With Clear Options for Student Deba=
+te):</u></b></span></p><p style=3D"box-sizing:border-box;border-width:0px;b=
+order-style:solid;margin:1rem 0px 0.5rem;font-family:fkGroteskNeue,ui-sans-=
+serif,system-ui,-apple-system,&quot;system-ui&quot;,&quot;Segoe UI&quot;,Ro=
+boto,&quot;Helvetica Neue&quot;,Arial,&quot;Noto Sans&quot;,sans-serif,&quo=
+t;Apple Color Emoji&quot;,&quot;Segoe UI Emoji&quot;,&quot;Segoe UI Symbol&=
+quot;,&quot;Noto Color Emoji&quot;,&quot;Hiragino Sans&quot;,&quot;PingFang=
+ SC&quot;,&quot;Apple SD Gothic Neo&quot;,&quot;Yu Gothic&quot;,&quot;Micro=
+soft YaHei&quot;,&quot;Microsoft JhengHei&quot;,Meiryo;letter-spacing:0.16p=
+x">The board faces multiple competing options without a clear &quot;right a=
+nswer&quot;:</p><div style=3D"box-sizing:border-box;border-width:0px;border=
+-style:solid;font-family:fkGroteskNeue,ui-sans-serif,system-ui,-apple-syste=
+m,&quot;system-ui&quot;,&quot;Segoe UI&quot;,Roboto,&quot;Helvetica Neue&qu=
+ot;,Arial,&quot;Noto Sans&quot;,sans-serif,&quot;Apple Color Emoji&quot;,&q=
+uot;Segoe UI Emoji&quot;,&quot;Segoe UI Symbol&quot;,&quot;Noto Color Emoji=
+&quot;,&quot;Hiragino Sans&quot;,&quot;PingFang SC&quot;,&quot;Apple SD Got=
+hic Neo&quot;,&quot;Yu Gothic&quot;,&quot;Microsoft YaHei&quot;,&quot;Micro=
+soft JhengHei&quot;,Meiryo;letter-spacing:0.16px"><div style=3D"box-sizing:=
+border-box;border-width:0px;border-style:solid;width:740px;overflow-x:auto;=
+background-color:transparent;max-width:90vw"><table style=3D"border-width:1=
+px 0px 0px 1px;border-style:solid;text-indent:0px;width:740px;table-layout:=
+auto;margin-top:1em;margin-bottom:1em;line-height:1.71429;border-spacing:0p=
+x"><thead style=3D"box-sizing:border-box;border-width:0px 0px 1px;border-st=
+yle:solid"><tr style=3D"box-sizing:border-box;border-width:0px;border-style=
+:solid"><th style=3D"box-sizing:border-box;border-width:0px 1px 1px 0px;bor=
+der-style:solid;font-weight:550;vertical-align:top;word-break:normal;paddin=
+g:8px;text-align:left"><span style=3D"box-sizing:border-box;border-width:0p=
+x;border-style:solid;color:inherit">Option</span></th><th style=3D"box-sizi=
+ng:border-box;border-width:0px 1px 1px 0px;border-style:solid;font-weight:5=
+50;vertical-align:top;word-break:normal;padding:8px;text-align:left"><span =
+style=3D"box-sizing:border-box;border-width:0px;border-style:solid;color:in=
+herit">Pros</span></th><th style=3D"box-sizing:border-box;border-width:0px =
+1px 1px 0px;border-style:solid;font-weight:550;vertical-align:top;word-brea=
+k:normal;padding:8px;text-align:left"><span style=3D"box-sizing:border-box;=
+border-width:0px;border-style:solid;color:inherit">Cons</span></th></tr></t=
+head><tbody style=3D"box-sizing:border-box;border-width:0px;border-style:so=
+lid"><tr style=3D"box-sizing:border-box;border-width:0px 0px 1px;border-sty=
+le:solid"><td style=3D"box-sizing:border-box;border-width:0px 1px 1px 0px;b=
+order-style:solid;vertical-align:baseline;padding:0.571429em 8px;min-width:=
+48px;word-break:normal"><span style=3D"box-sizing:border-box;border-width:0=
+px;border-style:solid">A: Incremental Reforms</span>=C2=A0(annual elections=
+, voting changes, ethics policies)</td><td style=3D"box-sizing:border-box;b=
+order-width:0px 1px 1px 0px;border-style:solid;vertical-align:baseline;padd=
+ing:0.571429em 8px;min-width:48px;word-break:normal">Quick to implement; de=
+monstrates responsiveness to shareholder concerns</td><td style=3D"box-sizi=
+ng:border-box;border-width:0px 1px 1px 0px;border-style:solid;vertical-alig=
+n:baseline;padding:0.571429em 8px;min-width:48px;word-break:normal">May be =
+seen as cosmetic; doesn&#39;t address underlying CEO concentration issue</t=
+d></tr><tr style=3D"box-sizing:border-box;border-width:0px 0px 1px;border-s=
+tyle:solid"><td style=3D"box-sizing:border-box;border-width:0px 1px 1px 0px=
+;border-style:solid;vertical-align:baseline;padding:0.571429em 8px;min-widt=
+h:48px;word-break:normal"><span style=3D"box-sizing:border-box;border-width=
+:0px;border-style:solid">B: Structural Changes</span>=C2=A0(independent cha=
+ir, CEO limits, mandatory board refreshment)</td><td style=3D"box-sizing:bo=
+rder-box;border-width:0px 1px 1px 0px;border-style:solid;vertical-align:bas=
+eline;padding:0.571429em 8px;min-width:48px;word-break:normal">Genuinely st=
+rengthens independence; addresses root causes</td><td style=3D"box-sizing:b=
+order-box;border-width:0px 1px 1px 0px;border-style:solid;vertical-align:ba=
+seline;padding:0.571429em 8px;min-width:48px;word-break:normal">May alienat=
+e the CEO; risks losing visionary leadership; board resistance</td></tr><tr=
+ style=3D"box-sizing:border-box;border-width:0px;border-style:solid"><td st=
+yle=3D"box-sizing:border-box;border-width:0px 1px 1px 0px;border-style:soli=
+d;vertical-align:baseline;padding:0.571429em 8px;min-width:48px;word-break:=
+normal"><span style=3D"box-sizing:border-box;border-width:0px;border-style:=
+solid">C: Hybrid Approach</span>=C2=A0(governance reforms + transparent com=
+pensation redesign + expanded independent committees)</td><td style=3D"box-=
+sizing:border-box;border-width:0px 1px 1px 0px;border-style:solid;vertical-=
+align:baseline;padding:0.571429em 8px;min-width:48px;word-break:normal">Bal=
+ances accountability with innovation; addresses disclosure concerns</td><td=
+ style=3D"box-sizing:border-box;border-width:0px 1px 1px 0px;border-style:s=
+olid;vertical-align:baseline;padding:0.571429em 8px;min-width:48px;word-bre=
+ak:normal">Complex to implement; may not satisfy critics; timeline challeng=
+es</td></tr></tbody></table></div><div style=3D"box-sizing:border-box;borde=
+r-width:1px;border-style:solid;display:flex;border-radius:0.5rem;opacity:0"=
+><div style=3D"box-sizing:border-box;border-width:0px;border-style:solid;di=
+splay:flex;opacity:1"></div><div style=3D"box-sizing:border-box;border-widt=
+h:0px 0px 0px 1px;border-style:solid;display:flex;opacity:1"></div><div sty=
+le=3D"box-sizing:border-box;border-width:0px 0px 0px 1px;border-style:solid=
+;display:flex;opacity:1"></div></div></div><p style=3D"box-sizing:border-bo=
+x;border-width:0px;border-style:solid;margin:0.5rem 0px;font-family:fkGrote=
+skNeue,ui-sans-serif,system-ui,-apple-system,&quot;system-ui&quot;,&quot;Se=
+goe UI&quot;,Roboto,&quot;Helvetica Neue&quot;,Arial,&quot;Noto Sans&quot;,=
+sans-serif,&quot;Apple Color Emoji&quot;,&quot;Segoe UI Emoji&quot;,&quot;S=
+egoe UI Symbol&quot;,&quot;Noto Color Emoji&quot;,&quot;Hiragino Sans&quot;=
+,&quot;PingFang SC&quot;,&quot;Apple SD Gothic Neo&quot;,&quot;Yu Gothic&qu=
+ot;,&quot;Microsoft YaHei&quot;,&quot;Microsoft JhengHei&quot;,Meiryo;lette=
+r-spacing:0.16px"><span style=3D"box-sizing:border-box;border-width:0px;bor=
+der-style:solid">Students must analyze:</span>=C2=A0Which approach best ser=
+ves shareholders while preserving Tesla&#39;s innovation culture? What are =
+the unintended consequences of each choice?</p><p style=3D"box-sizing:borde=
+r-box;border-width:0px;border-style:solid;margin:1rem 0px 0.5rem;font-famil=
+y:fkGroteskNeue,ui-sans-serif,system-ui,-apple-system,&quot;system-ui&quot;=
+,&quot;Segoe UI&quot;,Roboto,&quot;Helvetica Neue&quot;,Arial,&quot;Noto Sa=
+ns&quot;,sans-serif,&quot;Apple Color Emoji&quot;,&quot;Segoe UI Emoji&quot=
+;,&quot;Segoe UI Symbol&quot;,&quot;Noto Color Emoji&quot;,&quot;Hiragino S=
+ans&quot;,&quot;PingFang SC&quot;,&quot;Apple SD Gothic Neo&quot;,&quot;Yu =
+Gothic&quot;,&quot;Microsoft YaHei&quot;,&quot;Microsoft JhengHei&quot;,Mei=
+ryo;letter-spacing:0.16px"><span style=3D"box-sizing:border-box;border-widt=
+h:0px;border-style:solid"><b><u>3. The Data (What We&#39;re Using):</u></b>=
+</span></p><p style=3D"box-sizing:border-box;border-width:0px;border-style:=
+solid;margin:1rem 0px 0.5rem;font-family:fkGroteskNeue,ui-sans-serif,system=
+-ui,-apple-system,&quot;system-ui&quot;,&quot;Segoe UI&quot;,Roboto,&quot;H=
+elvetica Neue&quot;,Arial,&quot;Noto Sans&quot;,sans-serif,&quot;Apple Colo=
+r Emoji&quot;,&quot;Segoe UI Emoji&quot;,&quot;Segoe UI Symbol&quot;,&quot;=
+Noto Color Emoji&quot;,&quot;Hiragino Sans&quot;,&quot;PingFang SC&quot;,&q=
+uot;Apple SD Gothic Neo&quot;,&quot;Yu Gothic&quot;,&quot;Microsoft YaHei&q=
+uot;,&quot;Microsoft JhengHei&quot;,Meiryo;letter-spacing:0.16px"><span sty=
+le=3D"box-sizing:border-box;border-width:0px;border-style:solid">Primary So=
+urces (All Public):</span></p><ul style=3D"box-sizing:border-box;border-wid=
+th:0px;border-style:solid;list-style-position:initial;margin:0px;padding:0p=
+x;font-family:fkGroteskNeue,ui-sans-serif,system-ui,-apple-system,&quot;sys=
+tem-ui&quot;,&quot;Segoe UI&quot;,Roboto,&quot;Helvetica Neue&quot;,Arial,&=
+quot;Noto Sans&quot;,sans-serif,&quot;Apple Color Emoji&quot;,&quot;Segoe U=
+I Emoji&quot;,&quot;Segoe UI Symbol&quot;,&quot;Noto Color Emoji&quot;,&quo=
+t;Hiragino Sans&quot;,&quot;PingFang SC&quot;,&quot;Apple SD Gothic Neo&quo=
+t;,&quot;Yu Gothic&quot;,&quot;Microsoft YaHei&quot;,&quot;Microsoft JhengH=
+ei&quot;,Meiryo;letter-spacing:0.16px"><li style=3D"box-sizing:border-box;b=
+order-width:0px;border-style:solid;margin-top:0px;margin-bottom:0px;padding=
+-top:0px;padding-bottom:0px"><p style=3D"box-sizing:border-box;border-width=
+:0px;border-style:solid;margin:0px 0px 0.5rem;padding-top:0px;font-weight:i=
+nherit">Delaware court opinions (<em style=3D"box-sizing:border-box;border-=
+width:0px;border-style:solid">In re Tesla</em>, Court of Chancery + Supreme=
+ Court)</p></li><li style=3D"box-sizing:border-box;border-width:0px;border-=
+style:solid;margin-top:0px;margin-bottom:0px;padding-top:0px;padding-bottom=
+:0px"><p style=3D"box-sizing:border-box;border-width:0px;border-style:solid=
+;margin:0px 0px 0.5rem;padding-top:0px;font-weight:inherit">SEC filings: 10=
+-K, proxy statements (DEF 14A) 2018=E2=80=932024</p></li><li style=3D"box-s=
+izing:border-box;border-width:0px;border-style:solid;margin-top:0px;margin-=
+bottom:0px;padding-top:0px;padding-bottom:0px"><p style=3D"box-sizing:borde=
+r-box;border-width:0px;border-style:solid;margin:0px 0px 0.5rem;padding-top=
+:0px;font-weight:inherit">Tesla board governance documents: committee chart=
+ers, independence disclosures</p></li><li style=3D"box-sizing:border-box;bo=
+rder-width:0px;border-style:solid;margin-top:0px;margin-bottom:0px;padding-=
+top:0px;padding-bottom:0px"><p style=3D"box-sizing:border-box;border-width:=
+0px;border-style:solid;margin:0px 0px 0.5rem;padding-top:0px;font-weight:in=
+herit">Court testimony transcripts (public record)</p></li></ul><p style=3D=
+"box-sizing:border-box;border-width:0px;border-style:solid;margin:0.5rem 0p=
+x;font-family:fkGroteskNeue,ui-sans-serif,system-ui,-apple-system,&quot;sys=
+tem-ui&quot;,&quot;Segoe UI&quot;,Roboto,&quot;Helvetica Neue&quot;,Arial,&=
+quot;Noto Sans&quot;,sans-serif,&quot;Apple Color Emoji&quot;,&quot;Segoe U=
+I Emoji&quot;,&quot;Segoe UI Symbol&quot;,&quot;Noto Color Emoji&quot;,&quo=
+t;Hiragino Sans&quot;,&quot;PingFang SC&quot;,&quot;Apple SD Gothic Neo&quo=
+t;,&quot;Yu Gothic&quot;,&quot;Microsoft YaHei&quot;,&quot;Microsoft JhengH=
+ei&quot;,Meiryo;letter-spacing:0.16px"><span style=3D"box-sizing:border-box=
+;border-width:0px;border-style:solid">Secondary Sources (All Verified, Cred=
+ible):</span></p><ul style=3D"box-sizing:border-box;border-width:0px;border=
+-style:solid;list-style-position:initial;margin:0px;padding:0px;font-family=
+:fkGroteskNeue,ui-sans-serif,system-ui,-apple-system,&quot;system-ui&quot;,=
+&quot;Segoe UI&quot;,Roboto,&quot;Helvetica Neue&quot;,Arial,&quot;Noto San=
+s&quot;,sans-serif,&quot;Apple Color Emoji&quot;,&quot;Segoe UI Emoji&quot;=
+,&quot;Segoe UI Symbol&quot;,&quot;Noto Color Emoji&quot;,&quot;Hiragino Sa=
+ns&quot;,&quot;PingFang SC&quot;,&quot;Apple SD Gothic Neo&quot;,&quot;Yu G=
+othic&quot;,&quot;Microsoft YaHei&quot;,&quot;Microsoft JhengHei&quot;,Meir=
+yo;letter-spacing:0.16px"><li style=3D"box-sizing:border-box;border-width:0=
+px;border-style:solid;margin-top:0px;margin-bottom:0px;padding-top:0px;padd=
+ing-bottom:0px"><p style=3D"box-sizing:border-box;border-width:0px;border-s=
+tyle:solid;margin:0px 0px 0.5rem;padding-top:0px;font-weight:inherit">Legal=
+ analysis: Harvard Law Corporate Governance Forum, law firm memos (Fenwick,=
+ Hunton Andrews Kurth)</p></li><li style=3D"box-sizing:border-box;border-wi=
+dth:0px;border-style:solid;margin-top:0px;margin-bottom:0px;padding-top:0px=
+;padding-bottom:0px"><p style=3D"box-sizing:border-box;border-width:0px;bor=
+der-style:solid;margin:0px 0px 0.5rem;padding-top:0px;font-weight:inherit">=
+Shareholder activism data: institutional investor proposals, voting records=
+ (CalPERS, Norges Bank, ARK Invest)</p></li><li style=3D"box-sizing:border-=
+box;border-width:0px;border-style:solid;margin-top:0px;margin-bottom:0px;pa=
+dding-top:0px;padding-bottom:0px"><p style=3D"box-sizing:border-box;border-=
+width:0px;border-style:solid;margin:0px 0px 0.5rem;padding-top:0px;font-wei=
+ght:inherit">News coverage: Reuters, Bloomberg Law, ProMarket=E2=80=94docum=
+enting shareholder concerns and governance responses</p></li><li style=3D"b=
+ox-sizing:border-box;border-width:0px;border-style:solid;margin-top:0px;mar=
+gin-bottom:0px;padding-top:0px;padding-bottom:0px"><p style=3D"box-sizing:b=
+order-box;border-width:0px;border-style:solid;margin:0px 0px 0.5rem;padding=
+-top:0px;font-weight:inherit">Financial data: Board compensation benchmarki=
+ng, shareholder voting outcomes</p></li></ul><p style=3D"box-sizing:border-=
+box;border-width:0px;border-style:solid;margin:0.5rem 0px;font-family:fkGro=
+teskNeue,ui-sans-serif,system-ui,-apple-system,&quot;system-ui&quot;,&quot;=
+Segoe UI&quot;,Roboto,&quot;Helvetica Neue&quot;,Arial,&quot;Noto Sans&quot=
+;,sans-serif,&quot;Apple Color Emoji&quot;,&quot;Segoe UI Emoji&quot;,&quot=
+;Segoe UI Symbol&quot;,&quot;Noto Color Emoji&quot;,&quot;Hiragino Sans&quo=
+t;,&quot;PingFang SC&quot;,&quot;Apple SD Gothic Neo&quot;,&quot;Yu Gothic&=
+quot;,&quot;Microsoft YaHei&quot;,&quot;Microsoft JhengHei&quot;,Meiryo;let=
+ter-spacing:0.16px"><span style=3D"box-sizing:border-box;border-width:0px;b=
+order-style:solid"><u>The Case Will Include:</u></span></p><ul style=3D"box=
+-sizing:border-box;border-width:0px;border-style:solid;list-style-position:=
+initial;margin:0px;padding:0px;font-family:fkGroteskNeue,ui-sans-serif,syst=
+em-ui,-apple-system,&quot;system-ui&quot;,&quot;Segoe UI&quot;,Roboto,&quot=
+;Helvetica Neue&quot;,Arial,&quot;Noto Sans&quot;,sans-serif,&quot;Apple Co=
+lor Emoji&quot;,&quot;Segoe UI Emoji&quot;,&quot;Segoe UI Symbol&quot;,&quo=
+t;Noto Color Emoji&quot;,&quot;Hiragino Sans&quot;,&quot;PingFang SC&quot;,=
+&quot;Apple SD Gothic Neo&quot;,&quot;Yu Gothic&quot;,&quot;Microsoft YaHei=
+&quot;,&quot;Microsoft JhengHei&quot;,Meiryo;letter-spacing:0.16px"><li sty=
+le=3D"box-sizing:border-box;border-width:0px;border-style:solid;margin-top:=
+0px;margin-bottom:0px;padding-top:0px;padding-bottom:0px"><p style=3D"box-s=
+izing:border-box;border-width:0px;border-style:solid;margin:0px 0px 0.5rem;=
+padding-top:0px;font-weight:inherit"><span style=3D"box-sizing:border-box;b=
+order-width:0px;border-style:solid">Exhibit 1:</span>=C2=A0Timeline of gove=
+rnance events (2018=E2=80=932025)</p></li><li style=3D"box-sizing:border-bo=
+x;border-width:0px;border-style:solid;margin-top:0px;margin-bottom:0px;padd=
+ing-top:0px;padding-bottom:0px"><p style=3D"box-sizing:border-box;border-wi=
+dth:0px;border-style:solid;margin:0px 0px 0.5rem;padding-top:0px;font-weigh=
+t:inherit"><span style=3D"box-sizing:border-box;border-width:0px;border-sty=
+le:solid">Exhibit 2:</span>=C2=A0Board composition &amp; director independe=
+nce analysis (court-documented ties to Musk)</p></li><li style=3D"box-sizin=
+g:border-box;border-width:0px;border-style:solid;margin-top:0px;margin-bott=
+om:0px;padding-top:0px;padding-bottom:0px"><p style=3D"box-sizing:border-bo=
+x;border-width:0px;border-style:solid;margin:0px 0px 0.5rem;padding-top:0px=
+;font-weight:inherit"><span style=3D"box-sizing:border-box;border-width:0px=
+;border-style:solid">Exhibit 3:</span>=C2=A0Compensation history &amp; mile=
+stones achieved vs. planned</p></li><li style=3D"box-sizing:border-box;bord=
+er-width:0px;border-style:solid;margin-top:0px;margin-bottom:0px;padding-to=
+p:0px;padding-bottom:0px"><p style=3D"box-sizing:border-box;border-width:0p=
+x;border-style:solid;margin:0px 0px 0.5rem;padding-top:0px;font-weight:inhe=
+rit"><span style=3D"box-sizing:border-box;border-width:0px;border-style:sol=
+id">Exhibit 4:</span>=C2=A0Shareholder activist proposals &amp; board respo=
+nses</p></li><li style=3D"box-sizing:border-box;border-width:0px;border-sty=
+le:solid;margin-top:0px;margin-bottom:0px;padding-top:0px;padding-bottom:0p=
+x"><p style=3D"box-sizing:border-box;border-width:0px;border-style:solid;ma=
+rgin:0px 0px 0.5rem;padding-top:0px;font-weight:inherit"><span style=3D"box=
+-sizing:border-box;border-width:0px;border-style:solid">Exhibit 5:</span>=
+=C2=A0Governance reform comparison (Tesla vs. industry peers)</p></li></ul>=
+<p style=3D"box-sizing:border-box;border-width:0px;border-style:solid;margi=
+n:0.5rem 0px;font-family:fkGroteskNeue,ui-sans-serif,system-ui,-apple-syste=
+m,&quot;system-ui&quot;,&quot;Segoe UI&quot;,Roboto,&quot;Helvetica Neue&qu=
+ot;,Arial,&quot;Noto Sans&quot;,sans-serif,&quot;Apple Color Emoji&quot;,&q=
+uot;Segoe UI Emoji&quot;,&quot;Segoe UI Symbol&quot;,&quot;Noto Color Emoji=
+&quot;,&quot;Hiragino Sans&quot;,&quot;PingFang SC&quot;,&quot;Apple SD Got=
+hic Neo&quot;,&quot;Yu Gothic&quot;,&quot;Microsoft YaHei&quot;,&quot;Micro=
+soft JhengHei&quot;,Meiryo;letter-spacing:0.16px"><span style=3D"box-sizing=
+:border-box;border-width:0px;border-style:solid"><b><u>4. Why This Resolves=
+ the &quot;Clear Dilemma&quot; Requirement:</u></b></span></p><p style=3D"b=
+ox-sizing:border-box;border-width:0px;border-style:solid;margin:1rem 0px 0.=
+5rem;font-family:fkGroteskNeue,ui-sans-serif,system-ui,-apple-system,&quot;=
+system-ui&quot;,&quot;Segoe UI&quot;,Roboto,&quot;Helvetica Neue&quot;,Aria=
+l,&quot;Noto Sans&quot;,sans-serif,&quot;Apple Color Emoji&quot;,&quot;Sego=
+e UI Emoji&quot;,&quot;Segoe UI Symbol&quot;,&quot;Noto Color Emoji&quot;,&=
+quot;Hiragino Sans&quot;,&quot;PingFang SC&quot;,&quot;Apple SD Gothic Neo&=
+quot;,&quot;Yu Gothic&quot;,&quot;Microsoft YaHei&quot;,&quot;Microsoft Jhe=
+ngHei&quot;,Meiryo;letter-spacing:0.16px">Rather than an abstract governanc=
+e question, the case presents=C2=A0<span style=3D"box-sizing:border-box;bor=
+der-width:0px;border-style:solid">a board in crisis mode</span>, facing=C2=
+=A0<span style=3D"box-sizing:border-box;border-width:0px;border-style:solid=
+">real stakeholder pressure</span>=C2=A0with=C2=A0<span style=3D"box-sizing=
+:border-box;border-width:0px;border-style:solid">measurable consequences</s=
+pan>=C2=A0(shareholder votes, court rulings, reputational impact). The dile=
+mma isn&#39;t &quot;Should Tesla have better governance?&quot;=E2=80=94it&#=
+39;s &quot;Given the board&#39;s documented independence failures and share=
+holder distrust, what is the minimum vs. optimal governance overhaul to res=
+tore legitimacy?&quot;</p><p style=3D"box-sizing:border-box;border-width:0p=
+x;border-style:solid;margin:1rem 0px 0.5rem;font-family:fkGroteskNeue,ui-sa=
+ns-serif,system-ui,-apple-system,&quot;system-ui&quot;,&quot;Segoe UI&quot;=
+,Roboto,&quot;Helvetica Neue&quot;,Arial,&quot;Noto Sans&quot;,sans-serif,&=
+quot;Apple Color Emoji&quot;,&quot;Segoe UI Emoji&quot;,&quot;Segoe UI Symb=
+ol&quot;,&quot;Noto Color Emoji&quot;,&quot;Hiragino Sans&quot;,&quot;PingF=
+ang SC&quot;,&quot;Apple SD Gothic Neo&quot;,&quot;Yu Gothic&quot;,&quot;Mi=
+crosoft YaHei&quot;,&quot;Microsoft JhengHei&quot;,Meiryo;letter-spacing:0.=
+16px">This is=C2=A0<span style=3D"box-sizing:border-box;border-width:0px;bo=
+rder-style:solid">high-stakes, decision-focused, and specific to Tesla&#39;=
+s circumstances</span>=E2=80=94exactly what publishers expect.</p><p style=
+=3D"box-sizing:border-box;border-width:0px;border-style:solid;margin:1rem 0=
+px 0.5rem;font-family:fkGroteskNeue,ui-sans-serif,system-ui,-apple-system,&=
+quot;system-ui&quot;,&quot;Segoe UI&quot;,Roboto,&quot;Helvetica Neue&quot;=
+,Arial,&quot;Noto Sans&quot;,sans-serif,&quot;Apple Color Emoji&quot;,&quot=
+;Segoe UI Emoji&quot;,&quot;Segoe UI Symbol&quot;,&quot;Noto Color Emoji&qu=
+ot;,&quot;Hiragino Sans&quot;,&quot;PingFang SC&quot;,&quot;Apple SD Gothic=
+ Neo&quot;,&quot;Yu Gothic&quot;,&quot;Microsoft YaHei&quot;,&quot;Microsof=
+t JhengHei&quot;,Meiryo;letter-spacing:0.16px"><u><b>5. Protagonist:</b></u=
+></p><p style=3D"box-sizing:border-box;border-width:0px;border-style:solid;=
+margin:1rem 0px 0.5rem;font-family:fkGroteskNeue,ui-sans-serif,system-ui,-a=
+pple-system,&quot;system-ui&quot;,&quot;Segoe UI&quot;,Roboto,&quot;Helveti=
+ca Neue&quot;,Arial,&quot;Noto Sans&quot;,sans-serif,&quot;Apple Color Emoj=
+i&quot;,&quot;Segoe UI Emoji&quot;,&quot;Segoe UI Symbol&quot;,&quot;Noto C=
+olor Emoji&quot;,&quot;Hiragino Sans&quot;,&quot;PingFang SC&quot;,&quot;Ap=
+ple SD Gothic Neo&quot;,&quot;Yu Gothic&quot;,&quot;Microsoft YaHei&quot;,&=
+quot;Microsoft JhengHei&quot;,Meiryo;letter-spacing:0.16px"><span style=3D"=
+box-sizing:border-box;border-width:0px;border-style:solid;display:inline-bl=
+ock;padding-bottom:0.5rem;letter-spacing:0.16px">Robyn Denholm -=C2=A0</spa=
+n><span style=3D"box-sizing:border-box;border-width:0px;border-style:solid;=
+letter-spacing:0.16px">Chair of Tesla&#39;s Board of Directors</span><span =
+style=3D"letter-spacing:0.16px">=C2=A0(since November 2018).</span><u><b></=
+b></u></p><p style=3D"box-sizing:border-box;border-width:0px;border-style:s=
+olid;margin:1rem 0px 0.5rem;font-family:fkGroteskNeue,ui-sans-serif,system-=
+ui,-apple-system,&quot;system-ui&quot;,&quot;Segoe UI&quot;,Roboto,&quot;He=
+lvetica Neue&quot;,Arial,&quot;Noto Sans&quot;,sans-serif,&quot;Apple Color=
+ Emoji&quot;,&quot;Segoe UI Emoji&quot;,&quot;Segoe UI Symbol&quot;,&quot;N=
+oto Color Emoji&quot;,&quot;Hiragino Sans&quot;,&quot;PingFang SC&quot;,&qu=
+ot;Apple SD Gothic Neo&quot;,&quot;Yu Gothic&quot;,&quot;Microsoft YaHei&qu=
+ot;,&quot;Microsoft JhengHei&quot;,Meiryo;letter-spacing:0.16px"><span styl=
+e=3D"letter-spacing:0.16px">She&#39;s the Board Chair, responsible for gove=
+rnance oversight.=C2=A0</span><span style=3D"letter-spacing:0.16px"></span>=
+<span style=3D"letter-spacing:0.16px">The Delaware court scrutinized the bo=
+ard&#39;s independence under her leadership.=C2=A0</span><span style=3D"let=
+ter-spacing:0.16px">After the Jan 2024 court ruling, she must lead the boar=
+d&#39;s response to shareholder pressure for governance reforms.=C2=A0</spa=
+n><span style=3D"letter-spacing:0.16px">She must balance loyalty to Musk (w=
+ho appointed her Chair) with fiduciary duty to shareholders</span></p><p st=
+yle=3D"box-sizing:border-box;border-width:0px;border-style:solid;margin:1re=
+m 0px 0.5rem;font-family:fkGroteskNeue,ui-sans-serif,system-ui,-apple-syste=
+m,&quot;system-ui&quot;,&quot;Segoe UI&quot;,Roboto,&quot;Helvetica Neue&qu=
+ot;,Arial,&quot;Noto Sans&quot;,sans-serif,&quot;Apple Color Emoji&quot;,&q=
+uot;Segoe UI Emoji&quot;,&quot;Segoe UI Symbol&quot;,&quot;Noto Color Emoji=
+&quot;,&quot;Hiragino Sans&quot;,&quot;PingFang SC&quot;,&quot;Apple SD Got=
+hic Neo&quot;,&quot;Yu Gothic&quot;,&quot;Microsoft YaHei&quot;,&quot;Micro=
+soft JhengHei&quot;,Meiryo;letter-spacing:0.16px"><span style=3D"box-sizing=
+:border-box;border-width:0px;border-style:solid">Here&#39;s how I&#39;m thi=
+nking of executing the case study:</span></p><p style=3D"box-sizing:border-=
+box;border-width:0px;border-style:solid;margin:1rem 0px 0.5rem;font-family:=
+fkGroteskNeue,ui-sans-serif,system-ui,-apple-system,&quot;system-ui&quot;,&=
+quot;Segoe UI&quot;,Roboto,&quot;Helvetica Neue&quot;,Arial,&quot;Noto Sans=
+&quot;,sans-serif,&quot;Apple Color Emoji&quot;,&quot;Segoe UI Emoji&quot;,=
+&quot;Segoe UI Symbol&quot;,&quot;Noto Color Emoji&quot;,&quot;Hiragino San=
+s&quot;,&quot;PingFang SC&quot;,&quot;Apple SD Gothic Neo&quot;,&quot;Yu Go=
+thic&quot;,&quot;Microsoft YaHei&quot;,&quot;Microsoft JhengHei&quot;,Meiry=
+o;letter-spacing:0.16px">We proceed with=C2=A0<span style=3D"box-sizing:bor=
+der-box;border-width:0px;border-style:solid">Tesla Board Governance Case</s=
+pan>=C2=A0using this data/dilemma framework, with the understanding that:</=
+p><ul style=3D"box-sizing:border-box;border-width:0px;border-style:solid;li=
+st-style-position:initial;margin:0px;padding:0px;font-family:fkGroteskNeue,=
+ui-sans-serif,system-ui,-apple-system,&quot;system-ui&quot;,&quot;Segoe UI&=
+quot;,Roboto,&quot;Helvetica Neue&quot;,Arial,&quot;Noto Sans&quot;,sans-se=
+rif,&quot;Apple Color Emoji&quot;,&quot;Segoe UI Emoji&quot;,&quot;Segoe UI=
+ Symbol&quot;,&quot;Noto Color Emoji&quot;,&quot;Hiragino Sans&quot;,&quot;=
+PingFang SC&quot;,&quot;Apple SD Gothic Neo&quot;,&quot;Yu Gothic&quot;,&qu=
+ot;Microsoft YaHei&quot;,&quot;Microsoft JhengHei&quot;,Meiryo;letter-spaci=
+ng:0.16px"><li style=3D"box-sizing:border-box;border-width:0px;border-style=
+:solid;margin-top:0px;margin-bottom:0px;padding-top:0px;padding-bottom:0px"=
+><p style=3D"box-sizing:border-box;border-width:0px;border-style:solid;marg=
+in:0px 0px 0.5rem;padding-top:0px;font-weight:inherit">The case ends in=C2=
+=A0<span style=3D"box-sizing:border-box;border-width:0px;border-style:solid=
+">late 2024</span>=C2=A0(board faces governance decision after shareholder =
+votes)</p></li><li style=3D"box-sizing:border-box;border-width:0px;border-s=
+tyle:solid;margin-top:0px;margin-bottom:0px;padding-top:0px;padding-bottom:=
+0px"><p style=3D"box-sizing:border-box;border-width:0px;border-style:solid;=
+margin:0px 0px 0.5rem;padding-top:0px;font-weight:inherit">The=C2=A0<span s=
+tyle=3D"box-sizing:border-box;border-width:0px;border-style:solid">Dec 2025=
+ Supreme Court ruling</span>=C2=A0is included as a postscript (current but =
+non-determinative)</p></li><li style=3D"box-sizing:border-box;border-width:=
+0px;border-style:solid;margin-top:0px;margin-bottom:0px;padding-top:0px;pad=
+ding-bottom:0px"><p style=3D"box-sizing:border-box;border-width:0px;border-=
+style:solid;margin:0px 0px 0.5rem;padding-top:0px;font-weight:inherit">Stud=
+ents debate=C2=A0<span style=3D"box-sizing:border-box;border-width:0px;bord=
+er-style:solid">Options A, B, or C</span>=C2=A0(or propose alternatives) wi=
+thout a predetermined &quot;correct&quot; answer</p></li><li style=3D"box-s=
+izing:border-box;border-width:0px;border-style:solid;margin-top:0px;margin-=
+bottom:0px;padding-top:0px;padding-bottom:0px"><p style=3D"box-sizing:borde=
+r-box;border-width:0px;border-style:solid;margin:0px 0px 0.5rem;padding-top=
+:0px;font-weight:inherit">Teaching note will guide instructors on using the=
+ case for OB, governance, leadership, and legal frameworks</p></li></ul><p =
+style=3D"box-sizing:border-box;border-width:0px;border-style:solid;margin:0=
+.5rem 0px;font-family:fkGroteskNeue,ui-sans-serif,system-ui,-apple-system,&=
+quot;system-ui&quot;,&quot;Segoe UI&quot;,Roboto,&quot;Helvetica Neue&quot;=
+,Arial,&quot;Noto Sans&quot;,sans-serif,&quot;Apple Color Emoji&quot;,&quot=
+;Segoe UI Emoji&quot;,&quot;Segoe UI Symbol&quot;,&quot;Noto Color Emoji&qu=
+ot;,&quot;Hiragino Sans&quot;,&quot;PingFang SC&quot;,&quot;Apple SD Gothic=
+ Neo&quot;,&quot;Yu Gothic&quot;,&quot;Microsoft YaHei&quot;,&quot;Microsof=
+t JhengHei&quot;,Meiryo;letter-spacing:0.16px"><br>Does this clarity on=C2=
+=A0<span style=3D"box-sizing:border-box;border-width:0px;border-style:solid=
+">data specificity and dilemma options</span>=C2=A0align with your expectat=
+ions for a publisher-ready case?</p><p style=3D"box-sizing:border-box;borde=
+r-width:0px;border-style:solid;margin:1rem 0px 0.5rem;font-family:fkGrotesk=
+Neue,ui-sans-serif,system-ui,-apple-system,&quot;system-ui&quot;,&quot;Sego=
+e UI&quot;,Roboto,&quot;Helvetica Neue&quot;,Arial,&quot;Noto Sans&quot;,sa=
+ns-serif,&quot;Apple Color Emoji&quot;,&quot;Segoe UI Emoji&quot;,&quot;Seg=
+oe UI Symbol&quot;,&quot;Noto Color Emoji&quot;,&quot;Hiragino Sans&quot;,&=
+quot;PingFang SC&quot;,&quot;Apple SD Gothic Neo&quot;,&quot;Yu Gothic&quot=
+;,&quot;Microsoft YaHei&quot;,&quot;Microsoft JhengHei&quot;,Meiryo;letter-=
+spacing:0.16px">Happy to discuss further or adjust the approach.</p><p styl=
+e=3D"box-sizing:border-box;border-width:0px;border-style:solid;margin:1rem =
+0px 0.5rem;font-family:fkGroteskNeue,ui-sans-serif,system-ui,-apple-system,=
+&quot;system-ui&quot;,&quot;Segoe UI&quot;,Roboto,&quot;Helvetica Neue&quot=
+;,Arial,&quot;Noto Sans&quot;,sans-serif,&quot;Apple Color Emoji&quot;,&quo=
+t;Segoe UI Emoji&quot;,&quot;Segoe UI Symbol&quot;,&quot;Noto Color Emoji&q=
+uot;,&quot;Hiragino Sans&quot;,&quot;PingFang SC&quot;,&quot;Apple SD Gothi=
+c Neo&quot;,&quot;Yu Gothic&quot;,&quot;Microsoft YaHei&quot;,&quot;Microso=
+ft JhengHei&quot;,Meiryo;letter-spacing:0.16px">Thanks,</p><p style=3D"box-=
+sizing:border-box;border-width:0px;border-style:solid;margin:1rem 0px 0.5re=
+m;font-family:fkGroteskNeue,ui-sans-serif,system-ui,-apple-system,&quot;sys=
+tem-ui&quot;,&quot;Segoe UI&quot;,Roboto,&quot;Helvetica Neue&quot;,Arial,&=
+quot;Noto Sans&quot;,sans-serif,&quot;Apple Color Emoji&quot;,&quot;Segoe U=
+I Emoji&quot;,&quot;Segoe UI Symbol&quot;,&quot;Noto Color Emoji&quot;,&quo=
+t;Hiragino Sans&quot;,&quot;PingFang SC&quot;,&quot;Apple SD Gothic Neo&quo=
+t;,&quot;Yu Gothic&quot;,&quot;Microsoft YaHei&quot;,&quot;Microsoft JhengH=
+ei&quot;,Meiryo;letter-spacing:0.16px">Prithviraj Patil</p></div>----------=
+---<br><div class=3D"gmail_quote"><div dir=3D"ltr" class=3D"gmail_attr">On =
+Wed, Jan 7, 2026 at 2:27=E2=80=AFAM Dr. Kakoli Sen &lt;<a href=3D"mailto:ka=
+kolis@iimsambalpur.ac.in" target=3D"_blank">kakolis@iimsambalpur.ac.in</a>&=
+gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0=
+px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex"><div =
+dir=3D"ltr">Dear=C2=A0Prithviraj,<div>The publishers look for a clear organ=
+isational challenge as well as dilemma among possible options. It may be pe=
+rtaining to the entire industry but one company with a protagonist and rele=
+vant data needs to be there. Regarding the Elon Musk and Governance issue, =
+we can discuss but what=C2=A0kind of data are=C2=A0you=C2=A0thinking of?</d=
+iv><div>Thanks</div><div>Kakoli=C2=A0</div></div><br><div class=3D"gmail_qu=
+ote"><div dir=3D"ltr" class=3D"gmail_attr">On Wed, Jan 7, 2026 at 9:46=E2=
+=80=AFAM Prithviraj Patil &lt;<a href=3D"mailto:ephddba25prithvirajp@iimsam=
+balpur.ac.in" target=3D"_blank">ephddba25prithvirajp@iimsambalpur.ac.in</a>=
+&gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px =
+0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex"><div=
+ dir=3D"ltr">Hello Dr. Kakoli,<br>Hope all is well and Happy New Year.<br><=
+br>Reaching out for some guidance.<br><br>I&#39;ve created my case (<i>atta=
+ched)</i> from a real world situational problem that many companies would h=
+ave experienced at some=C2=A0point making it highly teachable. It&#39;s new=
+ and relevant in today&#39;s world (<i>as you pointed out in the 20th Dec l=
+ecture).</i><br><br>Although on re-visiting your lecture, I couldn&#39;t he=
+lp but ponder on the thought of writing a case study around &quot;Board Eff=
+ectiveness&quot; wrt <u>Tesla&#39;s Elon Musk vs Delaware=C2=A0Court</u>. S=
+pecifically touching on the governance frameworks and the dilemmas it raise=
+s. Since my research paper and thesis topic would be relevant to the=C2=A0g=
+overnance subject, I&#39;m thinking of exploring this topic as a case idea =
+so that my PhD focuses on one niche area within the industry.<br><br>Please=
+ could you let me know your thoughts on whether I should pursue my original=
+ case OR explore the alternative that I mentioned above (<i>I can present a=
+ case writing document for this as well if you feel that&#39;ll=C2=A0</i><i=
+>help you with providing the required guidance - let me know)</i><br><br>Ea=
+gerly awaiting your response.<br><br>Thanks,<div>Prithviraj Patil</div></di=
+v>
+</blockquote></div><div><br clear=3D"all"></div><div><br></div><span class=
+=3D"gmail_signature_prefix">-- </span><br><div dir=3D"ltr" class=3D"gmail_s=
+ignature"><div dir=3D"ltr"><div><p class=3D"MsoNormal" style=3D"margin:0in =
+0in 0.0001pt;line-height:normal;font-family:Calibri,sans-serif"><b><span la=
+ng=3D"HI" style=3D"font-family:&quot;Nirmala UI&quot;,sans-serif;color:blue=
+">=E0=A4=A1=E0=A5=89. =E0=A4=95=E0=A4=BE=E0=A4=95=E0=A5=8B=E0=A4=B2=E0=A5=
+=80 =E0=A4=B8=E0=A5=87=E0=A4=A8</span></b><b><span lang=3D"HI" style=3D"fon=
+t-family:Mangal,serif;color:blue">=C2=A0/</span></b><b><span lang=3D"HI" st=
+yle=3D"font-family:Arial,sans-serif;color:blue">=C2=A0</span></b><b><span s=
+tyle=3D"font-family:Arial,sans-serif;color:blue">Dr. Kakoli Sen</span></b><=
+span style=3D"font-family:Arial,sans-serif"></span></p><p class=3D"MsoNorma=
+l" style=3D"margin:0in 0in 0.0001pt;line-height:normal;font-family:Calibri,=
+sans-serif"><b><span lang=3D"HI" style=3D"font-family:&quot;Nirmala UI&quot=
+;,sans-serif;color:blue">=E0=A4=AA=E0=A5=8D=E0=A4=B0=E0=A5=8B=E0=A4=AB=E0=
+=A4=BC=E0=A5=87=E0=A4=B8=E0=A4=B0</span></b><b><span style=3D"font-family:A=
+rial,sans-serif;color:blue">=C2=A0/ Professor</span></b><b><span style=3D"f=
+ont-family:Arial,sans-serif">=C2=A0</span></b><span style=3D"font-family:Ar=
+ial,sans-serif;color:black"></span></p><p class=3D"MsoNormal" style=3D"marg=
+in:0in 0in 0.0001pt;line-height:normal;font-family:Calibri,sans-serif"><b><=
+span lang=3D"HI" style=3D"font-family:Mangal,serif;color:blue">=E0=A4=B8=E0=
+=A4=BE=E0=A4=AE=E0=A4=BE=E0=A4=A8=E0=A5=8D=E0=A4=AF =E0=A4=AA=E0=A5=8D=E0=
+=A4=B0=E0=A4=AC=E0=A4=82=E0=A4=A7=E0=A4=A8 =E0=A4=95=E0=A4=BE =E0=A4=95=E0=
+=A5=8D=E0=A4=B7=E0=A5=87=E0=A4=A4=E0=A5=8D=E0=A4=B0</span></b><b><span lang=
+=3D"HI" style=3D"font-family:Arial,sans-serif;color:blue">=C2=A0</span></b>=
+<b><span style=3D"font-family:Arial,sans-serif;color:blue">/=C2=A0</span></=
+b><b><span style=3D"font-family:Arial,sans-serif;color:blue">Area of Genera=
+l Management, Economics &amp; Public Policy</span></b><span style=3D"font-f=
+amily:Arial,sans-serif;color:black"></span></p><p class=3D"MsoNormal" style=
+=3D"margin:0in 0in 0.0001pt;line-height:normal;font-family:Calibri,sans-ser=
+if"><b><span lang=3D"HI" style=3D"font-family:&quot;Nirmala UI&quot;,sans-s=
+erif;color:blue">=E0=A4=AD=E0=A4=BE=E0=A4=B0=E0=A4=A4=E0=A5=80=E0=A4=AF</sp=
+an></b><b><span lang=3D"HI" style=3D"font-family:Mangal,serif;color:blue">=
+=C2=A0</span></b><b><span lang=3D"HI" style=3D"font-family:&quot;Nirmala UI=
+&quot;,sans-serif;color:blue">=E0=A4=AA=E0=A5=8D=E0=A4=B0=E0=A4=AC=E0=A4=82=
+=E0=A4=A7=E0=A4=A8</span></b><b><span lang=3D"HI" style=3D"font-family:Mang=
+al,serif;color:blue">=C2=A0</span></b><b><span lang=3D"HI" style=3D"font-fa=
+mily:&quot;Nirmala UI&quot;,sans-serif;color:blue">=E0=A4=B8=E0=A4=82=E0=A4=
+=B8=E0=A5=8D=E0=A4=A5=E0=A4=BE=E0=A4=A8</span></b><b><span lang=3D"HI" styl=
+e=3D"font-family:Mangal,serif;color:blue">=C2=A0</span></b><b><span lang=3D=
+"HI" style=3D"font-family:&quot;Nirmala UI&quot;,sans-serif;color:blue">=E0=
+=A4=B8=E0=A4=82=E0=A4=AC=E0=A4=B2=E0=A4=AA=E0=A5=81=E0=A4=B0</span></b><b><=
+span lang=3D"HI" style=3D"font-family:Mangal,serif;color:blue">=C2=A0/</spa=
+n></b><b><span style=3D"font-family:Arial,sans-serif;color:blue">=C2=A0Indi=
+an Institute of Management Sambalpur</span></b><span style=3D"font-family:A=
+rial,sans-serif"></span></p><p class=3D"MsoNormal" style=3D"margin:0in 0in =
+0.0001pt;line-height:normal;font-family:Calibri,sans-serif"><b><span lang=
+=3D"HI" style=3D"font-family:&quot;Nirmala UI&quot;,sans-serif;color:blue">=
+=E0=A4=B8=E0=A4=82=E0=A4=AC=E0=A4=B2=E0=A4=AA=E0=A5=81=E0=A4=B0</span></b><=
+b><span style=3D"font-family:Arial,sans-serif;color:blue">,=C2=A0</span></b=
+><b><span lang=3D"HI" style=3D"font-family:&quot;Nirmala UI&quot;,sans-seri=
+f;color:blue">=E0=A4=93=E0=A4=A1=E0=A4=BF=E0=A4=B6=E0=A4=BE</span></b><b><s=
+pan lang=3D"HI" style=3D"font-family:Mangal,serif;color:blue">=C2=A0-=C2=A0=
+</span></b><b><span style=3D"font-family:Arial,sans-serif;color:blue">76802=
+5 /=C2=A0Sambalpur, Odisha - 768025</span></b><font color=3D"#888888"><span=
+ style=3D"font-family:Arial,sans-serif"></span></font></p><p class=3D"MsoNo=
+rmal" style=3D"margin:0in 0in 0.0001pt;line-height:normal;font-family:Calib=
+ri,sans-serif"><b><span style=3D"font-family:Arial,sans-serif;color:blue">M=
+obile : 9971797032</span></b></p></div><font color=3D"#888888"><br></font><=
+/div></div>
+</blockquote></div></div>
+</blockquote></div><div><br clear=3D"all"></div><div><br></div><span class=
+=3D"gmail_signature_prefix">-- </span><br><div dir=3D"ltr" class=3D"gmail_s=
+ignature"><div dir=3D"ltr"><div><p class=3D"MsoNormal" style=3D"margin:0in =
+0in 0.0001pt;line-height:normal;font-size:11pt;font-family:Calibri,sans-ser=
+if"><b><span lang=3D"HI" style=3D"font-size:12pt;font-family:&quot;Nirmala =
+UI&quot;,sans-serif;color:blue">=E0=A4=A1=E0=A5=89. =E0=A4=95=E0=A4=BE=E0=
+=A4=95=E0=A5=8B=E0=A4=B2=E0=A5=80 =E0=A4=B8=E0=A5=87=E0=A4=A8</span></b><b>=
+<span lang=3D"HI" style=3D"font-size:12pt;font-family:Mangal,serif;color:bl=
+ue">=C2=A0/</span></b><b><span lang=3D"HI" style=3D"font-size:12pt;font-fam=
+ily:Arial,sans-serif;color:blue">=C2=A0</span></b><b><span style=3D"font-si=
+ze:12pt;font-family:Arial,sans-serif;color:blue">Dr. Kakoli Sen</span></b><=
+span style=3D"font-size:12pt;font-family:Arial,sans-serif"></span></p><p cl=
+ass=3D"MsoNormal" style=3D"margin:0in 0in 0.0001pt;line-height:normal;font-=
+size:11pt;font-family:Calibri,sans-serif"><b><span lang=3D"HI" style=3D"fon=
+t-size:12pt;font-family:&quot;Nirmala UI&quot;,sans-serif;color:blue">=E0=
+=A4=AA=E0=A5=8D=E0=A4=B0=E0=A5=8B=E0=A4=AB=E0=A4=BC=E0=A5=87=E0=A4=B8=E0=A4=
+=B0</span></b><b><span style=3D"font-size:12pt;font-family:Arial,sans-serif=
+;color:blue">=C2=A0/ Professor</span></b><b><span style=3D"font-size:12pt;f=
+ont-family:Arial,sans-serif">=C2=A0</span></b><span style=3D"font-size:12pt=
+;font-family:Arial,sans-serif;color:black"></span></p><p class=3D"MsoNormal=
+" style=3D"margin:0in 0in 0.0001pt;line-height:normal;font-size:11pt;font-f=
+amily:Calibri,sans-serif"><b><span lang=3D"HI" style=3D"font-size:12pt;font=
+-family:Mangal,serif;color:blue">=E0=A4=B8=E0=A4=BE=E0=A4=AE=E0=A4=BE=E0=A4=
+=A8=E0=A5=8D=E0=A4=AF =E0=A4=AA=E0=A5=8D=E0=A4=B0=E0=A4=AC=E0=A4=82=E0=A4=
+=A7=E0=A4=A8 =E0=A4=95=E0=A4=BE =E0=A4=95=E0=A5=8D=E0=A4=B7=E0=A5=87=E0=A4=
+=A4=E0=A5=8D=E0=A4=B0</span></b><b><span lang=3D"HI" style=3D"font-size:12p=
+t;font-family:Arial,sans-serif;color:blue">=C2=A0</span></b><b><span style=
+=3D"font-size:12pt;font-family:Arial,sans-serif;color:blue">/=C2=A0</span><=
+/b><b><span style=3D"font-size:12pt;font-family:Arial,sans-serif;color:blue=
+">Area of General Management, Economics &amp; Public Policy</span></b><span=
+ style=3D"font-size:12pt;font-family:Arial,sans-serif;color:black"></span><=
+/p><p class=3D"MsoNormal" style=3D"margin:0in 0in 0.0001pt;line-height:norm=
+al;font-size:11pt;font-family:Calibri,sans-serif"><b><span lang=3D"HI" styl=
+e=3D"font-size:12pt;font-family:&quot;Nirmala UI&quot;,sans-serif;color:blu=
+e">=E0=A4=AD=E0=A4=BE=E0=A4=B0=E0=A4=A4=E0=A5=80=E0=A4=AF</span></b><b><spa=
+n lang=3D"HI" style=3D"font-size:12pt;font-family:Mangal,serif;color:blue">=
+=C2=A0</span></b><b><span lang=3D"HI" style=3D"font-size:12pt;font-family:&=
+quot;Nirmala UI&quot;,sans-serif;color:blue">=E0=A4=AA=E0=A5=8D=E0=A4=B0=E0=
+=A4=AC=E0=A4=82=E0=A4=A7=E0=A4=A8</span></b><b><span lang=3D"HI" style=3D"f=
+ont-size:12pt;font-family:Mangal,serif;color:blue">=C2=A0</span></b><b><spa=
+n lang=3D"HI" style=3D"font-size:12pt;font-family:&quot;Nirmala UI&quot;,sa=
+ns-serif;color:blue">=E0=A4=B8=E0=A4=82=E0=A4=B8=E0=A5=8D=E0=A4=A5=E0=A4=BE=
+=E0=A4=A8</span></b><b><span lang=3D"HI" style=3D"font-size:12pt;font-famil=
+y:Mangal,serif;color:blue">=C2=A0</span></b><b><span lang=3D"HI" style=3D"f=
+ont-size:12pt;font-family:&quot;Nirmala UI&quot;,sans-serif;color:blue">=E0=
+=A4=B8=E0=A4=82=E0=A4=AC=E0=A4=B2=E0=A4=AA=E0=A5=81=E0=A4=B0</span></b><b><=
+span lang=3D"HI" style=3D"font-size:12pt;font-family:Mangal,serif;color:blu=
+e">=C2=A0/</span></b><b><span style=3D"font-size:12pt;font-family:Arial,san=
+s-serif;color:blue">=C2=A0Indian Institute of Management Sambalpur</span></=
+b><span style=3D"font-size:12pt;font-family:Arial,sans-serif"></span></p><p=
+ class=3D"MsoNormal" style=3D"margin:0in 0in 0.0001pt;line-height:normal;fo=
+nt-size:11pt;font-family:Calibri,sans-serif"><b><span lang=3D"HI" style=3D"=
+font-size:12pt;font-family:&quot;Nirmala UI&quot;,sans-serif;color:blue">=
+=E0=A4=B8=E0=A4=82=E0=A4=AC=E0=A4=B2=E0=A4=AA=E0=A5=81=E0=A4=B0</span></b><=
+b><span style=3D"font-size:12pt;font-family:Arial,sans-serif;color:blue">,=
+=C2=A0</span></b><b><span lang=3D"HI" style=3D"font-size:12pt;font-family:&=
+quot;Nirmala UI&quot;,sans-serif;color:blue">=E0=A4=93=E0=A4=A1=E0=A4=BF=E0=
+=A4=B6=E0=A4=BE</span></b><b><span lang=3D"HI" style=3D"font-size:12pt;font=
+-family:Mangal,serif;color:blue">=C2=A0-=C2=A0</span></b><b><span style=3D"=
+font-size:12pt;font-family:Arial,sans-serif;color:blue">768025 /=C2=A0Samba=
+lpur, Odisha - 768025</span></b><font color=3D"#888888"><span style=3D"font=
+-size:12pt;font-family:Arial,sans-serif"></span></font></p><p class=3D"MsoN=
+ormal" style=3D"margin:0in 0in 0.0001pt;line-height:normal;font-size:11pt;f=
+ont-family:Calibri,sans-serif"><b><span style=3D"font-size:12pt;font-family=
+:Arial,sans-serif;color:blue">Mobile : 9971797032</span></b></p></div><font=
+ color=3D"#888888"><br></font></div></div>
+</blockquote></div>
+</blockquote></div><div><br clear=3D"all"></div><div><br></div><span class=
+=3D"gmail_signature_prefix">-- </span><br><div dir=3D"ltr" class=3D"gmail_s=
+ignature"><div dir=3D"ltr"><div><p class=3D"MsoNormal" style=3D"margin:0in =
+0in 0.0001pt;line-height:normal;font-size:11pt;font-family:Calibri,sans-ser=
+if"><b><span lang=3D"HI" style=3D"font-size:12pt;font-family:&quot;Nirmala =
+UI&quot;,sans-serif;color:blue">=E0=A4=A1=E0=A5=89. =E0=A4=95=E0=A4=BE=E0=
+=A4=95=E0=A5=8B=E0=A4=B2=E0=A5=80 =E0=A4=B8=E0=A5=87=E0=A4=A8</span></b><b>=
+<span lang=3D"HI" style=3D"font-size:12pt;font-family:Mangal,serif;color:bl=
+ue">=C2=A0/</span></b><b><span lang=3D"HI" style=3D"font-size:12pt;font-fam=
+ily:Arial,sans-serif;color:blue">=C2=A0</span></b><b><span style=3D"font-si=
+ze:12pt;font-family:Arial,sans-serif;color:blue">Dr. Kakoli Sen</span></b><=
+span style=3D"font-size:12pt;font-family:Arial,sans-serif"></span></p><p cl=
+ass=3D"MsoNormal" style=3D"margin:0in 0in 0.0001pt;line-height:normal;font-=
+size:11pt;font-family:Calibri,sans-serif"><b><span lang=3D"HI" style=3D"fon=
+t-size:12pt;font-family:&quot;Nirmala UI&quot;,sans-serif;color:blue">=E0=
+=A4=AA=E0=A5=8D=E0=A4=B0=E0=A5=8B=E0=A4=AB=E0=A4=BC=E0=A5=87=E0=A4=B8=E0=A4=
+=B0</span></b><b><span style=3D"font-size:12pt;font-family:Arial,sans-serif=
+;color:blue">=C2=A0/ Professor</span></b><b><span style=3D"font-size:12pt;f=
+ont-family:Arial,sans-serif">=C2=A0</span></b><span style=3D"font-size:12pt=
+;font-family:Arial,sans-serif;color:black"></span></p><p class=3D"MsoNormal=
+" style=3D"margin:0in 0in 0.0001pt;line-height:normal;font-size:11pt;font-f=
+amily:Calibri,sans-serif"><b><span lang=3D"HI" style=3D"font-size:12pt;font=
+-family:Mangal,serif;color:blue">=E0=A4=B8=E0=A4=BE=E0=A4=AE=E0=A4=BE=E0=A4=
+=A8=E0=A5=8D=E0=A4=AF =E0=A4=AA=E0=A5=8D=E0=A4=B0=E0=A4=AC=E0=A4=82=E0=A4=
+=A7=E0=A4=A8 =E0=A4=95=E0=A4=BE =E0=A4=95=E0=A5=8D=E0=A4=B7=E0=A5=87=E0=A4=
+=A4=E0=A5=8D=E0=A4=B0</span></b><b><span lang=3D"HI" style=3D"font-size:12p=
+t;font-family:Arial,sans-serif;color:blue">=C2=A0</span></b><b><span style=
+=3D"font-size:12pt;font-family:Arial,sans-serif;color:blue">/=C2=A0</span><=
+/b><b><span style=3D"font-size:12pt;font-family:Arial,sans-serif;color:blue=
+">Area of General Management, Economics &amp; Public Policy</span></b><span=
+ style=3D"font-size:12pt;font-family:Arial,sans-serif;color:black"></span><=
+/p><p class=3D"MsoNormal" style=3D"margin:0in 0in 0.0001pt;line-height:norm=
+al;font-size:11pt;font-family:Calibri,sans-serif"><b><span lang=3D"HI" styl=
+e=3D"font-size:12pt;font-family:&quot;Nirmala UI&quot;,sans-serif;color:blu=
+e">=E0=A4=AD=E0=A4=BE=E0=A4=B0=E0=A4=A4=E0=A5=80=E0=A4=AF</span></b><b><spa=
+n lang=3D"HI" style=3D"font-size:12pt;font-family:Mangal,serif;color:blue">=
+=C2=A0</span></b><b><span lang=3D"HI" style=3D"font-size:12pt;font-family:&=
+quot;Nirmala UI&quot;,sans-serif;color:blue">=E0=A4=AA=E0=A5=8D=E0=A4=B0=E0=
+=A4=AC=E0=A4=82=E0=A4=A7=E0=A4=A8</span></b><b><span lang=3D"HI" style=3D"f=
+ont-size:12pt;font-family:Mangal,serif;color:blue">=C2=A0</span></b><b><spa=
+n lang=3D"HI" style=3D"font-size:12pt;font-family:&quot;Nirmala UI&quot;,sa=
+ns-serif;color:blue">=E0=A4=B8=E0=A4=82=E0=A4=B8=E0=A5=8D=E0=A4=A5=E0=A4=BE=
+=E0=A4=A8</span></b><b><span lang=3D"HI" style=3D"font-size:12pt;font-famil=
+y:Mangal,serif;color:blue">=C2=A0</span></b><b><span lang=3D"HI" style=3D"f=
+ont-size:12pt;font-family:&quot;Nirmala UI&quot;,sans-serif;color:blue">=E0=
+=A4=B8=E0=A4=82=E0=A4=AC=E0=A4=B2=E0=A4=AA=E0=A5=81=E0=A4=B0</span></b><b><=
+span lang=3D"HI" style=3D"font-size:12pt;font-family:Mangal,serif;color:blu=
+e">=C2=A0/</span></b><b><span style=3D"font-size:12pt;font-family:Arial,san=
+s-serif;color:blue">=C2=A0Indian Institute of Management Sambalpur</span></=
+b><span style=3D"font-size:12pt;font-family:Arial,sans-serif"></span></p><p=
+ class=3D"MsoNormal" style=3D"margin:0in 0in 0.0001pt;line-height:normal;fo=
+nt-size:11pt;font-family:Calibri,sans-serif"><b><span lang=3D"HI" style=3D"=
+font-size:12pt;font-family:&quot;Nirmala UI&quot;,sans-serif;color:blue">=
+=E0=A4=B8=E0=A4=82=E0=A4=AC=E0=A4=B2=E0=A4=AA=E0=A5=81=E0=A4=B0</span></b><=
+b><span style=3D"font-size:12pt;font-family:Arial,sans-serif;color:blue">,=
+=C2=A0</span></b><b><span lang=3D"HI" style=3D"font-size:12pt;font-family:&=
+quot;Nirmala UI&quot;,sans-serif;color:blue">=E0=A4=93=E0=A4=A1=E0=A4=BF=E0=
+=A4=B6=E0=A4=BE</span></b><b><span lang=3D"HI" style=3D"font-size:12pt;font=
+-family:Mangal,serif;color:blue">=C2=A0-=C2=A0</span></b><b><span style=3D"=
+font-size:12pt;font-family:Arial,sans-serif;color:blue">768025 /=C2=A0Samba=
+lpur, Odisha - 768025</span></b><font color=3D"#888888"><span style=3D"font=
+-size:12pt;font-family:Arial,sans-serif"></span></font></p><p class=3D"MsoN=
+ormal" style=3D"margin:0in 0in 0.0001pt;line-height:normal;font-size:11pt;f=
+ont-family:Calibri,sans-serif"><b><span style=3D"font-size:12pt;font-family=
+:Arial,sans-serif;color:blue">Mobile : 9971797032</span></b></p></div><font=
+ color=3D"#888888"><br></font></div></div>
+</blockquote></div>
+</blockquote></div><div><br clear=3D"all"></div><div><br></div><span class=
+=3D"gmail_signature_prefix">-- </span><br><div dir=3D"ltr" class=3D"gmail_s=
+ignature"><div dir=3D"ltr"><div><p class=3D"MsoNormal" style=3D"margin:0in =
+0in 0.0001pt;line-height:normal;font-size:11pt;font-family:Calibri,sans-ser=
+if"><b><span lang=3D"HI" style=3D"font-size:12pt;font-family:&quot;Nirmala =
+UI&quot;,sans-serif;color:blue">=E0=A4=A1=E0=A5=89. =E0=A4=95=E0=A4=BE=E0=
+=A4=95=E0=A5=8B=E0=A4=B2=E0=A5=80 =E0=A4=B8=E0=A5=87=E0=A4=A8</span></b><b>=
+<span lang=3D"HI" style=3D"font-size:12pt;font-family:Mangal,serif;color:bl=
+ue">=C2=A0/</span></b><b><span lang=3D"HI" style=3D"font-size:12pt;font-fam=
+ily:Arial,sans-serif;color:blue">=C2=A0</span></b><b><span style=3D"font-si=
+ze:12pt;font-family:Arial,sans-serif;color:blue">Dr. Kakoli Sen</span></b><=
+span style=3D"font-size:12pt;font-family:Arial,sans-serif"></span></p><p cl=
+ass=3D"MsoNormal" style=3D"margin:0in 0in 0.0001pt;line-height:normal;font-=
+size:11pt;font-family:Calibri,sans-serif"><b><span lang=3D"HI" style=3D"fon=
+t-size:12pt;font-family:&quot;Nirmala UI&quot;,sans-serif;color:blue">=E0=
+=A4=AA=E0=A5=8D=E0=A4=B0=E0=A5=8B=E0=A4=AB=E0=A4=BC=E0=A5=87=E0=A4=B8=E0=A4=
+=B0</span></b><b><span style=3D"font-size:12pt;font-family:Arial,sans-serif=
+;color:blue">=C2=A0/ Professor</span></b><b><span style=3D"font-size:12pt;f=
+ont-family:Arial,sans-serif">=C2=A0</span></b><span style=3D"font-size:12pt=
+;font-family:Arial,sans-serif;color:black"></span></p><p class=3D"MsoNormal=
+" style=3D"margin:0in 0in 0.0001pt;line-height:normal;font-size:11pt;font-f=
+amily:Calibri,sans-serif"><b><span lang=3D"HI" style=3D"font-size:12pt;font=
+-family:Mangal,serif;color:blue">=E0=A4=B8=E0=A4=BE=E0=A4=AE=E0=A4=BE=E0=A4=
+=A8=E0=A5=8D=E0=A4=AF =E0=A4=AA=E0=A5=8D=E0=A4=B0=E0=A4=AC=E0=A4=82=E0=A4=
+=A7=E0=A4=A8 =E0=A4=95=E0=A4=BE =E0=A4=95=E0=A5=8D=E0=A4=B7=E0=A5=87=E0=A4=
+=A4=E0=A5=8D=E0=A4=B0</span></b><b><span lang=3D"HI" style=3D"font-size:12p=
+t;font-family:Arial,sans-serif;color:blue">=C2=A0</span></b><b><span style=
+=3D"font-size:12pt;font-family:Arial,sans-serif;color:blue">/=C2=A0</span><=
+/b><b><span style=3D"font-size:12pt;font-family:Arial,sans-serif;color:blue=
+">Area of General Management, Economics &amp; Public Policy</span></b><span=
+ style=3D"font-size:12pt;font-family:Arial,sans-serif;color:black"></span><=
+/p><p class=3D"MsoNormal" style=3D"margin:0in 0in 0.0001pt;line-height:norm=
+al;font-size:11pt;font-family:Calibri,sans-serif"><b><span lang=3D"HI" styl=
+e=3D"font-size:12pt;font-family:&quot;Nirmala UI&quot;,sans-serif;color:blu=
+e">=E0=A4=AD=E0=A4=BE=E0=A4=B0=E0=A4=A4=E0=A5=80=E0=A4=AF</span></b><b><spa=
+n lang=3D"HI" style=3D"font-size:12pt;font-family:Mangal,serif;color:blue">=
+=C2=A0</span></b><b><span lang=3D"HI" style=3D"font-size:12pt;font-family:&=
+quot;Nirmala UI&quot;,sans-serif;color:blue">=E0=A4=AA=E0=A5=8D=E0=A4=B0=E0=
+=A4=AC=E0=A4=82=E0=A4=A7=E0=A4=A8</span></b><b><span lang=3D"HI" style=3D"f=
+ont-size:12pt;font-family:Mangal,serif;color:blue">=C2=A0</span></b><b><spa=
+n lang=3D"HI" style=3D"font-size:12pt;font-family:&quot;Nirmala UI&quot;,sa=
+ns-serif;color:blue">=E0=A4=B8=E0=A4=82=E0=A4=B8=E0=A5=8D=E0=A4=A5=E0=A4=BE=
+=E0=A4=A8</span></b><b><span lang=3D"HI" style=3D"font-size:12pt;font-famil=
+y:Mangal,serif;color:blue">=C2=A0</span></b><b><span lang=3D"HI" style=3D"f=
+ont-size:12pt;font-family:&quot;Nirmala UI&quot;,sans-serif;color:blue">=E0=
+=A4=B8=E0=A4=82=E0=A4=AC=E0=A4=B2=E0=A4=AA=E0=A5=81=E0=A4=B0</span></b><b><=
+span lang=3D"HI" style=3D"font-size:12pt;font-family:Mangal,serif;color:blu=
+e">=C2=A0/</span></b><b><span style=3D"font-size:12pt;font-family:Arial,san=
+s-serif;color:blue">=C2=A0Indian Institute of Management Sambalpur</span></=
+b><span style=3D"font-size:12pt;font-family:Arial,sans-serif"></span></p><p=
+ class=3D"MsoNormal" style=3D"margin:0in 0in 0.0001pt;line-height:normal;fo=
+nt-size:11pt;font-family:Calibri,sans-serif"><b><span lang=3D"HI" style=3D"=
+font-size:12pt;font-family:&quot;Nirmala UI&quot;,sans-serif;color:blue">=
+=E0=A4=B8=E0=A4=82=E0=A4=AC=E0=A4=B2=E0=A4=AA=E0=A5=81=E0=A4=B0</span></b><=
+b><span style=3D"font-size:12pt;font-family:Arial,sans-serif;color:blue">,=
+=C2=A0</span></b><b><span lang=3D"HI" style=3D"font-size:12pt;font-family:&=
+quot;Nirmala UI&quot;,sans-serif;color:blue">=E0=A4=93=E0=A4=A1=E0=A4=BF=E0=
+=A4=B6=E0=A4=BE</span></b><b><span lang=3D"HI" style=3D"font-size:12pt;font=
+-family:Mangal,serif;color:blue">=C2=A0-=C2=A0</span></b><b><span style=3D"=
+font-size:12pt;font-family:Arial,sans-serif;color:blue">768025 /=C2=A0Samba=
+lpur, Odisha - 768025</span></b><font color=3D"#888888"><span style=3D"font=
+-size:12pt;font-family:Arial,sans-serif"></span></font></p><p class=3D"MsoN=
+ormal" style=3D"margin:0in 0in 0.0001pt;line-height:normal;font-size:11pt;f=
+ont-family:Calibri,sans-serif"><b><span style=3D"font-size:12pt;font-family=
+:Arial,sans-serif;color:blue">Mobile : 9971797032</span></b></p></div><font=
+ color=3D"#888888"><br></font></div></div>
+
+--000000000000590a420648b73cf4--
+--000000000000590a430648b73cf5
+Content-Type: image/png; name="image.png"
+Content-Disposition: inline; filename="image.png"
+Content-Transfer-Encoding: base64
+Content-ID: <ii_mkdd74120>
+X-Attachment-Id: ii_mkdd74120
+
+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
+TwgW+WPZ5zxBnfZ08E+Z6uH/Uvc/RzAR1R78c/wXO5cB9Eb9gEoAAACKZVhJZk1NACoAAAAIAAQB
+GgAFAAAAAQAAAD4BGwAFAAAAAQAAAEYBKAADAAAAAQACAACHaQAEAAAAAQAAAE4AAAAAAAAAkAAA
+AAEAAACQAAAAAQADkoYABwAAABIAAAB4oAIABAAAAAEAAAPAoAMABAAAAAEAAAA0AAAAAEFTQ0lJ
+AAAAU2NyZWVuc2hvdEyct/0AAAAJcEhZcwAAFiUAABYlAUlSJPAAAAHVaVRYdFhNTDpjb20uYWRv
+YmUueG1wAAAAAAA8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIiB4OnhtcHRrPSJY
+TVAgQ29yZSA2LjAuMCI+CiAgIDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcv
+MTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+CiAgICAgIDxyZGY6RGVzY3JpcHRpb24gcmRmOmFi
+b3V0PSIiCiAgICAgICAgICAgIHhtbG5zOmV4aWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20vZXhpZi8x
+LjAvIj4KICAgICAgICAgPGV4aWY6UGl4ZWxZRGltZW5zaW9uPjUyPC9leGlmOlBpeGVsWURpbWVu
+c2lvbj4KICAgICAgICAgPGV4aWY6UGl4ZWxYRGltZW5zaW9uPjk2MDwvZXhpZjpQaXhlbFhEaW1l
+bnNpb24+CiAgICAgICAgIDxleGlmOlVzZXJDb21tZW50PlNjcmVlbnNob3Q8L2V4aWY6VXNlckNv
+bW1lbnQ+CiAgICAgIDwvcmRmOkRlc2NyaXB0aW9uPgogICA8L3JkZjpSREY+CjwveDp4bXBtZXRh
+PgpYqrDUAAAAHGlET1QAAAACAAAAAAAAABoAAAAoAAAAGgAAABoAABjHitV5twAAGJNJREFUeAHs
+nQOUJEkTx3PPtm3b3tOebd+esWdb72zbtm3btm37rr74xfeiXnVOVVejZm9mO+K9me6uyorM/Gdk
+KLOq+iRCwckRcAQcAUfAEXAEHAFHwBFwBBwBR8ARGMQR6OMB8CA+wt49R8ARcAQcAUfAEXAEHAFH
+wBFwBBwBRcADYBcER8ARcAQcAUfAEXAEHAFHwBFwBByBjkDAA+COGGbvpCPgCDgCjoAj4Ag4Ao6A
+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
+/vOf1jT33XffxDrrrKNpTj311IH43/rWt/T7S1/60gloKQU22mgjTXPWWWelRB+IA91Ax295y1sG
+vtf9+PGPf6zxSXPCCScMRctZ/5tvvrkq6/LLLx8qiw9XX311Fed3v/vdQJyc44mMX/va12pZX/nK
+VwbKsR+vetWrNPyII46wT0nPr371q5puzTXXnPjnP/85kMan6c997nMDYXU/iEf/QEMhWBtOOumk
+MCj6+xvf+IbmRdt8uP322/U75Vx88cV+UO372972Nk3zghe8oDZOSgD4p1za0gQ+7sBFyKvDtOPo
+P8pYe+21tb4vetGLJuCbTXDFFVdUeN1mm22aomrYRz/6UY0PH+sLOfkXdbD86KMvfOELrdWy+Ice
+emg0roWT3+zZs6Nx7CPzLfH4gx//9a9/taDo86KLLtK4a6yxRjK/jWXUNC8R32iAev385z+PZTHw
+7fWvf73W68Mf/vDAd/+H8W5ko3FDavug8b/85S+t1fn0pz+t7YvRuLUr15zkV+amm27Scl/ykpc0
+ztW33XabxqO/vv/97/tZtL4jo5IuVv8vfelLVb677rpra14pEXbZZRfN8w1veMPE3//+95QkVZwP
+fvCDmnbPPfesvjW93HrrrVX9f//73w9ENZoNZdGBSAk/zjzzTC2D8fvnP/85IcX/ovz73/+eMB7+
+8Y9/fCidj/uUOfqhhx6q2hqb41796ldreKrs+KlPfarK7xe/+MVQ/VI/NOkf5OG3M4XGDjvsMK3X
+ZpttNvHII49Eq4GMD00zvtt4aiyDyZQXTB6KjUfq+o9//KPqlyuvvDJW/c7f2vrIMpyHF5cA73nP
+e9wPf/hD94xnPMPJAElIMXqU+++/34kQ5WSgu7vuusvde++9TgaFu+eee9wFF1ygBXz72992Sy21
+1EBhxx9/vOMPEKHWCXNxz33ucwfixH7IIHPvfOc73eMf/3h34IEHxqIMfQMnwqDdrFmznBB+FS6E
+7HbffXcnHaHfhDk5EZLcU57ylCrOKC+iCGm7yOP88893T37yk0fJbijtH//4R/frX//ayWSq+BZl
+0Ilw4370ox85UWzcxhtv7IR5D6Qj/rbbbqvf9ttvP/e6171uIDz2Y6+99nKXXnqp23TTTZ0w7liU
+1m+WxzOf+Ux3+umnt8YnAvWkvjJpufe+971VmmOOOcaddtppbubMmU4GbPW96UWETCfKn+YpwmJT
+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
+uT5Jb4Rh3+txxx2n5x6NWkZJ34yBogA346eEFgwUDExjDBQFeBp3/hxqelGA5xCiW4pBCMX9UO5u
+1UOVOIgFKAJpC+JKcMFAwUBnDHAbyWWXXab8hQN77WpGTgznxpsC48dAUYDHj+NSQsFAwcBcigFO
+N+TIfIDDKTjZs0DBQE4MHHXUUXpn5wYbbOC23377nFmXvDpggBsauGKNU57Zi8eeX04z3X333fUa
+xw5ZlagFAwUDBQONGMCjhL877rhD4+F5guLL1YejnKDcWGgJHMBAUYAH0FF+FAwUDBQMFAwUDBQM
+TFcMsBLDNSpc49jn2pnpirfS7oKBgoHuGODqJrxMxnGlZvfaTK8URQGeXv1dWlswUDBQMFAwUDBQ
+MFAwUDBQMFAwUDAwbTFQFOBp2/Wl4QUDBQMFAwUDBQMFAwUDBQMFAwUDBQPTCwNFAZ5e/V1aWzBQ
+MFAwUDBQMFAwUDBQMFAwUDBQMDBtMVAU4Gnb9aXhBQMFAwUDBQMFAwUDBQMFAwUDBQMFA9MLA0UB
+nl79XVpbMFAwUDBQMFAwUDBQMFAwUDBQMFAwMG0xUBTgadv1peEFAwUDBQMFAwUDBQMFAwUDBQMF
+AwUD0wsD/wVg2yBuwVCg3AAAAABJRU5ErkJggg==
+--000000000000590a430648b73cf5
+Content-Type: image/png; name="image.png"
+Content-Disposition: inline; filename="image.png"
+Content-Transfer-Encoding: base64
+Content-ID: <ii_mkdd97uw1>
+X-Attachment-Id: ii_mkdd97uw1
+
+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
+TwgW+WPZ5zxBnfZ08E+Z6uH/Uvc/RzAR1R78c/wXO5cB9Eb9gEoAAACKZVhJZk1NACoAAAAIAAQB
+GgAFAAAAAQAAAD4BGwAFAAAAAQAAAEYBKAADAAAAAQACAACHaQAEAAAAAQAAAE4AAAAAAAAAkAAA
+AAEAAACQAAAAAQADkoYABwAAABIAAAB4oAIABAAAAAEAAAj+oAMABAAAAAEAAABKAAAAAEFTQ0lJ
+AAAAU2NyZWVuc2hvdGVuyD4AAAAJcEhZcwAAFiUAABYlAUlSJPAAAAHWaVRYdFhNTDpjb20uYWRv
+YmUueG1wAAAAAAA8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIiB4OnhtcHRrPSJY
+TVAgQ29yZSA2LjAuMCI+CiAgIDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcv
+MTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+CiAgICAgIDxyZGY6RGVzY3JpcHRpb24gcmRmOmFi
+b3V0PSIiCiAgICAgICAgICAgIHhtbG5zOmV4aWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20vZXhpZi8x
+LjAvIj4KICAgICAgICAgPGV4aWY6UGl4ZWxZRGltZW5zaW9uPjc0PC9leGlmOlBpeGVsWURpbWVu
+c2lvbj4KICAgICAgICAgPGV4aWY6UGl4ZWxYRGltZW5zaW9uPjIzMDI8L2V4aWY6UGl4ZWxYRGlt
+ZW5zaW9uPgogICAgICAgICA8ZXhpZjpVc2VyQ29tbWVudD5TY3JlZW5zaG90PC9leGlmOlVzZXJD
+b21tZW50PgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0
+YT4KrqmtbQAAABxpRE9UAAAAAgAAAAAAAAAlAAAAKAAAACUAAAAlAAAhztAE9K8AACGaSURBVHgB
+7J0JvFZF+ccfFEwEF5RIMlKCtL8iloHmRqKgZqK5k0XaopVL+i+VNMAFCctS09xyt3BJUDNT8Z9p
+lsmiZpmG8g8lt2xRMC1Ti97f2LzNPfds7znnvvd9ud/5fO495z1nzizfeWbmmZnnzOm1ouYMBwEI
+QAACEIAABCAAAQhAAAIQgAAEIAABCEAAAhCAAAQgAAEIQAACEIAABCAAAQi0FYFeGP60VXmRWAhA
+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
+--000000000000590a430648b73cf5--

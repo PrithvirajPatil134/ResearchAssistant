@@ -267,6 +267,7 @@ class LearnerAgent(BaseAgent):
         """
         Store a successful reasoning pattern for future reference.
         
+        Uses LLM to extract meaningful strategies and patterns.
         Only stores patterns with score >= 8.0 (good quality).
         """
         self.log_operation("store_pattern", 30)
@@ -279,11 +280,11 @@ class LearnerAgent(BaseAgent):
         # Extract key terms
         key_terms = self._extract_key_terms(query)
         
-        # Extract strategies from reasoning
-        strategies = self._extract_strategies(reasoning, feedback)
+        # Use LLM to extract strategies (enhanced learning)
+        strategies = self._extract_strategies_with_llm(query, reasoning, feedback)
         
-        # Create summary
-        summary = self._summarize_reasoning(reasoning)
+        # Use LLM for proper summarization
+        summary = self._summarize_reasoning_with_llm(query, reasoning)
         
         pattern = ReasoningPattern(
             query=query,
@@ -309,7 +310,7 @@ class LearnerAgent(BaseAgent):
             importance=8,
         )
         
-        logger.info(f"[LEARNER] Stored pattern with score {score}")
+        logger.info(f"[LEARNER] Stored pattern with score {score} via LLM analysis")
         
         return pattern
     
@@ -361,12 +362,113 @@ class LearnerAgent(BaseAgent):
         
         return scored_patterns[:top_k]
     
+    def _extract_strategies_with_llm(
+        self,
+        query: str,
+        reasoning: str,
+        feedback: Optional[str] = None,
+    ) -> List[str]:
+        """Extract effective strategies from reasoning using LLM analysis."""
+        try:
+            from ..core import get_llm_client
+            llm = get_llm_client()
+            
+            prompt = f"""Analyze this successful academic explanation and extract 3-5 reusable strategies.
+
+Query: {query}
+
+Reasoning Output (excerpt):
+{reasoning[:2000]}
+
+{f'Feedback received: {feedback}' if feedback else ''}
+
+Extract the strategies that made this explanation effective. Focus on:
+- Structure patterns (how content was organized)
+- Grounding techniques (how knowledge was used)
+- Writing approaches (tone, examples, transitions)
+
+Output ONLY a JSON array of strategy strings, max 5 items:
+["strategy 1", "strategy 2", ...]"""
+
+            response = llm.generate(
+                prompt,
+                system_prompt="You are an expert at analyzing academic writing patterns. Output only valid JSON."
+            )
+            
+            if response.success:
+                import json
+                import re
+                raw_content = response.content.strip()
+                
+                # Try to extract JSON array from response (may have extra text)
+                json_match = re.search(r'\[.*?\]', raw_content, re.DOTALL)
+                if json_match:
+                    json_str = json_match.group(0)
+                else:
+                    json_str = raw_content
+                
+                try:
+                    strategies = json.loads(json_str)
+                    if isinstance(strategies, list):
+                        logger.info(f"[LEARNER] LLM extracted {len(strategies)} strategies: {strategies}")
+                        return strategies[:5]
+                except json.JSONDecodeError as e:
+                    logger.warning(f"[LEARNER] JSON parse failed: {e}")
+                    logger.debug(f"[LEARNER] Raw LLM response:\n{raw_content[:500]}")
+                    
+                    # Try to extract strategies from text if JSON fails
+                    lines = [l.strip() for l in raw_content.split('\n') if l.strip().startswith('-') or l.strip().startswith('•')]
+                    if lines:
+                        text_strategies = [l.lstrip('-•').strip() for l in lines[:5]]
+                        logger.info(f"[LEARNER] Extracted {len(text_strategies)} strategies from text")
+                        return text_strategies
+        except Exception as e:
+            logger.warning(f"[LEARNER] LLM strategy extraction failed: {e}")
+        
+        # Fallback to rule-based extraction
+        return self._extract_strategies(reasoning, feedback)
+    
+    def _summarize_reasoning_with_llm(self, query: str, reasoning: str) -> str:
+        """Create a meaningful summary using LLM analysis."""
+        try:
+            from ..core import get_llm_client
+            llm = get_llm_client()
+            
+            prompt = f"""Summarize this academic explanation in 2-3 sentences for storage as a learning pattern.
+
+Query: {query}
+
+Explanation (excerpt):
+{reasoning[:2500]}
+
+Provide a concise summary (max 300 chars) capturing:
+- Key concepts explained
+- Main approach used
+- Core insight delivered
+
+Output only the summary text, no quotes or formatting."""
+
+            response = llm.generate(
+                prompt,
+                system_prompt="You are an expert at summarizing academic content concisely."
+            )
+            
+            if response.success and response.content:
+                summary = response.content.strip()[:300]
+                logger.info(f"[LEARNER] LLM generated summary: {len(summary)} chars")
+                return summary
+        except Exception as e:
+            logger.warning(f"[LEARNER] LLM summarization failed: {e}")
+        
+        # Fallback to rule-based summarization
+        return self._summarize_reasoning(reasoning)
+    
     def _extract_strategies(
         self,
         reasoning: str,
         feedback: Optional[str] = None,
     ) -> List[str]:
-        """Extract effective strategies from reasoning."""
+        """Extract effective strategies from reasoning (rule-based fallback)."""
         strategies = []
         reasoning_lower = reasoning.lower()
         
@@ -402,7 +504,7 @@ class LearnerAgent(BaseAgent):
         return list(dict.fromkeys(strategies))[:5]  # Unique, max 5
     
     def _summarize_reasoning(self, reasoning: str) -> str:
-        """Create a brief summary of reasoning for storage."""
+        """Create a brief summary of reasoning for storage (rule-based fallback)."""
         # Extract first substantial paragraph or section
         paragraphs = [p.strip() for p in reasoning.split('\n\n') if p.strip()]
         
@@ -470,3 +572,56 @@ class LearnerAgent(BaseAgent):
             "average_score": sum(scores) / len(scores),
             "common_strategies": [s for s, _ in common],
         }
+    
+    # =========================================================================
+    # Workflow Doc Update Methods
+    # =========================================================================
+    
+    def update_workflow_doc(
+        self,
+        persona_dir,
+        workflow_name: str,
+        query: str,
+        approach: str,
+        score: float,
+        success_factor: str,
+    ) -> bool:
+        """
+        Update the workflow doc with learned pattern entry.
+        
+        Appends to the 'Pattern Log' table in doc/{workflow_name}_workflow.md
+        """
+        from pathlib import Path
+        
+        doc_path = Path(persona_dir) / "doc" / f"{workflow_name}_workflow.md"
+        
+        if not doc_path.exists():
+            logger.warning(f"[LEARNER] Workflow doc not found: {doc_path}")
+            return False
+        
+        try:
+            content = doc_path.read_text()
+            
+            # Find the Pattern Log table
+            pattern_log_marker = "| (Learner populates)"
+            if pattern_log_marker in content:
+                # Build new row
+                date = datetime.now().strftime("%Y-%m-%d")
+                new_row = f"| {date} | {query[:30]}... | {approach[:40]} | {score:.1f} | {success_factor[:40]} |"
+                
+                # Replace the placeholder with new row + placeholder
+                updated_content = content.replace(
+                    pattern_log_marker,
+                    f"{new_row}\n{pattern_log_marker}"
+                )
+                
+                doc_path.write_text(updated_content)
+                logger.info(f"[LEARNER] Updated workflow doc: {doc_path.name}")
+                return True
+            else:
+                logger.warning(f"[LEARNER] Pattern Log marker not found in {doc_path}")
+                return False
+                
+        except Exception as e:
+            logger.error(f"[LEARNER] Failed to update workflow doc: {e}")
+            return False

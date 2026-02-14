@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 # =============================================================================
 
 class ProgressIndicator:
-    """Terminal progress indicator for workflow stages."""
+    """Simple terminal progress indicator - prints each stage once."""
     
     # Stage indices for update() calls
     STAGE_READ = 0
@@ -39,24 +39,18 @@ class ProgressIndicator:
     STAGE_SAVE = 5
     
     STAGES = [
-        ("📚", "Reading KB", "Extracting knowledge base..."),
-        ("🔍", "Warm Start", "Finding similar patterns..."),
-        ("🧠", "Reasoning", "Generating response..."),
-        ("📊", "Analyzing", "Scoring quality..."),
-        ("✅", "Validating", "Reviewing output..."),
-        ("💾", "Saving", "Writing output file..."),
+        ("📚", "ReaderAgent"),
+        ("🔍", "LearnerAgent"),
+        ("🧠", "ThinkingModule"),
+        ("📊", "AnalystAgent"),
+        ("✅", "ReviewerAgent"),
+        ("💾", "OutputWriter"),
     ]
-    
-    SPINNER_CHARS = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
     
     def __init__(self, enabled: bool = True):
         self.enabled = enabled and sys.stdout.isatty()
-        self.current_stage = 0
-        self.current_detail = ""
-        self._spinner_idx = 0
-        self._running = False
-        self._thread: Optional[threading.Thread] = None
-        self._lock = threading.Lock()
+        self.current_stage = -1
+        self._printed_stages: set = set()
     
     def start(self, query: str) -> None:
         """Start the progress display."""
@@ -64,76 +58,45 @@ class ProgressIndicator:
             return
         
         # Print header
-        print(f"\n{'─' * 60}")
-        print(f"🎯 Query: {query[:50]}{'...' if len(query) > 50 else ''}")
-        print(f"{'─' * 60}")
-        
-        self._running = True
-        self._thread = threading.Thread(target=self._spinner_loop, daemon=True)
-        self._thread.start()
+        print(f"\n{'─' * 50}")
+        print(f"🎯 {query[:45]}{'...' if len(query) > 45 else ''}")
+        print(f"{'─' * 50}")
     
     def update(self, stage_idx: int, detail: str = "") -> None:
-        """Update progress to a specific stage."""
+        """Print stage transition once."""
         if not self.enabled:
             return
         
-        with self._lock:
-            # Print newline to preserve previous stage before updating
-            if stage_idx > self.current_stage:
-                sys.stdout.write("\n")
-                sys.stdout.flush()
-            self.current_stage = min(stage_idx, len(self.STAGES) - 1)
-            self.current_detail = detail
+        # Only print each stage once
+        if stage_idx in self._printed_stages:
+            return
+        
+        self._printed_stages.add(stage_idx)
+        self.current_stage = stage_idx
+        
+        if stage_idx < len(self.STAGES):
+            emoji, agent = self.STAGES[stage_idx]
+            detail_text = f" → {detail}" if detail else ""
+            print(f"  {emoji} {agent}{detail_text}")
     
     def set_detail(self, detail: str) -> None:
-        """Update just the detail text."""
-        if not self.enabled:
-            return
-        with self._lock:
-            self.current_detail = detail
+        """Update detail - only prints for significant events."""
+        pass  # No-op for simple progress
+    
+    def log(self, message: str) -> None:
+        """Print an important log message."""
+        if self.enabled:
+            print(f"     ↳ {message}")
     
     def stop(self, success: bool = True) -> None:
         """Stop the progress display."""
-        self._running = False
-        if self._thread:
-            self._thread.join(timeout=0.5)
-        
         if self.enabled:
-            # Clear the line and print final status
-            sys.stdout.write("\r" + " " * 80 + "\r")
-            sys.stdout.flush()
+            print(f"{'─' * 50}")
             if success:
-                print("✨ Workflow complete!")
-            print(f"{'─' * 60}\n")
-    
-    def _spinner_loop(self) -> None:
-        """Background thread for spinner animation."""
-        while self._running:
-            with self._lock:
-                stage_idx = self.current_stage
-                detail = self.current_detail
-            
-            if stage_idx < len(self.STAGES):
-                emoji, name, desc = self.STAGES[stage_idx]
-                spinner = self.SPINNER_CHARS[self._spinner_idx % len(self.SPINNER_CHARS)]
-                
-                # Build status line
-                detail_text = f" [{detail}]" if detail else ""
-                status = f"\r{spinner} [{stage_idx + 1}/{len(self.STAGES)}] {emoji} {name}: {desc}{detail_text}"
-                
-                # Truncate if too long
-                max_len = 78
-                if len(status) > max_len:
-                    status = status[:max_len-3] + "..."
-                
-                # Pad to clear previous content
-                status = status.ljust(80)
-                
-                sys.stdout.write(status)
-                sys.stdout.flush()
-            
-            self._spinner_idx += 1
-            time_module.sleep(0.1)
+                print("✅ Done")
+            else:
+                print("❌ Failed")
+            print()
 
 
 # =============================================================================
@@ -265,7 +228,7 @@ class WorkflowInvoker:
         
         # Initialize progress indicator
         progress = ProgressIndicator(enabled=show_progress)
-        query = initial_state.get("topic", initial_state.get("task", ""))
+        query = initial_state.get("topic", initial_state.get("task", initial_state.get("assignment", "")))
         progress.start(query)
         
         # Get workflow spec
@@ -290,12 +253,12 @@ class WorkflowInvoker:
                 error=f"Missing required inputs: {missing}",
             )
         
-        # Load persona
+        # Load space (persona)
         try:
-            from research_assistant.personas import PersonaLoader
+            from research_assistant.spaces import SpaceLoader
             
-            personas_path = personas_dir or Path(__file__).parent.parent / "personas"
-            loader = PersonaLoader(personas_path)
+            spaces_path = personas_dir or Path(__file__).parent.parent / "spaces"
+            loader = SpaceLoader(spaces_path)
             persona = loader.load(persona_name)
         except Exception as e:
             progress.stop(success=False)
@@ -409,6 +372,7 @@ class WorkflowInvoker:
                     iteration=iteration,
                     thinking=thinking,
                     previous_output=previous_output,
+                    workflow_name=workflow_name,
                 )
                 
                 # Update progress for analysis
@@ -461,26 +425,32 @@ class WorkflowInvoker:
                 
                 progress.update(ProgressIndicator.STAGE_VALIDATE, f"check {val_iteration + 1}/{cls.MAX_VALIDATION_ITERATIONS}")
                 
-                # Reviewer validates
-                review_result = reviewer.execute(
+                # Reviewer validates with workflow context
+                review_result = reviewer.review_against_standards(
                     content=final_content,
-                    original_query=query,
-                    context={"persona": persona.name},
+                    workflow_name=workflow_name,
+                    user_query=query,
+                    persona={"name": persona.name},
                 )
                 
-                if review_result.success:
-                    review_data = review_result.output
-                    if isinstance(review_data, dict):
-                        validation_passed = review_data.get("approved", True)
-                        reviewer_feedback = review_data.get("feedback", "")
-                    else:
-                        validation_passed = True
-                else:
-                    validation_passed = True  # Skip validation if reviewer fails
+                # Extract results from ReviewResult
+                validation_passed = review_result.meets_standards
+                reviewer_feedback = "; ".join(
+                    i.get("message", "") for i in review_result.issues
+                ) or "; ".join(review_result.suggestions)
+                
+                # Check for critical issues
+                has_critical = any(
+                    i.get("severity") == "critical" for i in review_result.issues
+                )
+                if has_critical:
+                    validation_passed = False
+                    progress.log(f"Critical issue: {review_result.issues[0].get('message', 'unknown')}")
                 
                 logger.info(
                     f"[WORKFLOW] Validation iteration {val_iteration + 1}: "
-                    f"{'PASS' if validation_passed else 'NEEDS REVISION'}"
+                    f"Score {review_result.overall_score}/10 "
+                    f"({'PASS' if validation_passed else 'NEEDS REVISION'})"
                 )
                 
                 if validation_passed:
@@ -497,6 +467,7 @@ class WorkflowInvoker:
                     previous_feedback=reviewer_feedback,
                     iteration=reasoning_iterations,
                     thinking=thinking,
+                    workflow_name=workflow_name,
                 )
                 
                 final_content = cls._format_output(
@@ -513,12 +484,24 @@ class WorkflowInvoker:
             # =========================================================
             progress.update(ProgressIndicator.STAGE_SAVE, "storing pattern")
             
-            learner.store_pattern(
+            pattern = learner.store_pattern(
                 query=query,
                 reasoning=reasoning_content,
                 score=final_score,
                 feedback=analyst_feedback,
             )
+            
+            # Update workflow doc with learned pattern (if score was good)
+            if pattern and final_score >= 8.0:
+                strategies = pattern.strategies if pattern.strategies else ["KB grounding"]
+                learner.update_workflow_doc(
+                    persona_dir=persona.persona_dir,
+                    workflow_name=workflow_name,
+                    query=query,
+                    approach=strategies[0] if strategies else "structured explanation",
+                    score=final_score,
+                    success_factor="Passed analyst scoring",
+                )
             
             # =========================================================
             # STEP 7: WRITE OUTPUT FILE
@@ -529,6 +512,20 @@ class WorkflowInvoker:
             output_path.write_text(final_content)
             
             execution_time = int((time.time() - start_time) * 1000)
+            
+            # =========================================================
+            # STEP 8: LOG WORKFLOW EXECUTION
+            # =========================================================
+            cls._log_workflow_execution(
+                workflow_name=workflow_name,
+                persona_name=persona_name,
+                query=query,
+                output_path=output_path,
+                score=final_score,
+                reasoning_iterations=reasoning_iterations,
+                validation_iterations=validation_iterations,
+                execution_time_ms=execution_time,
+            )
             
             progress.stop(success=True)
             
@@ -571,6 +568,7 @@ class WorkflowInvoker:
         iteration: int,
         thinking: Any,
         previous_output: str = "",
+        workflow_name: str = "explain",
     ) -> str:
         """Generate reasoning content using LLM with persona context."""
         from research_assistant.core import get_llm_client
@@ -579,55 +577,28 @@ class WorkflowInvoker:
         # Start reasoning chain for tracking
         chain = thinking.start_reasoning(query)
         
+        # Load workflow guide for grounding (proactive reading)
+        workflow_guide = cls._load_workflow_guide(persona, workflow_name)
+        
         # Get persona context
         identity = persona.identity
         prof_name = identity.get("name", "Professor")
         institution = identity.get("institution", "University")
         expertise = identity.get("expertise", [])
         
-        # Build system prompt with persona context
-        system_prompt = f"""You are {prof_name}, a professor at {institution}.
-Your areas of expertise: {', '.join(expertise[:5])}.
-
-You are explaining academic concepts to doctoral/research students.
-Your explanations should:
-1. Be grounded in the provided knowledge base materials
-2. Use proper academic terminology and frameworks
-3. Include theoretical foundations and practical applications
-4. Be structured with clear sections and headings
-5. Reference source materials when applicable
-
-Write in a professional academic style that is accessible but rigorous."""
+        # Build workflow-specific system prompt (pass persona to load YAML config)
+        system_prompt = cls._build_system_prompt(workflow_name, prof_name, institution, expertise, persona)
 
         # Build the prompt with knowledge base content as PRIMARY source
-        kb_context = ""
-        if extracted_content:
-            kb_context = "\n\n## PRIMARY SOURCE - Course Knowledge Base (MUST USE):\n"
-            kb_context += "**IMPORTANT**: The following materials are from the professor's course. "
-            kb_context += "Use these as your PRIMARY reference. Define terms EXACTLY as they appear in these materials.\n"
-            for i, content in enumerate(extracted_content[:5], 1):
-                # Include more content for LLM context
-                excerpt = content[:2500].strip()
-                kb_context += f"\n### Course Material {i}:\n{excerpt}\n"
+        kb_context = cls._build_kb_context(extracted_content)
         
-        # Build main prompt with explicit KB grounding instructions
-        prompt = f"""Topic: {query}
+        # Build workflow-specific main prompt
+        prompt = cls._build_workflow_prompt(workflow_name, query, kb_context, workflow_guide, persona.name)
 
-**CRITICAL INSTRUCTION**: You MUST base your explanation primarily on the Course Knowledge Base materials provided below. 
-These are the professor's actual course materials. Use the EXACT definitions and frameworks from these materials.
-You may supplement with web search for additional context, but the KB materials are your PRIMARY source.
-
-If the KB materials define a term (like "DRO" = Digital Resource Orchestration), use THAT definition, not web search results.
-
-Please provide a comprehensive explanation of "{query}" using the following structure:
-
-1. **Conceptual Definition** - What is this concept? (Use KB definition FIRST)
-2. **Theoretical Foundation** - What theories/frameworks support it? (Reference KB materials)
-3. **Key Components** - What are the main elements? (From KB)
-4. **Practical Application** - How is it applied in practice?
-5. **Research Considerations** - How should researchers approach this topic?
-{kb_context}"""
-
+        # Add workflow guide for grounding (from doc/)
+        if workflow_guide:
+            prompt += f"\n\n## WORKFLOW GROUNDING GUIDE:\n{workflow_guide}"
+        
         # Add warm start strategies if available
         if warm_start_prompt:
             prompt += f"\n\n## Suggested Approach (from similar queries):\n{warm_start_prompt}"
@@ -695,6 +666,356 @@ emphasizing both theoretical rigor and practical application.*
         return header + response.content + footer
     
     @classmethod
+    def _build_system_prompt(
+        cls,
+        workflow_name: str,
+        prof_name: str,
+        institution: str,
+        expertise: List[str],
+        persona: Any = None,
+    ) -> str:
+        """Build workflow-specific system prompt from YAML configuration."""
+        expertise_str = ', '.join(expertise[:5])
+        
+        # Try to load system prompt from persona's prompts.yaml
+        if persona:
+            prompts_config = cls._load_prompts_yaml(persona)
+            if prompts_config:
+                # Use system_prompt from YAML if available
+                yaml_system = prompts_config.get("system_prompt", "")
+                if yaml_system:
+                    return yaml_system
+                
+                # Try to get workflow-specific prompts
+                workflows = prompts_config.get("workflows", {})
+                workflow_config = workflows.get(workflow_name, {})
+                
+                if workflow_config:
+                    # Build structured prompt from YAML sections
+                    scope = workflow_config.get("scope", "")
+                    decision_flow = workflow_config.get("decision_flow", "")
+                    validation_rules = workflow_config.get("validation_rules", "")
+                    
+                    structured_prompt = f"""You are {prof_name}, a professor at {institution}.
+Your areas of expertise: {expertise_str}.
+
+{scope}
+
+{decision_flow}
+
+{validation_rules}
+"""
+                    return structured_prompt
+        
+        # Fallback to hardcoded if YAML not available
+        base_prompt = f"""You are {prof_name}, a professor at {institution}.
+Your areas of expertise: {expertise_str}.
+"""
+        
+        if workflow_name == "explain":
+            return base_prompt + """
+You are explaining academic concepts to doctoral/research students.
+Your explanations should:
+1. Be grounded in the provided knowledge base materials
+2. Use proper academic terminology and frameworks
+3. Include theoretical foundations and practical applications
+4. Be structured with clear sections and headings
+5. Reference source materials when applicable
+
+Write in a professional academic style that is accessible but rigorous."""
+        
+        elif workflow_name == "guide":
+            return base_prompt + """
+You are GUIDING students through academic tasks - helping them develop their own work.
+Your guidance should:
+1. NOT provide direct answers or do the work for them
+2. Help them understand what's being asked
+3. Suggest frameworks and approaches from course materials
+4. Ask reflection questions that prompt critical thinking
+5. Reference specific KB materials they should consult
+
+Write as a mentor guiding discovery, not a tutor giving answers."""
+        
+        elif workflow_name == "review":
+            return base_prompt + """
+You are reviewing student submissions against academic standards.
+Your reviews should:
+1. Identify both strengths and areas for improvement
+2. Reference specific criteria from course materials
+3. Provide constructive, actionable feedback
+4. Maintain an encouraging but rigorous tone
+5. Suggest next steps for improvement
+
+Be thorough but supportive - the goal is student development."""
+        
+        elif workflow_name == "research":
+            return base_prompt + """
+You are helping plan research strategy and methodology.
+Your research guidance should:
+1. Map to theoretical frameworks from the knowledge base
+2. Identify literature and gaps
+3. Suggest appropriate methodologies
+4. Consider validity and ethical implications
+5. Provide structured research roadmaps
+
+Ground all suggestions in academic rigor and KB materials."""
+        
+        else:
+            return base_prompt + """
+Write in a professional academic style that is accessible but rigorous.
+Always ground responses in the provided knowledge base materials."""
+    
+    @classmethod
+    def _load_prompts_yaml(cls, persona: Any) -> Optional[Dict]:
+        """Load prompts.yaml configuration for a persona."""
+        try:
+            import yaml
+            prompts_path = persona.persona_dir / "prompts.yaml"
+            if prompts_path.exists():
+                with open(prompts_path, 'r') as f:
+                    return yaml.safe_load(f)
+        except Exception as e:
+            logger.warning(f"[WORKFLOW] Failed to load prompts.yaml: {e}")
+        return None
+    
+    @classmethod
+    def _build_kb_context(cls, extracted_content: List[str]) -> str:
+        """Build knowledge base context section."""
+        if not extracted_content:
+            return ""
+        
+        kb_context = "\n\n## PRIMARY SOURCE - Course Knowledge Base (MUST USE):\n"
+        kb_context += "**IMPORTANT**: The following materials are from the professor's course. "
+        kb_context += "Use these as your PRIMARY reference. Define terms EXACTLY as they appear in these materials.\n"
+        
+        for i, content in enumerate(extracted_content[:5], 1):
+            excerpt = content[:2500].strip()
+            kb_context += f"\n### Course Material {i}:\n{excerpt}\n"
+        
+        return kb_context
+    
+    @classmethod
+    def _build_workflow_prompt(
+        cls,
+        workflow_name: str,
+        query: str,
+        kb_context: str,
+        workflow_guide: str,
+        persona_name: str = "PERSONA",
+    ) -> str:
+        """Build workflow-specific main prompt."""
+        
+        if workflow_name == "explain":
+            # Detect if query is actually procedural (guide question in wrong workflow)
+            query_lower = query.lower()
+            procedural_keywords = ["how do i", "how to", "help me", "how would we", "how should i", "what should i do", "guide me", "steps to", "process for"]
+            
+            if any(keyword in query_lower for keyword in procedural_keywords):
+                return f"""Topic: {query}
+
+**⚠️ WORKFLOW MISMATCH DETECTED ⚠️**
+
+Your query asks "**how to proceed**" or "**how to do**" something - this is a **PROCEDURAL/GUIDANCE** question, not a conceptual explanation.
+
+**Current workflow**: EXPLAIN (designed for "What is X?" or "Define Y")
+**Recommended workflow**: **GUIDE** (designed for "How do I..." or "Help me with...")
+
+**What you should do**:
+Re-run with the GUIDE workflow:
+```
+ra guide "{query}" --persona {persona_name}
+```
+
+**Why this matters**:
+- EXPLAIN workflow explains concepts (e.g., "Explain research methodology")
+- GUIDE workflow provides step-by-step procedural guidance (e.g., "How do I analyze this case study?")
+
+Your query asks for procedural guidance, which requires:
+- Step-by-step approach
+- Framework application guidance
+- Task breakdown
+- Reflection questions
+
+The GUIDE workflow is specifically designed for this type of request.
+
+**Quick Reference**:
+| Use EXPLAIN when | Use GUIDE when |
+|------------------|----------------|
+| "Explain mediation" | "How do I analyze mediation?" |
+| "What is SEM?" | "Help me run SEM analysis" |
+| "Define validity" | "How do I establish validity?" |
+
+Please re-run with: `ra guide "..." --persona {persona_name}`
+
+{kb_context}"""
+            
+            else:
+                return f"""Topic: {query}
+
+**CRITICAL INSTRUCTION**: You MUST base your explanation primarily on the Course Knowledge Base materials provided below. 
+These are the professor's actual course materials. Use the EXACT definitions and frameworks from these materials.
+
+Please provide a comprehensive explanation of "{query}" using the following structure:
+
+1. **Conceptual Definition** - What is this concept? (Use KB definition FIRST)
+2. **Theoretical Foundation** - What theories/frameworks support it? (Reference KB materials)
+3. **Key Components** - What are the main elements? (From KB)
+4. **Practical Application** - How is it applied in practice?
+5. **Research Considerations** - How should researchers approach this topic?
+{kb_context}"""
+        
+        elif workflow_name == "guide":
+            # Detect request type from query
+            query_lower = query.lower()
+            
+            if any(t in query_lower for t in ["email", "response", "reply", "communication", "prof"]):
+                return f"""Assignment: {query}
+
+**CRITICAL INSTRUCTION**: ALWAYS provide comprehensive structured guidance based on available context.
+
+**MANDATORY OUTPUT STRUCTURE**:
+
+## 1. Email Context Summary
+Extract and summarize what the professor said/asked from KB materials.
+If email content is in KB: use it directly.
+If not fully available: work with what you have and note gaps.
+
+## 2. Key Points to Address
+List specific items from the professor's message that need response.
+
+## 3. Suggested Response Structure
+- Opening: Professional greeting template
+- Body: How to address each point (provide specific guidance)
+- Closing: Next steps template
+
+## 4. Tone Guidelines
+Professional communication principles.
+
+## 5. Draft Template
+Complete email structure with [PLACEHOLDERS] for customization.
+Include actual suggested content based on KB.
+
+## 6. Questions for Clarification (Optional)
+ONLY if additional context would significantly improve the guidance.
+Format as: "To provide more specific guidance, it would help to know: ..."
+
+**CRITICAL RULES**:
+- Provide guidance with available context FIRST
+- Do NOT refuse to proceed due to missing information
+- Do NOT start by asking what's needed - start by providing what you can
+- Clarification questions come LAST, after providing comprehensive guidance
+
+{kb_context}"""
+            
+            elif any(t in query_lower for t in ["objective", "aim", "goal"]):
+                return f"""Assignment: {query}
+
+**CRITICAL INSTRUCTION**: This is a GUIDE workflow requesting help with research OBJECTIVE formulation.
+You MUST follow the workflow guide format for objectives.
+
+The student needs guidance on writing a research objective. 
+Use the professor's criteria from the workflow guide.
+
+**OUTPUT MUST INCLUDE:**
+1. Research Objective statement starting with "The objective of this research is to..."
+2. Business Context section explaining why this matters
+3. Research Scope (general to specific)
+4. Suggested Title aligned with objective words
+5. Rationale table showing how it meets professor's criteria
+
+Do NOT give a generic explanation. Follow the objective format exactly.
+{kb_context}"""
+            
+            elif any(t in query_lower for t in ["questionnaire", "scale", "items", "measurement"]):
+                return f"""Assignment: {query}
+
+**CRITICAL INSTRUCTION**: This is a GUIDE workflow for questionnaire/measurement guidance.
+Help the student understand measurement design without doing the work for them.
+
+Provide:
+1. Understanding of the measurement task
+2. Framework suggestions from KB materials
+3. Reference to example instruments in KB
+4. Questions for reflection
+5. Next steps
+
+Ground in course materials about scale development and measurement.
+{kb_context}"""
+            
+            else:
+                return f"""Assignment: {query}
+
+**CRITICAL INSTRUCTION**: ALWAYS provide comprehensive structured guidance based on available context.
+
+**MANDATORY OUTPUT STRUCTURE**:
+
+## 1. Understanding the Task
+Analyze what's being asked based on the query and KB context.
+
+## 2. Suggested Approach/Framework
+Provide specific methodology or framework from KB materials.
+
+## 3. Relevant KB Materials
+Reference specific documents, sections, templates from KB.
+
+## 4. Step-by-Step Guidance
+Concrete steps the student should take.
+
+## 5. Reflection Questions
+Questions to guide their thinking.
+
+## 6. Draft/Template (if applicable)
+Provide structure with [PLACEHOLDERS] for them to fill.
+
+## 7. Questions for Additional Context (Optional)
+ONLY if more information would significantly enhance guidance.
+Format as: "To provide more specific guidance, it would help to know: ..."
+
+**CRITICAL RULES**:
+- Provide guidance with available context FIRST
+- Do NOT start by asking what's needed
+- Do NOT refuse to proceed
+- Clarification questions come LAST
+
+{kb_context}"""
+        
+        elif workflow_name == "review":
+            return f"""Submission for Review: {query}
+
+**CRITICAL INSTRUCTION**: Provide a thorough review against academic standards.
+
+Structure your review as:
+1. Executive Summary (2-3 sentences)
+2. Strengths (what works well)
+3. Areas for Improvement (with specific recommendations)
+4. Detailed feedback by section
+5. Next steps
+
+Be constructive and reference course criteria.
+{kb_context}"""
+        
+        elif workflow_name == "research":
+            return f"""Research Task: {query}
+
+**CRITICAL INSTRUCTION**: Help plan research strategy grounded in KB materials.
+
+Provide:
+1. Research objective clarification
+2. Theoretical framework mapping
+3. Literature/source strategy
+4. Methodology recommendations
+5. Timeline/next steps
+
+Ground all suggestions in academic frameworks from the knowledge base.
+{kb_context}"""
+        
+        else:
+            return f"""Task: {query}
+
+Please address this request using the knowledge base materials as your primary source.
+{kb_context}"""
+    
+    @classmethod
     def _format_output(
         cls,
         workflow_name: str,
@@ -715,6 +1036,75 @@ emphasizing both theoretical rigor and practical application.*
         ]
         
         return reasoning + "\n".join(metadata)
+    
+    @classmethod
+    def _load_workflow_guide(cls, persona: Any, workflow_name: str) -> str:
+        """
+        Load workflow guide document for grounding.
+        
+        Proactively reads persona/doc/{workflow_name}_workflow.md to provide
+        grounding rules and learned patterns to the thinker.
+        """
+        doc_dir = persona.persona_dir / "doc"
+        guide_path = doc_dir / f"{workflow_name}_workflow.md"
+        
+        if guide_path.exists():
+            try:
+                content = guide_path.read_text()
+                logger.info(f"[WORKFLOW] Loaded workflow guide: {guide_path.name}")
+                return content
+            except Exception as e:
+                logger.warning(f"[WORKFLOW] Failed to read workflow guide: {e}")
+                return ""
+        else:
+            logger.debug(f"[WORKFLOW] No workflow guide found at {guide_path}")
+            return ""
+    
+    @classmethod
+    def _log_workflow_execution(
+        cls,
+        workflow_name: str,
+        persona_name: str,
+        query: str,
+        output_path: Path,
+        score: float,
+        reasoning_iterations: int,
+        validation_iterations: int,
+        execution_time_ms: int,
+    ) -> None:
+        """Log workflow execution to logs/workflow_history.jsonl"""
+        try:
+            import json
+            from datetime import datetime
+            
+            # Get project root (where logs/ should be)
+            project_root = Path(__file__).parent.parent.parent
+            log_file = project_root / "logs" / "workflow_history.jsonl"
+            
+            # Ensure logs directory exists
+            log_file.parent.mkdir(parents=True, exist_ok=True)
+            
+            # Create log entry
+            log_entry = {
+                "timestamp": datetime.now().isoformat(),
+                "workflow": workflow_name,
+                "persona": persona_name,
+                "query": query,
+                "output_path": str(output_path),
+                "score": score,
+                "reasoning_iterations": reasoning_iterations,
+                "validation_iterations": validation_iterations,
+                "execution_time_ms": execution_time_ms,
+            }
+            
+            # Append to log file (JSONL format - one JSON object per line)
+            with open(log_file, 'a') as f:
+                f.write(json.dumps(log_entry) + '\n')
+            
+            logger.info(f"[WORKFLOW] Logged execution to {log_file}")
+            
+        except Exception as e:
+            logger.warning(f"[WORKFLOW] Failed to log execution: {e}")
     
     @classmethod
     def _ensure_defaults_registered(cls) -> None:

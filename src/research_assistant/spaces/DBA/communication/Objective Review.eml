@@ -1,0 +1,254 @@
+Delivered-To: ephddba25prithvirajp@iimsambalpur.ac.in
+Received: by 2002:a05:622a:529a:b0:503:3b2b:830e with SMTP id dr26csp1073310qtb;
+        Sun, 1 Feb 2026 00:10:20 -0800 (PST)
+X-Received: by 2002:a05:7022:4191:b0:11a:2ec8:de1c with SMTP id a92af1059eb24-125c0ffbec8mr3677865c88.36.1769933420086;
+        Sun, 01 Feb 2026 00:10:20 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769933420; cv=none;
+        d=google.com; s=arc-20240605;
+        b=PyHGfdH8ndLXzakxiSl4RWItplfBUEcO05TqQ3XVUpJjsqlhD4n1LZW73ame0IZ19E
+         0qnK1SdKtyFb0/KavmbTA9cyII+t8P22GdffwBYiFPu0D5U10f9w4P0MXSwcfYI5FKwB
+         dQS+0Z857T2wuQ9wfyeb4SFPFX0Qo0A/POfcKI8tcUIvW5Nvd0JKlmrf9VE2hB+WskiN
+         og3DReIZG1nFQ9jVsS9fZRtbay+/IbHE+oKvvK1kX6a2mjEp/uJ2BApfdodhrJVqIWY2
+         EhrY/7VEnlb9BlWlP1q3l02aQgynmzCQhq96Pww/Ck06JrxgMMG2Rv+qmaFQZ3TPZwLF
+         Kbcg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=to:in-reply-to:references:message-id:date:subject:mime-version:from
+         :content-transfer-encoding:feedback-id;
+        bh=Qu79z8BF92Gjms1mQELJFfuXzfxMXKXyMs/R5jIq6R8=;
+        fh=wkoy4xCjQcOGYwQpENw3YMEVOKC5ztkH/8iOWFvTyW8=;
+        b=ULLgY4qoM/vdFIzo9LMEu3SLzhrsoaXhKOzbrglsbHeMEzJSogsQ7xUwdwrGVe8p5X
+         pxeWhLlZIgLxQEKf+pgU2jO2qs2DyVFuqilUyduwZMKlKKxkq6bWvGEaBy9Dq/1urQ6d
+         uSBPX5jTDeEX3h+ES5sP6OoSC6lJc+RHGTtwd6w0XVrkRnoha0ar+UTgF4GfKIcRXe/m
+         iHYynUd3AD3TYAwwBaacxtLypKvykIImZLnThUTtD9AYY87W59oPyuHGIoSBDZmCKHVZ
+         xGJA4mnB4P1Nce5Dl1RF1Dx9oM6OTntWRcDpWYWaDlosIDJvdXaHWnjPPiyOhCC6NwZ2
+         ECag==;
+        dara=google.com
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of cardoso@consortium.international designates 188.121.53.58 as permitted sender) smtp.mailfrom=cardoso@consortium.international
+Return-Path: <cardoso@consortium.international>
+Received: from sxb1plsmtpa01-06.prod.sxb1.secureserver.net (sxb1plsmtpa01-06.prod.sxb1.secureserver.net. [188.121.53.58])
+        by mx.google.com with ESMTPS id a92af1059eb24-124a9d6e9absi24794199c88.23.2026.02.01.00.10.19
+        for <ephddba25prithvirajp@iimsambalpur.ac.in>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 01 Feb 2026 00:10:19 -0800 (PST)
+Received-SPF: pass (google.com: domain of cardoso@consortium.international designates 188.121.53.58 as permitted sender) client-ip=188.121.53.58;
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of cardoso@consortium.international designates 188.121.53.58 as permitted sender) smtp.mailfrom=cardoso@consortium.international
+Received: from smtpclient.apple ([109.48.32.219])
+	by :SMTPAUTH: with ESMTPSA
+	id mSWzvhxFDfLGDmSX2v2dJe; Sun, 01 Feb 2026 01:10:09 -0700
+X-CMAE-Analysis: v=2.4 cv=SJ/okuvH c=1 sm=1 tr=0 ts=697f0a62
+ a=pFlk15ug2bvEdjGSKglkdg==:117 a=pFlk15ug2bvEdjGSKglkdg==:17
+ a=MKtGQD3n3ToA:10 a=1oJP67jkp3AA:10 a=xuntqawb5D_WrHiZ-E0A:9
+ a=QEXdDO2ut3YA:10 a=gL2GDyEzU2-Fb7_eW58A:9 a=bC6bq2D2MNL0L4X8:21
+ a=_W_S_7VecoQA:10 a=9XG8DFK3t_EM8VS0DuUI:22 a=NWVoK91CQySWRX1oVYDe:22
+Feedback-ID: 0a39dd0893503a4c0ef7f24fb3893d1e:consortium.international:ssnet
+X-SECURESERVER-ACCT: cardoso@consortium.international
+Content-Type: multipart/alternative; boundary=Apple-Mail-9A14E1EE-55B6-4F65-ADD1-198F53D818AB
+Content-Transfer-Encoding: 7bit
+From: Cardoso Consortium International <cardoso@consortium.international>
+Mime-Version: 1.0 (1.0)
+Subject: Re: Objective Review
+Date: Sun, 1 Feb 2026 08:09:54 +0000
+Message-Id: <CB3F4F7B-24A3-4E5D-AB28-8437E9C322E4@consortium.international>
+References: <CACqgw3Y8iXZPuxwoy93TMXuTLuv2FA7cJ5oBLne+9oVbw9415A@mail.gmail.com>
+In-Reply-To: <CACqgw3Y8iXZPuxwoy93TMXuTLuv2FA7cJ5oBLne+9oVbw9415A@mail.gmail.com>
+To: Prithviraj Patil <ephddba25prithvirajp@iimsambalpur.ac.in>
+X-Mailer: iPhone Mail (23C71)
+X-CMAE-Envelope: MS4xfNfQPlJFYRbG0zT1q7afLlIyRfXDAGUmPzveSUChNYNKlF3GsIMy/G7UBeUxisPi7xqOQrwsRbWKv7E8lGZWrkjYLvdK6ffWbFIfADDkGH+98pJDGRcM
+ SMFLMivVZCo+5OfXpd8ZGXOWk7LwFtWYeNHmomOe1JR9O9vj/U2bau2x2DZi1Q7d4qroBQQcdhih+Jbh2tgYr7SZacjOLp6HhU1yqYeznkz5cToeNP0HfwQd
+
+
+--Apple-Mail-9A14E1EE-55B6-4F65-ADD1-198F53D818AB
+Content-Type: text/plain;
+	charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+Hi, for now, we don=E2=80=99t have the full view with literature review, met=
+hods etc. so will focus on what we have.=20
+
+One thing to check is the importance of using precise terminology that accur=
+ately reflects what you intend to demonstrate and that properly safeguards t=
+he scope of your work. In doctoral context, the term =E2=80=9Cimpact=E2=80=9D=
+ is not neutral or lightweight. It carries strong conceptual and methodologi=
+cal implications, particularly in management and social-science research, wh=
+ere it is associated with demonstrable, measurable, and often causal effects=
+.
+Based on my understanding, the following terms represent different levels of=
+ conceptual strength and evidentiary demand:
+	=E2=80=A2	Correlation - Correlation indicates that two variab=
+les vary together. It does not imply directionality or causation.
+	=E2=80=A2	Influence (directional but broad) Influence suggest=
+s that variable X affects variable Y in some way. The direction is implied, b=
+ut the mechanism may remain unspecified, the magnitude may vary, and causali=
+ty may be theoretical rather than empirically proven.
+	=E2=80=A2	Impact (strong, outcome-focused effect)Impact impli=
+es a substantial, measurable, and practically meaningful effect of X on Y. I=
+t is both directional and outcome-oriented, and therefore requires a higher l=
+evel of empirical and methodological rigor.
+Moderation (conditional relationship) -Moderation refers to a situation in w=
+hich a third variable alters the strength or direction of the relationship b=
+etween X and Y. The effect may be weak, conditional, or even absent when cer=
+tain conditions are not met. Conceptually, moderation is closer to associati=
+on than to direct causation and often operates at a multifactor level.
+
+I strongly encourage you to review these terms carefully and, in light of th=
+e previous clarifications, determine which one you are confident you can rig=
+orously support in your research.
+So from a methodological perspective,maybe using =E2=80=9Cmoderation=E2=80=9D=
+ for now  might particularly suitable option if your findings reveal an asso=
+ciation without requiring you to claim direct causality=E2=80=94an assertion=
+ that is often more complex and demanding to substantiate at the doctoral le=
+vel. That said, this remains a suggestion rather than a prescription.
+
+Hope it helps
+
+> On 31 Jan 2026, at 22:15, Prithviraj Patil <ephddba25prithvirajp@iimsambal=
+pur.ac.in> wrote:
+>=20
+> =EF=BB=BF
+> Hello Dr. Cardaso,
+> Good day.
+> Hope all is well.
+> I couldn't attend your class where my peers and yourself were discussing a=
+nd rephrasing objectives for each of their topics. I went through the class r=
+ecording and here's my thesis objective.
+>=20
+> "
+> The objective of this research is to investigate how internal IT governanc=
+e mechanisms - specifically Digital Resource Orchestration and software lice=
+nse rationalization influence capital efficiency and firm performance in ent=
+erprises.
+> "
+>=20
+> Please review and let me know what you think.
+>=20
+> Thanks,
+> Prithviraj Patil
+
+--Apple-Mail-9A14E1EE-55B6-4F65-ADD1-198F53D818AB
+Content-Type: text/html;
+	charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+<html class=3D"apple-mail-supports-explicit-dark-mode"><head><meta http-equi=
+v=3D"content-type" content=3D"text/html; charset=3Dutf-8"></head><body dir=3D=
+"auto"><div dir=3D"ltr"></div><div dir=3D"ltr">Hi, for now, we don=E2=80=99t=
+ have the full view with literature review, methods etc. so will focus on wh=
+at we have.&nbsp;</div><div dir=3D"ltr"><br></div><div dir=3D"ltr">One thing=
+ to check is the&nbsp;<span style=3D"-webkit-text-size-adjust: auto;">import=
+ance of using precise terminology that accurately reflects what you intend t=
+o demonstrate and that properly safeguards the scope of your work. In&nbsp;<=
+/span><span style=3D"-webkit-text-size-adjust: auto;">doctoral context, the t=
+erm =E2=80=9Cimpact=E2=80=9D is not neutral or lightweight. It carries stron=
+g conceptual and methodological implications, particularly in management and=
+ social-science research, where it is associated with demonstrable, measurab=
+le, and often causal effects.</span></div><div dir=3D"ltr"><p class=3D"p2" s=
+tyle=3D"margin: 0px; font-width: normal; line-height: normal; font-size-adju=
+st: none; font-kerning: auto; font-variant-alternates: normal; font-variant-=
+ligatures: normal; font-variant-numeric: normal; font-variant-east-asian: no=
+rmal; font-variant-position: normal; font-feature-settings: normal; font-opt=
+ical-sizing: auto; font-variation-settings: normal; min-height: 29px; -webki=
+t-text-size-adjust: auto;">Based on my understanding, the following terms re=
+present different levels of conceptual strength and evidentiary demand:</p><=
+ol class=3D"ol1" style=3D"-webkit-text-size-adjust: auto;"><ol class=3D"ol1"=
+><li class=3D"li1" style=3D"margin: 0px; font-width: normal; line-height: no=
+rmal; font-size-adjust: none; font-kerning: auto; font-variant-alternates: n=
+ormal; font-variant-ligatures: normal; font-variant-numeric: normal; font-va=
+riant-east-asian: normal; font-variant-position: normal; font-feature-settin=
+gs: normal; font-optical-sizing: auto; font-variation-settings: normal;"><sp=
+an class=3D"s1"><span class=3D"Apple-tab-span" style=3D"white-space: pre;">=
+	</span>=E2=80=A2<span class=3D"Apple-tab-span" style=3D"white-space: pre;">=
+	</span>Correlation -&nbsp;</span>Correlation indicates that two var=
+iables vary together. It does not imply directionality or causation.</li><li=
+ class=3D"li1" style=3D"margin: 0px; font-width: normal; line-height: normal=
+; font-size-adjust: none; font-kerning: auto; font-variant-alternates: norma=
+l; font-variant-ligatures: normal; font-variant-numeric: normal; font-varian=
+t-east-asian: normal; font-variant-position: normal; font-feature-settings: n=
+ormal; font-optical-sizing: auto; font-variation-settings: normal;"><span cl=
+ass=3D"s1"><span class=3D"Apple-tab-span" style=3D"white-space: pre;">	</s=
+pan>=E2=80=A2<span class=3D"Apple-tab-span" style=3D"white-space: pre;">=
+	</span>Influence (directional but broad)&nbsp;</span>Influence suggests tha=
+t variable X affects variable Y in some way. The direction is implied, but t=
+he mechanism may remain unspecified, the magnitude may vary, and causality m=
+ay be theoretical rather than empirically proven.</li><li class=3D"li1" styl=
+e=3D"margin: 0px; font-width: normal; line-height: normal; font-size-adjust:=
+ none; font-kerning: auto; font-variant-alternates: normal; font-variant-lig=
+atures: normal; font-variant-numeric: normal; font-variant-east-asian: norma=
+l; font-variant-position: normal; font-feature-settings: normal; font-optica=
+l-sizing: auto; font-variation-settings: normal;"><span class=3D"s1"><span c=
+lass=3D"Apple-tab-span" style=3D"white-space: pre;">	</span>=E2=80=A2<sp=
+an class=3D"Apple-tab-span" style=3D"white-space: pre;">	</span>Impa=
+ct (strong, outcome-focused effect)</span>Impact implies a substantial, meas=
+urable, and practically meaningful effect of X on Y. It is both directional a=
+nd outcome-oriented, and therefore requires a higher level of empirical and m=
+ethodological rigor.</li><li class=3D"li1" style=3D"margin: 0px; font-width:=
+ normal; line-height: normal; font-size-adjust: none; font-kerning: auto; fo=
+nt-variant-alternates: normal; font-variant-ligatures: normal; font-variant-=
+numeric: normal; font-variant-east-asian: normal; font-variant-position: nor=
+mal; font-feature-settings: normal; font-optical-sizing: auto; font-variatio=
+n-settings: normal;">Moderation (conditional relationship) -Moderation refer=
+s to a situation in which a third variable alters the strength or direction o=
+f the relationship between X and Y. The effect may be weak, conditional, or e=
+ven absent when certain conditions are not met. Conceptually, moderation is c=
+loser to association than to direct causation and often operates at a multif=
+actor level.</li></ol></ol><p class=3D"p3" style=3D"margin: 0px 0px 0px 36px=
+; font-width: normal; line-height: normal; font-size-adjust: none; font-kern=
+ing: auto; font-variant-alternates: normal; font-variant-ligatures: normal; f=
+ont-variant-numeric: normal; font-variant-east-asian: normal; font-variant-p=
+osition: normal; font-feature-settings: normal; font-optical-sizing: auto; f=
+ont-variation-settings: normal; min-height: 29px; -webkit-text-size-adjust: a=
+uto;"><span class=3D"s1"></span><br></p><ol class=3D"ol1" style=3D"-webkit-t=
+ext-size-adjust: auto;"><ol class=3D"ol1"><li class=3D"li1" style=3D"margin:=
+ 0px; font-width: normal; line-height: normal; font-size-adjust: none; font-=
+kerning: auto; font-variant-alternates: normal; font-variant-ligatures: norm=
+al; font-variant-numeric: normal; font-variant-east-asian: normal; font-vari=
+ant-position: normal; font-feature-settings: normal; font-optical-sizing: au=
+to; font-variation-settings: normal;"><span class=3D"s1">I strongly encourag=
+e you to review these terms carefully and, in light of the previous clarific=
+ations, determine which one you are confident you can rigorously support in y=
+our research.</span></li></ol></ol><p class=3D"p3" style=3D"margin: 0px 0px 0=
+px 36px; font-width: normal; line-height: normal; font-size-adjust: none; fo=
+nt-kerning: auto; font-variant-alternates: normal; font-variant-ligatures: n=
+ormal; font-variant-numeric: normal; font-variant-east-asian: normal; font-v=
+ariant-position: normal; font-feature-settings: normal; font-optical-sizing:=
+ auto; font-variation-settings: normal; min-height: 29px; -webkit-text-size-=
+adjust: auto;"><span class=3D"s1"></span></p><div><p class=3D"p1" style=3D"m=
+argin: 0px; font-width: normal; line-height: normal; font-size-adjust: none;=
+ font-kerning: auto; font-variant-alternates: normal; font-variant-ligatures=
+: normal; font-variant-numeric: normal; font-variant-east-asian: normal; fon=
+t-variant-position: normal; font-feature-settings: normal; font-optical-sizi=
+ng: auto; font-variation-settings: normal; -webkit-text-size-adjust: auto;">=
+<span class=3D"s1">So from a methodological perspective,maybe using =E2=80=9C=
+moderation=E2=80=9D for now &nbsp;might particularly suitable option if your=
+ findings reveal an association without requiring you to claim direct causal=
+ity=E2=80=94an assertion that is often more complex and demanding to substan=
+tiate at the doctoral level. That said, this remains a suggestion rather tha=
+n a prescription.</span></p><p class=3D"p1" style=3D"margin: 0px; font-width=
+: normal; line-height: normal; font-size-adjust: none; font-kerning: auto; f=
+ont-variant-alternates: normal; font-variant-ligatures: normal; font-variant=
+-numeric: normal; font-variant-east-asian: normal; font-variant-position: no=
+rmal; font-feature-settings: normal; font-optical-sizing: auto; font-variati=
+on-settings: normal; -webkit-text-size-adjust: auto;"><span class=3D"s1"><br=
+></span></p><p class=3D"p1" style=3D"margin: 0px; font-width: normal; line-h=
+eight: normal; font-size-adjust: none; font-kerning: auto; font-variant-alte=
+rnates: normal; font-variant-ligatures: normal; font-variant-numeric: normal=
+; font-variant-east-asian: normal; font-variant-position: normal; font-featu=
+re-settings: normal; font-optical-sizing: auto; font-variation-settings: nor=
+mal; -webkit-text-size-adjust: auto;"><span class=3D"s1">Hope it helps</span=
+></p></div></div><div dir=3D"ltr"><br><blockquote type=3D"cite">On 31 Jan 20=
+26, at 22:15, Prithviraj Patil &lt;ephddba25prithvirajp@iimsambalpur.ac.in&g=
+t; wrote:<br><br></blockquote></div><blockquote type=3D"cite"><div dir=3D"lt=
+r">=EF=BB=BF<div dir=3D"ltr">Hello Dr. Cardaso,<div>Good day.</div><div>Hope=
+ all is well.</div><div>I couldn't attend your class where my peers and your=
+self were discussing and rephrasing objectives for each of their topics. I w=
+ent through the class recording and here's my thesis objective.</div><div><b=
+r></div><div>"</div><div><i>The objective of this research is to investigate=
+ how internal IT governance mechanisms - specifically Digital Resource Orche=
+stration and software license rationalization influence capital efficiency a=
+nd firm performance in enterprises.</i></div><div>"</div><div><br></div><div=
+>Please review and let me know what you think.</div><div><br></div><div>Than=
+ks,</div><div>Prithviraj Patil</div></div>
+</div></blockquote></body></html>=
+
+--Apple-Mail-9A14E1EE-55B6-4F65-ADD1-198F53D818AB--

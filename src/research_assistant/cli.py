@@ -32,7 +32,7 @@ def cli(ctx: click.Context, verbose: bool):
 def explain(ctx: click.Context, topic: str, persona: str):
     """Explain a concept using persona's teaching style.
     
-    Output: personas/{PERSONA}/output/explain_{timestamp}.md
+    Output: spaces/{SPACE}/output/explain_{timestamp}.md
     """
     import logging
     
@@ -68,7 +68,7 @@ def explain(ctx: click.Context, topic: str, persona: str):
 def review(ctx: click.Context, submission_path: Path, persona: str, rubric: Optional[str]):
     """Review a submission against persona's standards.
     
-    Output: personas/{PERSONA}/output/review_{timestamp}.md
+    Output: spaces/{SPACE}/output/review_{timestamp}.md
     """
     from research_assistant.workflows import WorkflowInvoker
     
@@ -96,7 +96,7 @@ def review(ctx: click.Context, submission_path: Path, persona: str, rubric: Opti
 def guide(ctx: click.Context, assignment: str, persona: str):
     """Get assignment guidance (no direct answers).
     
-    Output: personas/{PERSONA}/output/guide_{timestamp}.md
+    Output: spaces/{SPACE}/output/guide_{timestamp}.md
     """
     from research_assistant.workflows import WorkflowInvoker
     
@@ -166,30 +166,30 @@ def persona():
 
 @persona.command("list")
 def persona_list():
-    """List available personas."""
-    from research_assistant.personas import PersonaLoader
+    """List available spaces."""
+    from research_assistant.spaces import PersonaLoader
     
-    personas_dir = Path(__file__).parent / "personas"
-    loader = PersonaLoader(personas_dir)
+    spaces_dir = Path(__file__).parent / "spaces"
+    loader = PersonaLoader(spaces_dir)
     
-    personas = loader.list_available()
-    if personas:
-        click.echo("\nAvailable personas:")
-        for p in personas:
+    spaces = loader.list_available()
+    if spaces:
+        click.echo("\nAvailable spaces:")
+        for p in spaces:
             click.echo(f"  • {p}")
         click.echo()
     else:
-        click.echo("No personas found")
+        click.echo("No spaces found")
 
 
 @persona.command("info")
 @click.argument("name")
 def persona_info(name: str):
     """Show persona details."""
-    from research_assistant.personas import PersonaLoader
+    from research_assistant.spaces import PersonaLoader
     
-    personas_dir = Path(__file__).parent / "personas"
-    loader = PersonaLoader(personas_dir)
+    spaces_dir = Path(__file__).parent / "spaces"
+    loader = PersonaLoader(spaces_dir)
     
     try:
         p = loader.load(name)

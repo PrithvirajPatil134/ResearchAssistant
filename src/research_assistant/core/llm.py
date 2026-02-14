@@ -75,16 +75,30 @@ class LLMClient:
         "perplexity": "sonar-pro",  # Best Perplexity model with web search
         "anthropic": "claude-3-haiku-20240307",
         "openai": "gpt-4o-mini",
-        "kiro": "claude-sonnet-4",
+        "kiro": "claude-sonnet-4.5",  # Claude Sonnet 4.5 - 1M token context window
     }
     
-    # Perplexity supported models (see docs.perplexity.ai/getting-started/models)
-    PERPLEXITY_MODELS = [
-        "sonar-pro",  # Most capable, 200k context, web search
-        "sonar",  # Lightweight, 128k context, web search
-        "sonar-reasoning-pro",  # Extended thinking, web search
-        "sonar-reasoning",  # Reasoning with web search
-    ]
+    # Available models by provider
+    # Set LLM_MODEL env var to select a specific model
+    AVAILABLE_MODELS = {
+        "perplexity": [
+            # Perplexity Sonar models (with web search)
+            "sonar-pro",           # Most capable, 200k context
+            "sonar",               # Lightweight, 128k context
+            "sonar-reasoning-pro", # Extended thinking
+            "sonar-reasoning",     # Reasoning
+        ],
+        "kiro": [
+            # Run `kiro-cli chat --help` to see available models
+            "Auto",                # Auto-select best model
+            "claude-sonnet-4.5",   # Claude Sonnet 4.5
+            "claude-sonnet-4",     # Claude Sonnet 4 (default)
+            "claude-haiku-4.5",    # Claude Haiku 4.5 (fast)
+            "claude-opus-4.5",     # Claude Opus 4.5 (most capable)
+            "claude-sonnet-4.5-1m",# Claude Sonnet 4.5 with 1M context
+            "qwen3-coder-480b",    # Qwen 3 Coder 480B
+        ],
+    }
     
     def __init__(
         self,
@@ -98,12 +112,19 @@ class LLMClient:
         self.timeout_seconds = timeout_seconds
         
         self._provider = self._detect_provider()
-        self.model = model or self.DEFAULT_MODELS.get(self._provider, "gpt-4o-mini")
+        
+        # Model selection priority: constructor arg > LLM_MODEL env > default
+        self.model = (
+            model
+            or os.getenv("LLM_MODEL")
+            or self.DEFAULT_MODELS.get(self._provider, "gpt-4o-mini")
+        )
         
         self._anthropic_client = None
         self._openai_client = None
         
         logger.info(f"[LLM] Initialized with provider: {self._provider}, model: {self.model}")
+        logger.debug(f"[LLM] Available models: {self.AVAILABLE_MODELS.get(self._provider, [])}")
     
     def _detect_provider(self) -> str:
         """Detect available LLM provider."""

@@ -1,0 +1,55 @@
+Starting DBA workflow test...
+Topic: digital resource orchestration and capital efficiency in SaaS management
+------------------------------------------------------------
+
+============================================================
+Success: True
+Score: 9.1/10
+Reasoning Iterations: 1
+Validation Iterations: 1
+Execution Time: 121417ms
+
+Output saved to: /Users/propatil/workplace/ResearchAssistant/src/research_assistant/personas/DBA/output/explain_20260131_135010.md
+
+First 2000 chars of output:
+------------------------------------------------------------
+# digital resource orchestration and capital efficiency in SaaS management
+
+**Explained by: Prof. Cardasso**
+*Bordeaux Business School | Expertise: Doctoral Research Supervision, Thesis Proposal Development, Research Methodology*
+
+---
+
+> # Digital Resource Orchestration and Capital Efficiency in SaaS Management
+
+## A Doctoral-Level Conceptual Explanation
+
+Prof. Cardasso | Bordeaux Business School | DBA Research Guidance
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+## 1. Conceptual Definition
+
+Digital Resource Orchestration (DRO) refers to the systematic governance, allocation, and optimization of digital assets—particularly SaaS subscriptions and cloud-based tools—to maximize capital efficiency within technology enterprises.
+
+From the course materials, DRO is positioned as an internal governance mechanism that addresses a specific problem: modern tech enterprises systematically waste 20–50% of their SaaS budgets through "zombie seats"—unused licenses caused by employee turnover and poor governance. This capital destruction is largely invisible to boards and investors yet represents a measurable drag on firm efficiency and returns.
+
+Capital efficiency in this context measures how effectively a firm converts its digital resource investments into productive output, typically assessed through metrics like Return on Invested Capital (ROIC).
+
+The thesis reference frames DRO not merely as cost-cutting, but as operational discipline—a leading indicator of managerial competence that investors, CFOs, and boards can use to evaluate firm health.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+## 2. Theoretical Foundation
+
+The course materials identify several theoretical lenses for examining DRO:
+
+### Agency Theory
+Explores why managers over-provision digital resources. Two competing explanations emerge:
+- **Risk aversion**: "Better to have it and not need it"
+- **Governance gaps**: Lack of oversight mechanisms enabling waste
+
+### Strategic Slack Theory
+A critical distinction from t

@@ -1,0 +1,271 @@
+Delivered-To: ephddba25prithvirajp@iimsambalpur.ac.in
+Received: by 2002:a05:622a:2a1a:b0:503:3b2b:830e with SMTP id hc26csp821277qtb;
+        Sat, 14 Feb 2026 06:01:49 -0800 (PST)
+X-Received: by 2002:a05:690c:6c0d:b0:797:a98b:817b with SMTP id 00721157ae682-797a98b85f7mr29150797b3.14.1771077708700;
+        Sat, 14 Feb 2026 06:01:48 -0800 (PST)
+ARC-Seal: i=2; a=rsa-sha256; t=1771077708; cv=pass;
+        d=google.com; s=arc-20240605;
+        b=g9Aaw5voxL35LxxnAOxBm5FMLQHo4BIC9PFjsYwzb+pn60PU4K/c5hyrcH996ndRda
+         p256amPD+ewxnUCcwYQrJ553KN2eXIf1B+bzTM1BM/9qqcKj4eouE/UNyM9WDP3TGQAV
+         NMK2G+W1ETmuwVbOR7aIu8hQpQX8nQBMblXvRFk2pl86iGo7C6nUHJ2uVZiuPgemX7ju
+         lEHPlAOvxLYaQBiULaAgxFYKhPxd+f5L19YhwvPYXB/KlSlp5lV9HFbQEUMRYqaHSm/c
+         YdmAGyOVedQERKajkQpQptIQOQEl7un1AGOqwx5JlQRLU4nWFDaT3WofxurPX3+RFqUj
+         6JEw==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :dkim-signature;
+        bh=tbFYrwgm5UEshAli3dtblvvdtNkGtSEcv3Nrx/gZJS0=;
+        fh=wkoy4xCjQcOGYwQpENw3YMEVOKC5ztkH/8iOWFvTyW8=;
+        b=hKFiOhYLY9ImMH89D5GTQPnUxxa2RAeVek+qea195Asvdl/IMWMSsy0Q36AjyTEAHe
+         yuAr5CemazX8lDsXkbJ9qyA+u7OTJJVi9EbWO1niXEdvQ+Umyu7rwngQfW3ECvPqiUIH
+         QZbw6pGc5s8/VoiVXXdbPG2+IgboXWl9q2EF+/s6rPLiNkJrkA+H8jIIbeD9yqzYR3wV
+         kfd+VzB5Tviau+eOYS0OA1KiOn32phx/HbKy978PptNI3iDfO7kqT+OOUMydjXit1Fn3
+         xIlGVL9Ct3TPWZvGzLa8FSYIyZg1ihseVKxq/OAhPv4MrhZ7vRo3wu/f6IUHQOGqUb+w
+         Ld5w==;
+        dara=google.com
+ARC-Authentication-Results: i=2; mx.google.com;
+       dkim=pass header.i=@iimsambalpur-ac-in.20230601.gappssmtp.com header.s=20230601 header.b=tbeS492Q;
+       arc=pass (i=1);
+       spf=pass (google.com: domain of kakolis@iimsambalpur.ac.in designates 209.85.220.41 as permitted sender) smtp.mailfrom=kakolis@iimsambalpur.ac.in;
+       dara=neutral header.i=@iimsambalpur.ac.in
+Return-Path: <kakolis@iimsambalpur.ac.in>
+Received: from mail-sor-f41.google.com (mail-sor-f41.google.com. [209.85.220.41])
+        by mx.google.com with SMTPS id 00721157ae682-7979d045f74sor27596447b3.0.2026.02.14.06.01.48
+        for <ephddba25prithvirajp@iimsambalpur.ac.in>
+        (Google Transport Security);
+        Sat, 14 Feb 2026 06:01:48 -0800 (PST)
+Received-SPF: pass (google.com: domain of kakolis@iimsambalpur.ac.in designates 209.85.220.41 as permitted sender) client-ip=209.85.220.41;
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@iimsambalpur-ac-in.20230601.gappssmtp.com header.s=20230601 header.b=tbeS492Q;
+       arc=pass (i=1);
+       spf=pass (google.com: domain of kakolis@iimsambalpur.ac.in designates 209.85.220.41 as permitted sender) smtp.mailfrom=kakolis@iimsambalpur.ac.in;
+       dara=neutral header.i=@iimsambalpur.ac.in
+ARC-Seal: i=1; a=rsa-sha256; t=1771077708; cv=none;
+        d=google.com; s=arc-20240605;
+        b=EhI6tL5N/hvSYqBjaDlP/otyvsHxXBZExre+CsO3XUIVKpBvhipD1mp4SyvQ8wrCKd
+         rAhmVvtsfhqeXUe0YRtRNT6xujSLAfJn6etkTVn53P3LH7Z9ICiA8vOYDKF7cKUUIqdI
+         ZTx2Zj4F2gbCtCrNSt9rCphKwyL0UUOlR9akLJ6M/M8YXRE0atg9jtmYUpcR0Ddk92In
+         NGApCGkAHH49LpIdsPsLhrvr74+9C2J0Nzyu7exvEiJ+U5gmhrvuvyeShAdOa6VUBQnm
+         jvQA7xEJQp1aUaTh6E2j4eAM76PWHSOzRh5VenJ3eUH/n6RxhfE9C9R/cQkMm6RJKPSM
+         cieg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :dkim-signature;
+        bh=tbFYrwgm5UEshAli3dtblvvdtNkGtSEcv3Nrx/gZJS0=;
+        fh=wkoy4xCjQcOGYwQpENw3YMEVOKC5ztkH/8iOWFvTyW8=;
+        b=ZVi+/WG8PepGm48sIMGEO3vKHBTOL4WepCK+a/S8JxWo6NgSLdXiWHa6LZ+mlIGzrt
+         Iw1XIXU3gVJnfR6617nTUtTQpf3YaKASw12Pyh+D7AAzNtxy0dLe2xOCYNC0Q5zyl8A8
+         P6dFe2KOk/WM0EEi0CBem/1MZQi9ksQB2LCFVRiXW1H7nATdXK0276GYZnRPXOTZZ+w7
+         fmZoCTe6qmi3lVeO21Gqe3n3+3Svl91+rIXPpq0aZ1zBUjtEeEVtkyTY71LzEMr63AQs
+         CjWEM+EWKGIJSv2qrCGhGOyCeDbynyFGV50bIzjiPHwKFRs6FQ4zkvhuZ8rGq+99X7n0
+         M/Vg==;
+        darn=iimsambalpur.ac.in
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=iimsambalpur-ac-in.20230601.gappssmtp.com; s=20230601; t=1771077708; x=1771682508; darn=iimsambalpur.ac.in;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tbFYrwgm5UEshAli3dtblvvdtNkGtSEcv3Nrx/gZJS0=;
+        b=tbeS492QQlqL0uAtFUfQH7ivr3G5ksrU+GNqgrGHjPCgN6NgDLRRkj7hY2kW0O2JZw
+         mVx1supDnmvoHBLOHx4VjPDeajTduj/HWyptkcpCEhTQtqXoQNVpv7Pu7k3rdAJgzojS
+         kLoeqJjrcnjaT4SuI3kH0DD9bDWv8s65PBmiXTHIeR09EJ29lrcm0+ZjEhXAoXk7kp7S
+         A5g1YayYPqy7+oU05dkwS66Itw8OVRHruLVnIkB7fWGAfJVfSxp8s0L3v+WBhvHtu+h1
+         E/IAm+D4tTxyF+Dy+UC2KE7s0aUS9i9AfiRyHBqJde2Q6DYmrxcaYfzgPgptMv5x4YEB
+         /4sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771077708; x=1771682508;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tbFYrwgm5UEshAli3dtblvvdtNkGtSEcv3Nrx/gZJS0=;
+        b=PACZiDkWXQY+kOUbBnxPEotcp6YhdioZ1zpyEX6jqhXd3DaHUsv6aA1tI6qIyRBTB5
+         W1sR81AK1W/wRMBkJvJlXnCLC7fK5uXEIG0ClltnbQgcpsf8EffYVAhZCw+AqB+HI/bJ
+         ORTBTJW/xwZjWGLVWNWjAtg4aKahx02NHtbf90CcdXwHXqi5Vkx2wwQsfeDl6gn4GCV0
+         5qoReBZs9A11F+pxsDYGGNRu/wuRcROHrbf59oOXhRHNTxeZpGXhNRVNq9VcyrU0RgnC
+         wINQg60gqEAobUHy19FxZHKL3ED+U/MsJlRvR9Sfa11pA1hhNrj98rfPrIkwtPIN7JVn
+         LNAw==
+X-Gm-Message-State: AOJu0Yyqm+3tJjDtDXWXAydDQgSIUujfo/+ftzF+QhUVuSiSmAmilKsR
+	V0CBcbUNv+p6dHN657hZ7Udrb+nhlKwcCZ0Z1O5NIHHCRwPqhcjEOzI/EXtkOXVSTPeeju6h95Z
+	tSDOaJaHM9hTFpl1H4DqcJ33VOP+RowmUVqkJpNsrMIqWa9zHkUyrYDhRKw==
+X-Gm-Gg: AZuq6aJPUwETULhJtUH2QayQ1Zj6oPCgSvzMbaRblKcn8eHW55d9s6b7N5T5UjZWihk
+	a+dRmEagIKuTp2jN752azXcox6PeuBp6Z9GPdO2tL55VbBbNEMZJlP4HOEtHlVAi80+RhibrJnH
+	QPS+taawC7CvYg1xnUUz5FPvFJc6B2ApnIh1RpGXMbIBBmGl54xzqLfKKpY3SiAZOKucIfXb6vK
+	6j4/lEo8+6g774YQ2RpJexf5kThktqbho/yO5JkQiiQLdadCwnaCr4/muCVCYhh9nOT53bYkcMs
+	zFd8fGjC3w==
+X-Received: by 2002:a05:690c:f95:b0:797:a6a9:568 with SMTP id
+ 00721157ae682-797a6a90795mr44126887b3.33.1771077707801; Sat, 14 Feb 2026
+ 06:01:47 -0800 (PST)
+MIME-Version: 1.0
+References: <CACqgw3YTC_14t_r7GezApx=CEjf7=eOE7VeOVyoYdc9eEoWobw@mail.gmail.com>
+In-Reply-To: <CACqgw3YTC_14t_r7GezApx=CEjf7=eOE7VeOVyoYdc9eEoWobw@mail.gmail.com>
+From: "Dr. Kakoli Sen" <kakolis@iimsambalpur.ac.in>
+Date: Sat, 14 Feb 2026 19:31:15 +0530
+X-Gm-Features: AZwV_Qi3m11MXg0XRQM_lNtNR4OGnHJyoWDk3tOtLa4vv0Hadov-K7uxfeO1edU
+Message-ID: <CAANRYCoPHNKs7ywh=qaFHS1Ru+4Y3JX_Ef-xDH=YYmSRFJ1ENA@mail.gmail.com>
+Subject: Re: Updated Case Idea (Textile MSME) - v1
+To: Prithviraj Patil <ephddba25prithvirajp@iimsambalpur.ac.in>
+Content-Type: multipart/alternative; boundary="000000000000a4b944064ac9294c"
+
+--000000000000a4b944064ac9294c
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Dear Prithviraj,
+You can start writing the case with the given idea but pls also list out
+3-4 questions and the management concepts / models that can be
+taught through those questions from the case. In the Teaching Note, you
+will also need to write the answers in detail.
+Thanks
+Kakoli
+
+On Sun, Feb 8, 2026 at 7:37=E2=80=AFAM Prithviraj Patil <
+ephddba25prithvirajp@iimsambalpur.ac.in> wrote:
+
+> Hello Prof. Kakoli,
+>
+> Thank you for your guidance on exploring small-medium companies and the
+> IJCSM secondary data option. I appreciate your pointing out both
+> pathways=E2=80=94they've helped me develop a more feasible case idea.
+>
+> Following your advice, I've developed an alternative case focused on a
+> small-scale textile MSME in Ichalkaranji, Maharashtra. I believe this
+> addresses the consent and data challenges we discussed while offering
+> strong teachability.
+>
+> Attached are the details of the case.
+>
+> I've attached the detailed case idea template for your review. Please let
+> me know if this direction aligns with your expectations or if any
+> modifications are needed. I'm also happy to discuss the IJCSM secondary
+> data option for Tesla if you'd like me to explore both tracks.
+>
+> Thank you for your continued guidance.
+>
+> Regards,
+> Prithviraj Patil
+>
+
+
+--=20
+
+*=E0=A4=A1=E0=A5=89. =E0=A4=95=E0=A4=BE=E0=A4=95=E0=A5=8B=E0=A4=B2=E0=A5=80=
+ =E0=A4=B8=E0=A5=87=E0=A4=A8** /* *Dr. Kakoli Sen*
+
+*=E0=A4=AA=E0=A5=8D=E0=A4=B0=E0=A5=8B=E0=A4=AB=E0=A4=BC=E0=A5=87=E0=A4=B8=
+=E0=A4=B0** / Professor*
+
+*=E0=A4=B8=E0=A4=BE=E0=A4=AE=E0=A4=BE=E0=A4=A8=E0=A5=8D=E0=A4=AF =E0=A4=AA=
+=E0=A5=8D=E0=A4=B0=E0=A4=AC=E0=A4=82=E0=A4=A7=E0=A4=A8 =E0=A4=95=E0=A4=BE =
+=E0=A4=95=E0=A5=8D=E0=A4=B7=E0=A5=87=E0=A4=A4=E0=A5=8D=E0=A4=B0* */ **Area =
+of General Management, Economics &
+Public Policy*
+
+*=E0=A4=AD=E0=A4=BE=E0=A4=B0=E0=A4=A4=E0=A5=80=E0=A4=AF* *=E0=A4=AA=E0=A5=
+=8D=E0=A4=B0=E0=A4=AC=E0=A4=82=E0=A4=A7=E0=A4=A8* *=E0=A4=B8=E0=A4=82=E0=A4=
+=B8=E0=A5=8D=E0=A4=A5=E0=A4=BE=E0=A4=A8* *=E0=A4=B8=E0=A4=82=E0=A4=AC=E0=A4=
+=B2=E0=A4=AA=E0=A5=81=E0=A4=B0** /** Indian Institute of Management
+Sambalpur*
+
+*=E0=A4=B8=E0=A4=82=E0=A4=AC=E0=A4=B2=E0=A4=AA=E0=A5=81=E0=A4=B0**, **=E0=
+=A4=93=E0=A4=A1=E0=A4=BF=E0=A4=B6=E0=A4=BE** - **768025 / Sambalpur, Odisha=
+ - 768025*
+
+*Mobile : 9971797032*
+
+--000000000000a4b944064ac9294c
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Dear=C2=A0Prithviraj,<div>You can start writing the case w=
+ith the given idea but pls also list out 3-4 questions and the management=
+=C2=A0concepts / models that can be taught=C2=A0through those questions fro=
+m the case. In the Teaching Note, you will also need to write the answers i=
+n detail.=C2=A0</div><div>Thanks</div><div>Kakoli=C2=A0</div></div><br><div=
+ class=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr" class=3D"gmai=
+l_attr">On Sun, Feb 8, 2026 at 7:37=E2=80=AFAM Prithviraj Patil &lt;<a href=
+=3D"mailto:ephddba25prithvirajp@iimsambalpur.ac.in">ephddba25prithvirajp@ii=
+msambalpur.ac.in</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" =
+style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);pa=
+dding-left:1ex"><div dir=3D"ltr"><div>Hello Prof. Kakoli,</div><div><br></d=
+iv>Thank you for your guidance on exploring small-medium companies and the =
+IJCSM secondary data option. I appreciate your pointing out both pathways=
+=E2=80=94they&#39;ve helped me develop a more feasible case idea.<br><br>Fo=
+llowing your advice, I&#39;ve developed an alternative case focused on a sm=
+all-scale textile MSME in Ichalkaranji, Maharashtra. I believe this address=
+es the consent and data challenges we discussed while offering strong teach=
+ability.<br><div><br></div><div>Attached are the details of the case.</div>=
+<div><br></div><div>I&#39;ve attached the detailed case idea template for y=
+our review. Please let me know if this direction aligns with your expectati=
+ons or if any modifications are needed. I&#39;m also happy to discuss the I=
+JCSM secondary data option for Tesla if you&#39;d like me to explore both t=
+racks.<br></div><div><br></div><div>Thank you for your continued guidance.<=
+br></div><div><br></div><div>Regards,</div><div>Prithviraj Patil</div></div=
+>
+</blockquote></div><div><br clear=3D"all"></div><div><br></div><span class=
+=3D"gmail_signature_prefix">-- </span><br><div dir=3D"ltr" class=3D"gmail_s=
+ignature"><div dir=3D"ltr"><div><p class=3D"MsoNormal" style=3D"margin:0in =
+0in 0.0001pt;line-height:normal;font-size:11pt;font-family:Calibri,sans-ser=
+if"><b><span lang=3D"HI" style=3D"font-size:12pt;font-family:&quot;Nirmala =
+UI&quot;,sans-serif;color:blue">=E0=A4=A1=E0=A5=89. =E0=A4=95=E0=A4=BE=E0=
+=A4=95=E0=A5=8B=E0=A4=B2=E0=A5=80 =E0=A4=B8=E0=A5=87=E0=A4=A8</span></b><b>=
+<span lang=3D"HI" style=3D"font-size:12pt;font-family:Mangal,serif;color:bl=
+ue">=C2=A0/</span></b><b><span lang=3D"HI" style=3D"font-size:12pt;font-fam=
+ily:Arial,sans-serif;color:blue">=C2=A0</span></b><b><span style=3D"font-si=
+ze:12pt;font-family:Arial,sans-serif;color:blue">Dr. Kakoli Sen</span></b><=
+span style=3D"font-size:12pt;font-family:Arial,sans-serif"></span></p><p cl=
+ass=3D"MsoNormal" style=3D"margin:0in 0in 0.0001pt;line-height:normal;font-=
+size:11pt;font-family:Calibri,sans-serif"><b><span lang=3D"HI" style=3D"fon=
+t-size:12pt;font-family:&quot;Nirmala UI&quot;,sans-serif;color:blue">=E0=
+=A4=AA=E0=A5=8D=E0=A4=B0=E0=A5=8B=E0=A4=AB=E0=A4=BC=E0=A5=87=E0=A4=B8=E0=A4=
+=B0</span></b><b><span style=3D"font-size:12pt;font-family:Arial,sans-serif=
+;color:blue">=C2=A0/ Professor</span></b><b><span style=3D"font-size:12pt;f=
+ont-family:Arial,sans-serif">=C2=A0</span></b><span style=3D"font-size:12pt=
+;font-family:Arial,sans-serif;color:black"></span></p><p class=3D"MsoNormal=
+" style=3D"margin:0in 0in 0.0001pt;line-height:normal;font-size:11pt;font-f=
+amily:Calibri,sans-serif"><b><span lang=3D"HI" style=3D"font-size:12pt;font=
+-family:Mangal,serif;color:blue">=E0=A4=B8=E0=A4=BE=E0=A4=AE=E0=A4=BE=E0=A4=
+=A8=E0=A5=8D=E0=A4=AF =E0=A4=AA=E0=A5=8D=E0=A4=B0=E0=A4=AC=E0=A4=82=E0=A4=
+=A7=E0=A4=A8 =E0=A4=95=E0=A4=BE =E0=A4=95=E0=A5=8D=E0=A4=B7=E0=A5=87=E0=A4=
+=A4=E0=A5=8D=E0=A4=B0</span></b><b><span lang=3D"HI" style=3D"font-size:12p=
+t;font-family:Arial,sans-serif;color:blue">=C2=A0</span></b><b><span style=
+=3D"font-size:12pt;font-family:Arial,sans-serif;color:blue">/=C2=A0</span><=
+/b><b><span style=3D"font-size:12pt;font-family:Arial,sans-serif;color:blue=
+">Area of General Management, Economics &amp; Public Policy</span></b><span=
+ style=3D"font-size:12pt;font-family:Arial,sans-serif;color:black"></span><=
+/p><p class=3D"MsoNormal" style=3D"margin:0in 0in 0.0001pt;line-height:norm=
+al;font-size:11pt;font-family:Calibri,sans-serif"><b><span lang=3D"HI" styl=
+e=3D"font-size:12pt;font-family:&quot;Nirmala UI&quot;,sans-serif;color:blu=
+e">=E0=A4=AD=E0=A4=BE=E0=A4=B0=E0=A4=A4=E0=A5=80=E0=A4=AF</span></b><b><spa=
+n lang=3D"HI" style=3D"font-size:12pt;font-family:Mangal,serif;color:blue">=
+=C2=A0</span></b><b><span lang=3D"HI" style=3D"font-size:12pt;font-family:&=
+quot;Nirmala UI&quot;,sans-serif;color:blue">=E0=A4=AA=E0=A5=8D=E0=A4=B0=E0=
+=A4=AC=E0=A4=82=E0=A4=A7=E0=A4=A8</span></b><b><span lang=3D"HI" style=3D"f=
+ont-size:12pt;font-family:Mangal,serif;color:blue">=C2=A0</span></b><b><spa=
+n lang=3D"HI" style=3D"font-size:12pt;font-family:&quot;Nirmala UI&quot;,sa=
+ns-serif;color:blue">=E0=A4=B8=E0=A4=82=E0=A4=B8=E0=A5=8D=E0=A4=A5=E0=A4=BE=
+=E0=A4=A8</span></b><b><span lang=3D"HI" style=3D"font-size:12pt;font-famil=
+y:Mangal,serif;color:blue">=C2=A0</span></b><b><span lang=3D"HI" style=3D"f=
+ont-size:12pt;font-family:&quot;Nirmala UI&quot;,sans-serif;color:blue">=E0=
+=A4=B8=E0=A4=82=E0=A4=AC=E0=A4=B2=E0=A4=AA=E0=A5=81=E0=A4=B0</span></b><b><=
+span lang=3D"HI" style=3D"font-size:12pt;font-family:Mangal,serif;color:blu=
+e">=C2=A0/</span></b><b><span style=3D"font-size:12pt;font-family:Arial,san=
+s-serif;color:blue">=C2=A0Indian Institute of Management Sambalpur</span></=
+b><span style=3D"font-size:12pt;font-family:Arial,sans-serif"></span></p><p=
+ class=3D"MsoNormal" style=3D"margin:0in 0in 0.0001pt;line-height:normal;fo=
+nt-size:11pt;font-family:Calibri,sans-serif"><b><span lang=3D"HI" style=3D"=
+font-size:12pt;font-family:&quot;Nirmala UI&quot;,sans-serif;color:blue">=
+=E0=A4=B8=E0=A4=82=E0=A4=AC=E0=A4=B2=E0=A4=AA=E0=A5=81=E0=A4=B0</span></b><=
+b><span style=3D"font-size:12pt;font-family:Arial,sans-serif;color:blue">,=
+=C2=A0</span></b><b><span lang=3D"HI" style=3D"font-size:12pt;font-family:&=
+quot;Nirmala UI&quot;,sans-serif;color:blue">=E0=A4=93=E0=A4=A1=E0=A4=BF=E0=
+=A4=B6=E0=A4=BE</span></b><b><span lang=3D"HI" style=3D"font-size:12pt;font=
+-family:Mangal,serif;color:blue">=C2=A0-=C2=A0</span></b><b><span style=3D"=
+font-size:12pt;font-family:Arial,sans-serif;color:blue">768025 /=C2=A0Samba=
+lpur, Odisha - 768025</span></b><font color=3D"#888888"><span style=3D"font=
+-size:12pt;font-family:Arial,sans-serif"></span></font></p><p class=3D"MsoN=
+ormal" style=3D"margin:0in 0in 0.0001pt;line-height:normal;font-size:11pt;f=
+ont-family:Calibri,sans-serif"><b><span style=3D"font-size:12pt;font-family=
+:Arial,sans-serif;color:blue">Mobile : 9971797032</span></b></p></div><font=
+ color=3D"#888888"><br></font></div></div>
+
+--000000000000a4b944064ac9294c--

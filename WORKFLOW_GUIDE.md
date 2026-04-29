@@ -1,185 +1,418 @@
-# Research Assistant Workflow Selection Guide
+# Research Assistant Workflow Guide
+
+## Architecture (Level 3)
+
+```
+User → CLI → WorkflowInvoker (orchestrator)
+                    │
+         ┌──────────┼──────────────────────┐
+         │          │          │            │
+      Reader    Learner    Contract     Recitation
+     (Python)  (Python+LLM) (LLM)      (checkpoint)
+         │          │          │            │
+         └──────────┼──────────┘            │
+                    ▼                       │
+         IterativeProcessor                 │
+         ┌──────────────────┐               │
+         │ SharedWorkspace  │               │
+         │ (staged results) │               │
+         └────────┬─────────┘               │
+                  ▼                         │
+           kiro-cli (Claude)                │
+           pure text generation             │
+                  │                         │
+                  ▼                         │
+         ┌──────────────────────────────────┘
+         │  Parallel Evaluation (Level 3)
+         │  ┌─────────┬──────────┬───────────┐
+         │  │ Analyst  │ Reviewer │ Evaluator │
+         │  │ (LLM x4) │ (LLM x3) │ (LLM x1) │
+         │  └────┬─────┴────┬─────┴─────┬─────┘
+         │       └──────────┼───────────┘
+         │                  ▼
+         │         UnifiedEvaluation
+         │         (merged verdict)
+         └──────────────────┘
+```
+
+All LLM calls go through `kiro-cli --trust-tools=` (pure text, no agent behavior).
+Python handles orchestration, file reading, caching, contracts, and learning.
+
+## The Mental Model
+
+Every workflow follows the same human researcher pattern:
+
+1. Read one thing at a time, not everything into one prompt
+2. Define "done" before starting (dispatch contract)
+3. Build understanding incrementally, each step on the previous
+4. When tasks are independent, run them in parallel (documents AND evaluators)
+5. Re-anchor before composing (recitation checkpoint prevents drift)
+6. Evaluate from multiple angles simultaneously (analyst + reviewer + evaluator)
+7. Learn from every run (extract lessons, avoid past mistakes)
+8. Audit assumptions periodically (thresholds go stale when models improve)
 
 ## Quick Reference
 
-| Your Question Starts With | Use This Workflow | Example |
-|---------------------------|-------------------|---------|
-| "Explain...", "What is...", "Define..." | `explain` | Explain mediation analysis |
-| "How do I...", "Help me...", "How would we..." | `guide` | How do I write an objective? |
-| "Review my...", "Feedback on..." | `review` | Review my methodology section |
-| "Research plan for...", "Design study..." | `research` | Research plan for SaaS governance |
+| Task | Workflow | Command |
+|------|----------|---------|
+| Explain a concept | `explain` | `ra explain "..." -p PERSONA` |
+| Step-by-step guidance | `guide` | `ra guide "..." -p PERSONA` |
+| Review submitted work | `review` | `ra review path/to/file -p PERSONA` |
+| Research planning | `research` | `ra research "..." -p PERSONA` |
+| Statistical analysis | `quant` | `ra quant "..." -p PERSONA` |
+| Harness audit | `audit` | `ra audit -p PERSONA` |
+| Any workflow by name | `workflow run` | `ra workflow run NAME "..." -p PERSONA` |
 
-## Detailed Workflow Descriptions
+## Spaces
 
-### 1. EXPLAIN Workflow
+Four spaces exist, each representing an academic domain:
 
-**Purpose**: Define and explain academic concepts, theories, and terminology
+| Space | Domain | Knowledge Base |
+|-------|--------|----------------|
+| QNTR | Quantitative Research Methods | Course materials, method readings, datasets |
+| CRO | Corporate Research & Operations | Industry cases, operational frameworks |
+| DBA | Doctoral Business Administration | Dissertation materials, methodology guides |
+| CW | Case Writing | Published cases, teaching notes, style guides |
 
-**When to Use**:
-- You want to understand a concept, theory, or term
-- Need definition with theoretical foundation
-- Want to learn about a methodology or framework
+Each space has its own:
+- **knowledge/** (read-only source material)
+- **output/** (final deliverables)
+- **doc/** (lessons, session memory, workflow guides)
+- **cache/** (reusable stage outputs)
+- **artifacts/** (intermediate files per run)
 
-**Query Patterns**:
-- "Explain [concept]"
-- "What is [term]?"
-- "Define [theory]"
-- "Tell me about [framework]"
+## Level 3 Modules
 
-**Output Includes**:
-1. Conceptual definition (from KB)
-2. Theoretical foundation
-3. Key components
-4. Practical application
-5. Research considerations
+### 1. Dispatch Contract (Pre-Dispatch)
 
-**Examples**:
+Built after KB extraction, before agents execute. Defines:
+- **done_definition**: 2-3 sentences describing what a successful output looks like
+- **completeness_criteria**: What a complete answer must include
+- **required_sections**: Sections the output must contain
+- **grounding_requirements**: Claims that must be KB-grounded
+
+Uses LLM for complex queries, falls back to workflow-specific heuristics for simple ones.
+Trivial queries (< 15 words) get `skip_evaluator=True`.
+
+The contract is injected into both the Analyst's scoring prompt and the Reviewer's validation prompt, so they score against intent rather than generic quality.
+
+### 2. Recitation Checkpoint (Pre-Composition)
+
+Inserted at two points:
+- Before the final stage in multi-stage workflows
+- Before `_format_output()` in all workflows
+
+Re-states: "Original question was X. From stage 1 I have Y. From stage 2 I have Z. The user needs W."
+
+Max ~200 words. Prevents drift toward the most verbose source.
+
+### 3. Parallel Evaluation (Post-Composition)
+
+Replaces the old sequential Analyst then Reviewer loop. Now runs three evaluators concurrently:
+
+| Evaluator | What it checks | Criteria |
+|-----------|---------------|----------|
+| Analyst | Reasoning quality | KB grounding, completeness, quality, structure (0-10) |
+| Reviewer | Standards compliance | Workflow-specific rubric, strengths/issues/suggestions |
+| Evaluator | Intent alignment | Answer alignment, claim-evidence, completeness, actionability (1-5 each) |
+
+All three run in `ThreadPoolExecutor(max_workers=3)` with 120s timeout.
+Results merge into `UnifiedEvaluation`. If any evaluator fails, one revision attempt with combined feedback.
+
+Latency savings: ~60-70% reduction vs sequential evaluation.
+
+### 4. Harness Audit
+
+Run on-demand or when the model changes. Checks:
+- Are thresholds still right? (7.5 pass, 70% context, max 5 iterations)
+- Is the workflow doing work the model now handles natively?
+- Are there stale error patterns in lessons_learned.md?
+- Are heuristic pre-checks still catching anything?
+
+Produces a markdown report with findings and recommendations.
+
+## How Stage Detection Works
+
+When your query contains `STEP 1 / STEP 2 / STEP 3` markers, the invoker splits it into stages. Each stage is automatically classified:
+
+| Stage Type | Detection Keywords | Processing Mode |
+|------------|-------------------|-----------------|
+| Multi-doc analysis | "analyze all", "each case", "benchmark", "all papers" | Parallel or iterative (1 doc at a time) |
+| Document writing | "write the", "generate the complete", "draft the" | Section-by-section (template-driven) |
+| Everything else | (none) | Single focused LLM call |
+
+## Section Templates (Auto-Selected)
+
+The system detects what you're writing and selects the right section structure:
+
+| Document Type | Detection Keywords | Sections |
+|--------------|-------------------|----------|
+| Case study | "case study", "teaching case" | Opening, Background, Industry, Crisis, Options, Decision, Exhibits |
+| Research paper | "research paper", "journal paper" | Abstract, Intro, Lit Review, Methodology, Results, Discussion, Conclusion |
+| Literature review | "literature", "lit review", "survey" | Search Strategy, Thematic Analysis, Framework Mapping, Methods Assessment, Gaps, Conceptual Framework |
+| Thesis intro | "thesis", "chapter 1", "introduction" | Context, Problem, Questions, Significance, Overview |
+| Thesis methodology | "methodology", "chapter 3" | Philosophy, Design, Collection, Analysis, Ethics |
+| Thesis results | "results", "chapter 4" | Descriptive Stats, Assumptions, Hypothesis Testing, Summary |
+| Thesis discussion | "discussion", "chapter 5" | Findings Summary, Discussion, Theory Implications, Practice Implications, Limitations |
+
+## Evaluation Pipeline (Level 3)
+
+After content is generated, all three evaluators run in parallel:
+
+**Analyst (4 LLM calls, sequential within agent)**:
+1. Structure & Clarity: score + reasoning
+2. KB Grounding: score + compare with previous (contract-aware)
+3. Completeness: score + compare with previous (contract-aware)
+4. Quality & Rigor: final score informed by all dimensions
+
+Pass threshold: 7.5/10.
+
+**Reviewer (3 LLM calls, sequential within agent)**:
+1. Identify strengths (contract-aware)
+2. Identify issues (informed by strengths)
+3. Generate suggestions (informed by both)
+
+Pass threshold: 6.0/10.
+
+**Evaluator (1 LLM call)**:
+Scores 4 criteria 1-5:
+- Answer Alignment: Does it answer the actual question?
+- Claim-Evidence Linkage: Is every claim backed by a source?
+- Completeness: Would the user need an obvious follow-up?
+- Actionability: Can the user DO something with this?
+
+Pass threshold: All scores >= 3.
+
+If any evaluator fails, one revision with combined feedback from all three.
+
+## Shared Workspace & Caching
+
+Each staged execution creates:
+- `spaces/{PERSONA}/cache/{workflow_id}/` for cached stage outputs (resume on failure)
+- `spaces/{PERSONA}/workspace/{workflow_id}/` for shared workspace intermediate results
+
+Any stage can read from the workspace. If stage 3 fails, stages 1-2 are cached and will not regenerate on re-run.
+
+## Learning System
+
+Every run:
+1. Loads lessons from `spaces/{PERSONA}/doc/lessons_learned.md`
+2. Injects them into every LLM prompt
+3. After completion, extracts a new one-line lesson via LLM
+4. Stores it for future runs
+5. If score >= 8.0, stores reasoning pattern with strategies for warm-start matching
+
+View lessons: `cat src/research_assistant/spaces/{PERSONA}/doc/lessons_learned.md`
+
+## Workflow Logging (Level 3)
+
+Each execution logs to `logs/workflow_history.jsonl` with expanded data:
+
+```json
+{
+  "timestamp": "2026-04-09T...",
+  "workflow": "explain",
+  "persona": "QNTR",
+  "query": "...",
+  "score": 8.2,
+  "reasoning_iterations": 2,
+  "validation_iterations": 1,
+  "execution_time_ms": 45000,
+  "eval": {
+    "analyst_score": 8.2,
+    "reviewer_score": 7.5,
+    "evaluator": {
+      "alignment": 4,
+      "evidence": 4,
+      "completeness": 3,
+      "actionability": 4
+    },
+    "overall_pass": true
+  }
+}
+```
+
+This data feeds the Harness Audit for threshold analysis.
+
+## Environment Variables
+
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `LLM_TIMEOUT_SECONDS` | 300 | Base timeout (adaptive estimation may increase) |
+| `LLM_MODEL` | claude-sonnet-4.5 | Model for kiro-cli |
+| `PERPLEXITY_API_KEY` | (none) | Use Perplexity API instead of kiro-cli |
+| `ANTHROPIC_API_KEY` | (none) | Use Anthropic API directly |
+
+## Tips
+
+1. **Use STEP markers** for complex tasks to trigger staged execution
+2. **Reference file paths** in your query; the reader extracts them automatically
+3. **Re-run on failure**; cached stages will not regenerate
+4. **Check lessons**: `cat spaces/PERSONA/doc/lessons_learned.md`
+5. **>5 documents** triggers parallel analysis automatically
+6. **Run `ra audit`** after model changes or quarterly to check threshold staleness
+7. **Check eval logs**: `tail logs/workflow_history.jsonl` shows all three evaluator scores
+
+---
+
+## Change Log
+
+### 2026-04-25: Cross-Space Knowledge, Session Memory, Layered Config, Agent Protocol
+
+**Source**: Analysis of [AWSMantle genai-rewrite branch](https://code.amazon.com/packages/AWSMantle/trees/genai-rewrite) for applicable patterns.
+
+**Changes to workflow capabilities**:
+
+#### 1. Cross-Space Knowledge Access with Isolation
+
+*Problem*: A research paper might need knowledge from CRO (industry cases), QNTR (method readings), and DBA (dissertation frameworks), but each workflow was locked to one space's knowledge base.
+
+*Solution*: Spaces can now declare read-only references to other spaces' knowledge via `cross_space_sources` in persona.yaml:
+
+```yaml
+cross_space_sources:
+  - space: DBA
+    access: read_only
+    knowledge_types: [research_papers, methodology]
+  - space: CRO
+    access: read_only
+    knowledge_types: [industry_cases]
+```
+
+Key behaviors:
+- Cross-space access is read-only for knowledge. Learnings and patterns stay isolated per space.
+- Every piece of cross-space content is tagged with its source space so agents know provenance.
+- When a cross-space reference is ambiguous, the system flags `[CLARIFICATION NEEDED]` rather than assuming. It does not make assumptions about which space's interpretation to use.
+- The Learner tracks which cross-space combinations work well for which query types, building patterns over time.
+- Enabled/disabled via `--cross-space` CLI flag or `cross_space_enabled` config.
+
+*Performance*: Zero additional LLM calls. The Reader already reads files; this expands which files it can read.
+
+#### 2. Single-File Cross-Session Memory
+
+*Problem*: Memory was in-process only. Reasoning patterns and strategies were lost between CLI runs. Only one-line lessons persisted.
+
+*Solution*: At workflow end, a `session_memory.md` file (~2K tokens) is written per space:
+
+```
+spaces/{SPACE}/doc/session_memory.md
+```
+
+Contains:
+- Last 5 query summaries with scores
+- Top strategies that worked (from Learner patterns)
+- Known user preferences observed across runs
+- Cross-space patterns (which combinations produced good results)
+
+At workflow start, this file is loaded alongside lessons and injected into the warm-start context.
+
+*Performance*: Zero additional LLM calls in the common case. LLM summarization only triggers when the file exceeds 2K tokens (roughly every 10-15 runs). The file read at startup is negligible.
+
+#### 3. Layered Configuration with Runtime Overrides
+
+*Problem*: Changing evaluation thresholds or disabling features required editing config files.
+
+*Solution*: New CLI flags and config section for runtime control:
+
 ```bash
-ra explain "mediation analysis" --persona QNTR
-ra explain "research philosophy" --persona DBA
-ra explain "case study methodology" --persona CW
+# Fast mode: skip parallel eval, limit iterations
+ra explain "topic" -p QNTR --skip-parallel-eval --max-iterations 2
+
+# Disable post-completion LLM calls (lesson extraction, strategy extraction)
+ra explain "topic" -p QNTR --skip-learner-llm
+
+# Enable cross-space knowledge
+ra research "topic" -p QNTR --cross-space
+
+# Combine for maximum speed
+ra explain "topic" -p QNTR --skip-parallel-eval --skip-learner-llm --max-iterations 1
 ```
 
-### 2. GUIDE Workflow
+Config file equivalent:
 
-**Purpose**: Provide step-by-step guidance for completing academic tasks
+```yaml
+performance:
+  parallel_eval_enabled: true
+  max_reasoning_iterations: 5
+  learner_llm_calls: true
+  cross_space_enabled: false
+```
 
-**When to Use**:
-- Need help completing an assignment
-- Want procedural guidance ("how to do X")
-- Responding to professor feedback
-- Developing thesis components
+CLI flags override config file values. Environment variables override both.
 
-**Query Patterns**:
-- "How do I [task]?"
-- "Help me [action]"
-- "How would we proceed with [task]?"
-- "Generate response for professor's email"
-- "How should I approach [assignment]?"
+*Performance*: Strictly positive. Provides explicit controls to trade quality for speed when needed.
 
-**Output Includes**:
-1. Task understanding
-2. Suggested approach/framework
-3. Relevant KB materials
-4. Step-by-step guidance
-5. Reflection questions
-6. Draft templates with placeholders
-7. Optional clarification questions
+#### 4. Formalized Agent Interface Protocol
 
-**Examples**:
+*Problem*: `BaseAgent.execute(**kwargs)` accepted anything. Agents could be wired wrong without errors until runtime.
+
+*Solution*: Python `Protocol` classes define typed input/output for each agent role:
+
+```python
+class ReaderProtocol(Protocol):
+    def execute(self, query: str, knowledge_dir: Path) -> AgentResult: ...
+
+class AnalystProtocol(Protocol):
+    def execute(self, query: str, reasoning: str,
+                knowledge_content: List[str], iteration: int) -> AgentResult: ...
+
+class ReviewerProtocol(Protocol):
+    def review_against_standards(self, content: str, workflow_name: str,
+                                  user_query: str, persona: Dict,
+                                  contract: Any) -> Any: ...
+
+class LearnerProtocol(Protocol):
+    def get_patterns(self, query: str) -> Dict[str, Any]: ...
+    def store_pattern(self, query: str, reasoning: str,
+                      score: float, feedback: Optional[str]) -> Any: ...
+```
+
+Startup validation checks that all agents satisfy their protocol before the workflow runs. Catches wiring errors immediately instead of mid-execution.
+
+*Performance*: Zero. Validation runs once at startup in microseconds.
+
+**Files touched**: `agents/base.py`, `config.py`, `spaces/loader.py`, `agents/reader.py`, `agents/learner.py`, `workflows/invoker.py`, `cli.py`, each space's `persona.yaml`.
+
+### 2026-04-28: Binary File Reading, Sub-Agent Contract, Memory Tools
+
+**What changed**:
+
+#### 1. Binary File Handling
+
+The workflow pipeline now reads PDFs, DOCX, and XLSX files in full. Previously the ReaderAgent truncated PDFs at 10K characters; that limit was removed. Token budget management stays at the `extract_relevant()` orchestration layer.
+
+The utility at `scripts/read_binary.py` handles extraction in-memory. No conversion files are written to disk; the binary file remains the single source of truth. Supported commands:
+
 ```bash
-ra guide "How do I write a research objective?" --persona DBA
-ra guide "Help me respond to professor's email at /path/to/email.eml" --persona DBA
-ra guide "How would we analyze this case study?" --persona QNTR
+python3 scripts/read_binary.py paper.pdf            # Full extraction
+python3 scripts/read_binary.py paper.pdf --pages 1-10
+python3 scripts/read_binary.py paper.pdf --meta     # Page count only
+python3 scripts/read_binary.py data.xlsx --sheet "2025 JQL"
 ```
 
-### 3. REVIEW Workflow
+#### 2. Sub-Agent Contract for Large Documents
 
-**Purpose**: Get feedback on completed work
+For documents over 15 pages or 30K characters of extracted text, the orchestrator delegates full-document processing to a sub-agent. The contract is enforced by both the steering rule (`.kiro/steering/binary-file-reading.md`) and the AnalystAgent's grounding check:
 
-**When to Use**:
-- Submitting completed draft for review
-- Want constructive feedback
-- Need evaluation against standards
+- **Input**: full extracted text + explicit task instruction
+- **Output**: structured response with page/section references for every claim, completeness declaration, zero fabrication
+- **Conduct**: no partial extraction, no summary-only responses, no vague statements
+- **Orchestrator verification**: spot-check 2-3 claims directly against source pages, flag outputs that lack page references, reject and re-delegate thin outputs
 
-**Query Patterns**:
-- "Review my [submission]"
-- "Feedback on my [work]"
-- "Evaluate this [document]"
+When the ReaderAgent encounters a binary file during workflow execution, the AnalystAgent's completeness check now verifies that all pages/sections were processed, and the grounding check verifies page-level references.
 
-**Output Includes**:
-1. Executive summary
-2. Strengths identified
-3. Areas for improvement
-4. Detailed feedback
-5. Assessment scores
-6. Recommended next steps
+#### 3. Persistent Memory Tools (Optional)
 
-**Examples**:
-```bash
-ra review "Review my research objective" --persona DBA
-ra review "Feedback on my questionnaire items" --persona QNTR
-```
+**CognitiveInfrastructure**: MCP server installed via `aim mcp install cognitive-infrastructure-mcp`. Provides `kiro-recall` (hybrid keyword + vector search over curated knowledge, local embeddings, no AWS credentials needed), `workspace-search` (BM25 full-workspace index), and `tool-router` (MCP proxy). Configure `VAULT_DIR` in `~/.kiro/settings/mcp.json` to point at the workspace root.
 
-### 4. RESEARCH Workflow
+**Kiro Evolve** (IDE-adapted): Captures Kiro IDE conversations via `promptSubmit` and `agentStop` hooks, writes daily transcripts to `~/.kiro/transcripts/`. After 50+ prompts across 2+ days, proposes knowledge graduation via a manual trigger. Approved knowledge lands in `.kiro/steering/evolved/` and auto-loads into future sessions. Say "evolve" in any session for on-demand review.
 
-**Purpose**: Plan research strategy and methodology
+Both tools apply to Kiro IDE and to kiro-cli workflow execution (which reads the same `~/.kiro/settings/mcp.json` and `.kiro/steering/` directory).
 
-**When to Use**:
-- Planning a research project
-- Designing methodology
-- Literature strategy planning
-- Research gap identification
+#### 4. Applicability
 
-**Query Patterns**:
-- "Research plan for [topic]"
-- "Design study on [subject]"
-- "Methodology for investigating [phenomenon]"
-
-**Output Includes**:
-1. Research objective clarification
-2. Theoretical framework mapping
-3. Literature strategy
-4. Methodology recommendations
-5. Timeline and next steps
-
-**Examples**:
-```bash
-ra research "Research plan for digital transformation" --persona DBA
-```
-
-## Common Mistakes
-
-### ❌ Wrong: Using EXPLAIN for Procedural Questions
-```bash
-ra explain "How do I write an objective?"  # WRONG - this is procedural
-```
-**Why it fails**: Explain workflow expects a concept to define, not steps to provide
-
-**✅ Correct**:
-```bash
-ra guide "How do I write an objective?" --persona DBA
-```
-
-### ❌ Wrong: Using GUIDE for Concept Questions
-```bash
-ra guide "mediation analysis" --persona QNTR  # WRONG - this is conceptual
-```
-**Why it fails**: Guide workflow expects a task/assignment, not a concept
-
-**✅ Correct**:
-```bash
-ra explain "mediation analysis" --persona QNTR
-```
-
-## What Happens on Workflow Mismatch?
-
-**As of v2.0**: The EXPLAIN workflow now detects procedural questions and provides helpful error:
-
-```
-⚠️ WORKFLOW MISMATCH DETECTED ⚠️
-
-Your query asks "how to proceed" - this is PROCEDURAL/GUIDANCE.
-
-Recommended: Re-run with GUIDE workflow:
-ra guide "your question" --persona PERSONA
-```
-
-This helps you correct the mistake immediately instead of getting empty output.
-
-## Tips for Best Results
-
-1. **Be specific**: Include file paths when referencing documents
-2. **Use guide for "how to"**: Any question about procedure or steps
-3. **Use explain for "what is"**: Any question about concepts or definitions
-4. **Check the output score**: ≥9.0/10 means good quality, <9.0 may need workflow change
-5. **Read KB materials first**: Understanding course context improves query formulation
-
-## Support
-
-If you're unsure which workflow to use, look at your question:
-- Starts with **"How"** → likely GUIDE
-- Starts with **"What is"** or **"Explain"** → likely EXPLAIN
-- Starts with **"Review"** → likely REVIEW
-
-Still unsure? Try GUIDE first - it's more flexible for multi-part questions.
+These changes apply workspace-wide:
+- **Kiro IDE sessions**: all chat interactions
+- **Workflows**: explain, guide, review, research, quant
+- **ReaderAgent**: binary file consumption during workflow execution
+- **AnalystAgent**: completeness and grounding verification against binary sources

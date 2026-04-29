@@ -47,10 +47,34 @@ class ReaderAgent(BaseAgent):
         super().__init__("reader", memory, context_guard)
         self._knowledge_dir: Optional[Path] = None
         self._extracted_cache: Dict[str, ExtractedContent] = {}
+        self._cross_space_dirs: List[Dict[str, Any]] = []  # [{path: Path, origin: str}]
     
     def set_knowledge_dir(self, path: Path) -> None:
         """Set the knowledge directory to read from."""
         self._knowledge_dir = path
+    
+    def set_cross_space_sources(self, sources: list) -> None:
+        """
+        Register cross-space knowledge sources for reading.
+        
+        Each source is a KnowledgeSource with metadata['cross_space_origin'] set.
+        The reader groups them by origin space and makes their parent directories
+        available for scanning, tagged with provenance.
+        """
+        seen_dirs = {}
+        for source in sources:
+            origin = source.metadata.get("cross_space_origin", "unknown")
+            parent = source.path.parent
+            key = str(parent)
+            if key not in seen_dirs:
+                seen_dirs[key] = {"path": parent, "origin": origin}
+        
+        self._cross_space_dirs = list(seen_dirs.values())
+        if self._cross_space_dirs:
+            logger.info(
+                f"[ReaderAgent] Registered {len(self._cross_space_dirs)} cross-space "
+                f"knowledge directories from {len(set(d['origin'] for d in self._cross_space_dirs))} spaces"
+            )
     
     def execute(self, **kwargs) -> AgentResult:
         """Main execution - extract content relevant to query."""
@@ -78,102 +102,199 @@ class ReaderAgent(BaseAgent):
         )
     
     def extract_relevant(self, query: str, knowledge_dir: Path) -> List[ExtractedContent]:
-        """Extract content relevant to query from knowledge directory."""
+        """Extract content relevant to query from knowledge directory.
+        
+        Strategy:
+        1. Extract ALL explicitly referenced files/dirs from query → load with full content
+        2. Scan KB directory for additional relevant files → load with standard limits
+        3. Respect a total token budget to avoid blowing up the prompt
+        """
         self.log_operation("extract_relevant", 100)
         
         relevant_content = []
+        seen_files = set()
         query_terms = [t.lower() for t in query.split() if len(t) > 3]
         
-        # Check if query contains explicit file path
-        explicit_file = self._extract_file_path(query)
-        if explicit_file and explicit_file.exists():
-            logger.info(f"[ReaderAgent] Reading explicit file: {explicit_file}")
-            content = self._read_file(explicit_file)
+        # Token budget: ~80K chars ≈ 20K tokens for KB context
+        TOKEN_BUDGET_CHARS = 80000
+        chars_used = 0
+        
+        # --- Phase 1: Load explicitly referenced files with generous limits ---
+        explicit_paths = self._extract_all_file_paths(query)
+        for filepath in explicit_paths:
+            if chars_used >= TOKEN_BUDGET_CHARS:
+                logger.warning(f"[ReaderAgent] Token budget exhausted, skipping remaining explicit files")
+                break
+            
+            content = self._read_file(filepath, max_chars=30000)  # 30K per explicit file
             if content:
-                content.relevance_score = 1.0  # Explicit file = max relevance
+                content.relevance_score = 1.0  # Explicit = max relevance
+                remaining = TOKEN_BUDGET_CHARS - chars_used
+                if len(content.content) > remaining:
+                    content.content = content.content[:remaining]
+                chars_used += len(content.content)
+                relevant_content.append(content)
+                seen_files.add(str(filepath))
+                logger.info(f"[ReaderAgent] Loaded explicit: {filepath.name} ({len(content.content)} chars)")
+        
+        # --- Phase 2: Scan KB directory for additional relevant files ---
+        if knowledge_dir.exists() and chars_used < TOKEN_BUDGET_CHARS:
+            scored_content = []
+            
+            for filepath in knowledge_dir.rglob("*"):
+                if filepath.is_file() and str(filepath) not in seen_files:
+                    content = self._read_file(filepath)  # Standard 10K limit
+                    if content:
+                        relevance = self._calculate_relevance(content.content, query_terms)
+                        content.relevance_score = relevance
+                        if relevance > 0.1:
+                            scored_content.append(content)
+            
+            # Sort by relevance, fill remaining budget
+            scored_content.sort(key=lambda x: x.relevance_score, reverse=True)
+            
+            for content in scored_content:
+                if chars_used >= TOKEN_BUDGET_CHARS:
+                    break
+                remaining = TOKEN_BUDGET_CHARS - chars_used
+                if len(content.content) > remaining:
+                    content.content = content.content[:remaining]
+                chars_used += len(content.content)
                 relevant_content.append(content)
         
-        if not knowledge_dir.exists():
-            return relevant_content
+        # --- Phase 3: Scan cross-space knowledge directories (if configured) ---
+        if self._cross_space_dirs and chars_used < TOKEN_BUDGET_CHARS:
+            cross_scored = []
+            
+            for dir_info in self._cross_space_dirs:
+                cross_dir = dir_info["path"]
+                origin = dir_info["origin"]
+                
+                if not cross_dir.exists():
+                    continue
+                
+                for filepath in cross_dir.rglob("*"):
+                    if filepath.is_file() and str(filepath) not in seen_files:
+                        content = self._read_file(filepath)
+                        if content:
+                            relevance = self._calculate_relevance(content.content, query_terms)
+                            content.relevance_score = relevance
+                            if relevance > 0.15:  # Slightly higher threshold for cross-space
+                                # Tag with provenance
+                                content.metadata["cross_space_origin"] = origin
+                                content.source_file = f"[{origin}] {content.source_file}"
+                                cross_scored.append(content)
+            
+            cross_scored.sort(key=lambda x: x.relevance_score, reverse=True)
+            
+            for content in cross_scored:
+                if chars_used >= TOKEN_BUDGET_CHARS:
+                    break
+                remaining = TOKEN_BUDGET_CHARS - chars_used
+                if len(content.content) > remaining:
+                    content.content = content.content[:remaining]
+                chars_used += len(content.content)
+                relevant_content.append(content)
+                seen_files.add(str(content.metadata.get("original_path", content.source_file)))
+            
+            if cross_scored:
+                logger.info(
+                    f"[ReaderAgent] Cross-space: {len([c for c in relevant_content if c.metadata.get('cross_space_origin')])} "
+                    f"files added from other spaces"
+                )
         
-        # Walk through knowledge directory
-        for filepath in knowledge_dir.rglob("*"):
-            if filepath.is_file():
-                content = self._read_file(filepath)
-                if content:
-                    # Calculate relevance
-                    relevance = self._calculate_relevance(content.content, query_terms)
-                    content.relevance_score = relevance
-                    
-                    # Include if relevant
-                    if relevance > 0.1:
-                        relevant_content.append(content)
+        logger.info(
+            f"[ReaderAgent] Total: {len(relevant_content)} files, "
+            f"{chars_used} chars (~{chars_used // 4} tokens)"
+        )
         
-        # Sort by relevance
-        relevant_content.sort(key=lambda x: x.relevance_score, reverse=True)
-        
-        return relevant_content[:10]  # Top 10 most relevant
+        return relevant_content
     
     def _extract_file_path(self, query: str) -> Optional[Path]:
-        """Extract explicit file path from query (handles spaces and Unicode)."""
+        """Extract explicit file path from query. Returns first match. See _extract_all_file_paths for multiple."""
+        paths = self._extract_all_file_paths(query)
+        return paths[0] if paths else None
+
+    def _extract_all_file_paths(self, query: str) -> List[Path]:
+        """Extract ALL explicit file paths and directory paths from query."""
         import re
         
-        # Pattern: Capture from / to file extension, allowing spaces
-        patterns = [
-            r'(?:at\s+)?(/[^"\']+?\.(?:eml|png|jpg|jpeg|pdf|docx|txt|md|xlsx))\b',
-            r'(?:file|screenshot|image|document|email)(?:\s+is)?\s+(?:at\s+)?([/~][^"\']+?\.(?:eml|png|jpg|jpeg|pdf|docx|txt|md|xlsx))\b',
+        found_paths = []
+        
+        # File patterns — allow apostrophes and other common filename chars
+        file_patterns = [
+            r'(?:at\s+)?(/[^\n"<>]+?\.(?:eml|png|jpg|jpeg|pdf|docx|txt|md|xlsx))\b',
             r'["\']([/~][^"\']+?\.(?:eml|png|jpg|jpeg|pdf|docx|txt|md|xlsx))["\']',
+            r'\((/[^)]+?\.(?:eml|png|jpg|jpeg|pdf|docx|txt|md|xlsx))\)',
         ]
         
-        for pattern in patterns:
-            match = re.search(pattern, query, re.IGNORECASE)
-            if match:
-                filepath_str = match.group(1).strip()
-                filepath = Path(filepath_str)
-                
-                # Direct match (exact path)
-                if filepath.exists():
-                    logger.info(f"[ReaderAgent] Found explicit file: {filepath}")
-                    return filepath
-                
-                # Try with ~ expansion
-                if filepath_str.startswith('~'):
-                    filepath = Path(filepath_str).expanduser()
-                    if filepath.exists():
-                        logger.info(f"[ReaderAgent] Found explicit file (expanded ~): {filepath}")
-                        return filepath
-                
-                # Handle Unicode/encoding issues (e.g., narrow no-break space)
-                # Try fuzzy matching in the parent directory
-                parent = filepath.parent
-                if parent.exists():
-                    target_name = filepath.name
-                    logger.debug(f"[ReaderAgent] Trying fuzzy match for: {target_name}")
-                    
-                    for file in parent.iterdir():
-                        # Normalize both names for comparison
-                        import unicodedata
-                        norm_file = unicodedata.normalize('NFKC', file.name)
-                        norm_target = unicodedata.normalize('NFKC', target_name)
-                        
-                        if norm_file == norm_target or file.name == target_name:
-                            logger.info(f"[ReaderAgent] Found explicit file (fuzzy match): {file}")
-                            return file
+        # Directory patterns (e.g., "at /path/to/dir/ (C2 through C15)")
+        dir_patterns = [
+            r'(?:at\s+)?(/[^\n"<>]+?/)\s*\(',
+            r'(?:at\s+)?(/[^\n"<>]+?/)(?:\s|$)',
+        ]
         
-        logger.debug(f"[ReaderAgent] No explicit file path found in query")
+        seen = set()
+        
+        for pattern in file_patterns:
+            for match in re.finditer(pattern, query, re.IGNORECASE):
+                filepath_str = match.group(1).strip()
+                filepath = self._resolve_path(filepath_str)
+                if filepath and filepath.is_file() and str(filepath) not in seen:
+                    seen.add(str(filepath))
+                    found_paths.append(filepath)
+        
+        # Also resolve directories — load all readable files within them
+        for pattern in dir_patterns:
+            for match in re.finditer(pattern, query, re.IGNORECASE):
+                dirpath_str = match.group(1).strip()
+                dirpath = Path(dirpath_str)
+                if dirpath.is_dir():
+                    for child in sorted(dirpath.rglob("*")):
+                        if child.is_file() and child.suffix.lower() in ['.md', '.txt', '.docx', '.pdf', '.xlsx', '.eml'] and str(child) not in seen:
+                            seen.add(str(child))
+                            found_paths.append(child)
+        
+        logger.info(f"[ReaderAgent] Extracted {len(found_paths)} explicit paths from query")
+        return found_paths
+
+    def _resolve_path(self, filepath_str: str) -> Optional[Path]:
+        """Resolve a file path string, handling ~ expansion and Unicode normalization."""
+        import unicodedata
+        
+        filepath = Path(filepath_str)
+        
+        if filepath.exists():
+            return filepath
+        
+        if filepath_str.startswith('~'):
+            filepath = Path(filepath_str).expanduser()
+            if filepath.exists():
+                return filepath
+        
+        # Fuzzy match in parent directory (handles Unicode issues)
+        parent = filepath.parent
+        if parent.exists():
+            target_name = filepath.name
+            for file in parent.iterdir():
+                norm_file = unicodedata.normalize('NFKC', file.name)
+                norm_target = unicodedata.normalize('NFKC', target_name)
+                if norm_file == norm_target:
+                    return file
+        
         return None
     
-    def _read_file(self, filepath: Path) -> Optional[ExtractedContent]:
+    def _read_file(self, filepath: Path, max_chars: int = 10000) -> Optional[ExtractedContent]:
         """Read content from a file based on its type."""
         suffix = filepath.suffix.lower()
         
         try:
             if suffix in ['.txt', '.md']:
-                return self._read_text(filepath)
+                return self._read_text(filepath, max_chars)
             elif suffix == '.eml':
                 return self._read_eml(filepath)
             elif suffix == '.docx':
-                return self._read_docx(filepath)
+                return self._read_docx(filepath, max_chars)
             elif suffix == '.xlsx':
                 return self._read_xlsx(filepath)
             elif suffix == '.pdf':
@@ -186,9 +307,9 @@ class ReaderAgent(BaseAgent):
             logger.warning(f"Failed to read {filepath}: {e}")
             return None
     
-    def _read_text(self, filepath: Path) -> ExtractedContent:
-        """Read plain text file."""
-        content = filepath.read_text(errors='ignore')[:10000]  # Limit size
+    def _read_text(self, filepath: Path, max_chars: int = 50000) -> ExtractedContent:
+        """Read plain text file. No artificial truncation — budget managed by extract_relevant."""
+        content = filepath.read_text(errors='ignore')[:max_chars]
         return ExtractedContent(
             source_file=str(filepath.name),
             content_type="text",
@@ -242,7 +363,7 @@ class ReaderAgent(BaseAgent):
             logger.warning(f"EML read error: {e}")
             return None
     
-    def _read_docx(self, filepath: Path) -> Optional[ExtractedContent]:
+    def _read_docx(self, filepath: Path, max_chars: int = 50000) -> Optional[ExtractedContent]:
         """Read DOCX file by extracting XML."""
         try:
             text_parts = []
@@ -257,7 +378,7 @@ class ReaderAgent(BaseAgent):
                         if elem.text and elem.tag.endswith('}t'):
                             text_parts.append(elem.text)
             
-            content = ' '.join(text_parts)[:10000]
+            content = ' '.join(text_parts)[:max_chars]
             return ExtractedContent(
                 source_file=str(filepath.name),
                 content_type="text",
@@ -360,16 +481,58 @@ class ReaderAgent(BaseAgent):
             logger.warning(f"XLSX read error: {e}")
             return None
     
-    def _read_pdf(self, filepath: Path) -> Optional[ExtractedContent]:
-        """Read PDF - basic text extraction."""
-        # Note: Full PDF extraction requires PyPDF2 or similar
-        # This is a placeholder that returns filename as content
-        return ExtractedContent(
-            source_file=str(filepath.name),
-            content_type="reference",
-            content=f"[PDF Document: {filepath.name}]",
-            metadata={"format": "pdf", "requires_ocr": True}
-        )
+    def _read_pdf(self, filepath: Path, max_chars: int = 0) -> Optional[ExtractedContent]:
+        """Read PDF with actual text extraction using PyPDF2.
+        
+        Extracts ALL pages by default (max_chars=0 means no limit).
+        Token budget management is handled by extract_relevant(), not here.
+        Per binary-file-reading steering rule: never truncate source documents
+        at the extraction layer.
+        """
+        try:
+            import PyPDF2
+            
+            text_parts = []
+            with open(filepath, 'rb') as f:
+                reader = PyPDF2.PdfReader(f)
+                num_pages = len(reader.pages)
+                
+                for page in reader.pages:
+                    page_text = page.extract_text()
+                    if page_text:
+                        text_parts.append(page_text)
+            
+            content = '\n\n'.join(text_parts)
+            if max_chars > 0:
+                content = content[:max_chars]
+            
+            if not content.strip():
+                # Fallback: PDF might be image-based (scanned)
+                logger.warning(f"[ReaderAgent] PDF has no extractable text (may be scanned): {filepath.name}")
+                return ExtractedContent(
+                    source_file=str(filepath.name),
+                    content_type="reference",
+                    content=f"[PDF Document: {filepath.name} — {num_pages} pages, scanned/image-based, text extraction not possible]",
+                    metadata={"format": "pdf", "pages": num_pages, "requires_ocr": True}
+                )
+            
+            logger.info(f"[ReaderAgent] PDF extracted: {filepath.name} ({num_pages} pages, {len(content)} chars)")
+            
+            return ExtractedContent(
+                source_file=str(filepath.name),
+                content_type="text",
+                content=content,
+                metadata={"format": "pdf", "pages": num_pages}
+            )
+            
+        except Exception as e:
+            logger.warning(f"[ReaderAgent] PDF read error for {filepath.name}: {e}")
+            return ExtractedContent(
+                source_file=str(filepath.name),
+                content_type="reference",
+                content=f"[PDF Document: {filepath.name} — read error: {e}]",
+                metadata={"format": "pdf", "error": str(e)}
+            )
     
     def _read_image(self, filepath: Path) -> Optional[ExtractedContent]:
         """Read image file using vision model (Anthropic API) for text extraction."""

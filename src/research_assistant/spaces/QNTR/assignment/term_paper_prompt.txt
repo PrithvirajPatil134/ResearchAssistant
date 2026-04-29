@@ -1,0 +1,101 @@
+Generate a complete QNTR Term Paper (~2,600 words) on the topic: Agentic AI Governance and Its Impact on Enterprise Risk and Business Performance.
+
+This is a literature-review-based term paper for Prof. Atul Prashar's Quantitative Methods in Research course at IIM Sambalpur. The paper must demonstrate mastery of research methodology concepts taught in the course by applying them to a real research topic the student is developing.
+
+REQUIRED SECTIONS AND HEADINGS:
+
+1. Introduction (~350 words)
+- Motivate the research problem: agentic AI systems are being deployed in enterprises, but governance frameworks lag behind, creating measurable business risk.
+- State the research gap clearly: the CS/technical side has governance mechanisms (Kolt 2025, Lu et al. 2024, Cohen et al. 2024); the management/IS side has proven governance leads to business value (Weill and Ross 2004, Mikalef et al. 2021, 2025; Friede et al. 2015). Nobody has empirically connected agentic AI governance maturity to firm-level risk outcomes.
+- State the research objective: The objective of this research is to examine the relationship between agentic AI governance maturity and enterprise risk exposure, and to identify the governance practices that predict measurable firm-level outcomes.
+- State the two research questions: RQ1 (qualitative): What governance practices are organizations adopting for agentic AI deployments, and what risk categories emerge? RQ2 (quantitative): Do these governance practices predict firm-level risk outcomes (incident frequency, financial loss, compliance failures)?
+- Briefly preview the mixed-methods sequential exploratory design.
+
+2. Theoretical Background / Literature Review (~700 words)
+- DO NOT merely summarize papers. SYNTHESIZE the literature following Sutton and Staw (1995): theory answers why, not just what. References are not theory, data are not theory, lists of variables are not theory. The literature review must build a causal argument, not a catalog.
+- Organize into three streams:
+  Stream 1, Technical governance of agentic AI: Kolt (2025) agency theory framing (inclusivity, visibility, liability); Lu et al. (2024) 35 RAI patterns (unvalidated in organizations); Cohen et al. (2024) untestability of advanced agents; Kolt, Shur-Ofry and Cohen (2025) complex systems perspective; Chan et al. (2023) taxonomy of harms scaling with agency; Chan and Kolt et al. (2024) visibility as prerequisite for governance.
+  Stream 2, Governance leads to business value (established): Weill and Ross (2004) IT governance leads to 40% higher IT returns; Friede et al. (2015) ESG governance leads to positive CFP in 90% of 2,200 studies; Mikalef et al. (2021) AI capability leads to firm performance via organizational creativity; Mikalef et al. (2025) responsible AI governance leads to competitive performance via knowledge management; Enholm et al. (2022) dark side of AI understudied in IS.
+  Stream 3, The bridge gap: Vu et al. (2025) first empirical study on agent governance in BPM (qualitative, 22 practitioners, six governance recommendations). No study yet combines qualitative discovery of agentic AI governance constructs with quantitative testing of their business impact.
+- End with a clear gap statement and the theoretical lens: principal-agent theory (Kolt 2025) + IT governance-to-business-value lineage (Weill and Ross 2004; Mikalef and Gupta 2021).
+
+3. Research Methodology (~600 words)
+- Design: Exploratory sequential mixed-methods (Creswell and Plano Clark 2018). Cite Venkatesh, Brown and Bala (2013, MIS Quarterly) as the IS-specific methodological anchor.
+- Philosophical stance: Pragmatist. Phase 1 is interpretive/inductive; Phase 2 is post-positivist/deductive. Explicitly acknowledge the dual philosophical commitment per Creswell and Plano Clark.
+- Phase 1 (Qualitative, Theory Building): Data sources: publicly available executive discourse (earnings calls, keynote talks, podcast transcripts, published interviews), regulatory disclosures (10-K risk factors, SEC filings), industry reports (Gartner, McKinsey State of AI), and optionally 5-10 targeted practitioner interviews. Method: Thematic analysis (Braun and Clarke 2006) with open and axial coding. Document analysis protocol from Bowen (2009). Trustworthiness: Credibility (triangulation across source types), transferability (thick description), dependability (audit trail), confirmability (reflexivity notes). Output: Three to five propositions connecting governance practices to risk outcomes.
+- Phase 2 (Quantitative, Testing): Design: Cross-sectional firm-level survey. Unit of analysis: firm. Respondent: senior IT/risk/governance officer (one per firm). Target: 100-200 firms. DV (binary): reportable agentic AI incident in last 12 months (Y/N). IVs (derived from Phase 1): governance maturity index, human-in-the-loop control presence, shadow AI prevalence, industry, firm size, agent deployment depth, existing IT governance maturity. Analysis: Binary logistic regression. Report odds ratios, Wald chi-square, pseudo-R-squared (McFadden, Nagelkerke), Hosmer-Lemeshow goodness-of-fit, classification accuracy. Test interaction between governance maturity and shadow AI prevalence. Validation: VIF for multicollinearity, Cook's distance for outliers, sensitivity analysis on sample composition.
+
+4. Proposed Conceptual Framework (~250 words)
+- Present the conceptual model: IV: Agentic AI Governance Maturity; Mediator: Workflow Control Rigidity; DV: Enterprise AI Risk Exposure (financial loss, incidents, compliance failures); Moderator: Shadow AI Prevalence (weakens the governance to risk reduction effect).
+- State three propositions (not hypotheses; this is mixed-methods, Phase 1 generates propositions): P1: Firms with higher agentic AI governance maturity experience fewer reportable AI incidents. P2: The effect of governance maturity on incident frequency is mediated by workflow control rigidity. P3: Shadow AI prevalence moderates the governance-risk relationship such that higher shadow AI weakens the protective effect of governance.
+- Explain WHY each proposition holds using the theoretical lens (agency theory + IT governance lineage). Do not just state them. Provide the causal reasoning per Sutton and Staw (1995).
+
+5. Expected Contributions (~250 words)
+- Theoretical: First empirical bridge between CS-side agentic AI governance mechanisms and management-side business value evidence. Extends principal-agent theory to AI-as-agent contexts. Extends Mikalef et al. (2025) from general AI to agentic AI specifically.
+- Practical: Actionable governance maturity benchmarks for CISOs and AI governance leads. Quantified risk reduction from specific governance practices. Shadow AI as a measurable threat to governance effectiveness.
+- Methodological: Demonstrates mixed-methods sequential exploratory design for a nascent IS topic where validated instruments do not yet exist.
+
+6. Limitations and Future Research (~200 words)
+- Cross-sectional design (no causality). Self-report bias from single respondent per firm. Selection bias in public discourse sources for Phase 1. Sample size constraints for logistic regression. Western/English-language bias in discourse sources.
+- Future: Longitudinal panel study tracking governance maturity and incident rates over time. Multi-respondent designs. Industry-specific models (finance vs. healthcare vs. manufacturing). Qualitative deep-dive into shadow AI dynamics.
+
+7. Conclusion (~150 words)
+- Restate the gap, the approach, and the expected contribution in three to four sentences. End with a forward-looking statement about why this research matters as agentic AI adoption accelerates.
+
+References:
+- Include ALL papers cited. Use APA 7th edition format. Minimum 15-20 references. Only top-quality-ring journals (ABDC A*/A/B, CORE A*/A/B, JCR Q1/Q2, Top 50 Law Reviews). No blogs, no vendor white papers, no predatory journals.
+
+KEY PAPERS TO CITE (from our reading list):
+
+CS/Technical Side:
+1. Kolt, N. (2025). Governing AI Agents. Notre Dame Law Review.
+2. Cohen, M., Kolt, N., Bengio, Y., Hadfield, G., and Russell, S. (2024). Regulating Advanced Artificial Agents. Science.
+3. Lu, Q., Zhu, L., Xu, X., Whittle, J., Zowghi, D., and Jacquet, A. (2024). Responsible AI Pattern Catalogue. ACM Computing Surveys, ABDC A*.
+4. Kolt, N., Shur-Ofry, M., and Cohen, M. (2025). Lessons from Complex Systems Science for AI Governance. Patterns (Cell Press).
+5. Chan, A., et al. (2023). Harms from Increasingly Agentic Algorithmic Systems. ACM FAccT 2023.
+6. Chan, A., Kolt, N., et al. (2024). Visibility into AI Agents. ACM FAccT 2024.
+7. Bengio, Y., Hinton, G., et al. (2024). Managing Extreme AI Risks. Science.
+
+Management/Business Side:
+8. Mikalef, P., Conboy, K., Lundstrom, J., and Pateli, A. (2025). Responsible AI Governance: A Review and Research Framework. Information and Management, ABDC A*.
+9. Mikalef, P., and Gupta, M. (2021). AI Capability: Conceptualization, Measurement, and Impact on Firm Performance. Information and Management, ABDC A*.
+10. Enholm, I., Papagiannidis, E., Mikalef, P., and Krogstie, J. (2022). AI in IS Research: SLR and Research Agenda. Intl. Journal of Information Management, ABDC A*.
+11. Weill, P., and Ross, J. W. (2004). IT Governance: How Top Performers Manage IT Decision Rights. Harvard Business School Press.
+12. Friede, G., Busch, T., and Bassen, A. (2015). ESG and Corporate Financial Performance. Journal of Sustainable Finance and Investment, ABDC A.
+
+Bridge Paper:
+13. Vu, H., Revoredo, K., Leopold, H., and Mendling, J. (2025). Agentic Business Process Management. arXiv:2504.03693.
+
+Methodology:
+14. Creswell, J. W., and Plano Clark, V. L. (2018). Designing and Conducting Mixed Methods Research (3rd ed.). Sage.
+15. Venkatesh, V., Brown, S. A., and Bala, H. (2013). Bridging the Qualitative-Quantitative Divide. MIS Quarterly, 37(1), 21-54.
+16. Braun, V., and Clarke, V. (2006). Using Thematic Analysis in Psychology. Qualitative Research in Psychology, 3(2), 77-101.
+17. Bowen, G. A. (2009). Document Analysis as a Qualitative Research Method. Qualitative Research Journal, 9(2), 27-40.
+
+Theory:
+18. Sutton, R. I., and Staw, B. M. (1995). What Theory is Not. Administrative Science Quarterly, 40(3), 371-384.
+
+CRITICAL WRITING STANDARDS:
+
+1. Theory is causal reasoning, not citation lists. Per Sutton and Staw (1995): references are not theory, data are not theory, variables are not theory, diagrams are not theory, hypotheses are not theory. Every claim in the literature review must answer why with a logically connected causal story.
+
+2. Synthesize, do not summarize. Per the literature review standards: do not walk through papers one by one. Organize by theme/stream. Show how papers build on, contradict, or leave gaps relative to each other.
+
+3. Propositions, not hypotheses. This is a mixed-methods paper where Phase 1 is qualitative/theory-building. Use propositions (P1, P2, P3) not hypotheses (H1, H2, H3). Hypotheses assume validated instruments that do not yet exist for agentic AI governance.
+
+4. Explicit philosophical stance. State the pragmatist orientation. Phase 1 = interpretive/inductive. Phase 2 = post-positivist/deductive. Cite Creswell and Plano Clark (2018) as the bridging authority.
+
+5. Quality gate on all citations. Only ABDC A*/A/B, CORE A*/A/B, JCR Q1/Q2, Top 50 Law Reviews. No blogs, vendor reports, or unranked venues.
+
+6. Academic tone. Third person. No contractions. No hyperbole. Precise language. Every claim backed by a citation or logical argument.
+
+7. Word budget. ~2,600 words total (excluding references). Distribute across sections as indicated above. Do not pad with filler.
+
+CONTEXT FILES TO READ BEFORE WRITING:
+
+1. /spaces/QNTR/knowledge/literature review/Research_Approach_Reconciliation_v1.md: The full mixed-methods research design, Phase 1 and Phase 2 plans, publication strategy, and working reference list.
+2. /spaces/QNTR/knowledge/literature review/Agentic Governance Refactor_v2.md: Why the research approach was refactored from pure positivist to mixed-methods, the iterative paper discovery methodology, and quality gates.
+3. /spaces/CRO/output/Session3_What_Is_Theory.md: Sutton and Staw (1995) and DiMaggio (1995) on what theory IS and IS NOT. Apply these standards rigorously in the literature review section.
+4. /spaces/QNTR/knowledge/literature review/Week3_HW_Submission.md: The Week 3 homework with the 10-paper literature review, concept map, search strategy, and gap statement.
+5. /spaces/QNTR/knowledge/literature review/Week3_HW_Feedback_v2.md: Feedback on Week 3 submission with corrected search blocks, expanded paper list (15 papers), and refined gap statement.
+6. All PDFs in /spaces/QNTR/knowledge/literature review/Agentic Governance/Relevant Readings/: The actual papers being cited.

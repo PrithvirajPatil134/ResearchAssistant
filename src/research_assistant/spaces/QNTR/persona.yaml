@@ -70,6 +70,27 @@ knowledge_base:
     - "course_materials"
     - "assignments"
 
+  # Cross-space knowledge access (read-only).
+  # When enabled via --cross-space flag, the Reader can pull knowledge
+  # from these spaces. Each piece is tagged with its origin for provenance.
+  # Learnings and patterns remain isolated to this space.
+  cross_space_sources:
+    - space: DBA
+      access: read_only
+      knowledge_types:
+        - research_papers
+        - documents
+    - space: CRO
+      access: read_only
+      knowledge_types:
+        - research_papers
+        - documents
+    - space: CW
+      access: read_only
+      knowledge_types:
+        - research_papers
+        - documents
+
 # Core course topics
 course_topics:
   fundamentals:

@@ -149,4 +149,5 @@
 |------|-----------------|----------|-------|----------------|
 | 2026-02-07 | Based on the class course outl... | Multi-source document analysis: Read all | 8.5 | Passed analyst scoring |
 | 2026-02-09 | Based on the class course outl... | Read all source documents completely bef | 8.6 | Passed analyst scoring |
+| 2026-04-23 | Generate a complete QNTR Term ... | Anchor the research gap as a two-camps p | 8.0 | Passed analyst scoring |
 | (Learner populates) | | | | |

@@ -145,4 +145,19 @@
 | Date | Assignment Type | Approach | Score | Success Factor |
 |------|-----------------|----------|-------|----------------|
 | 2026-02-07 |  Here is an email thread ('/Us... | Begin with explicit context reconstructi | 8.9 | Passed analyst scoring |
+| 2026-02-18 | Help me respond to professor's... | Start with immediate action acknowledgme | 9.0 | Passed analyst scoring |
+| 2026-04-02 | I need you to write a publicat... | Use numbered steps or lists | 8.6 | Passed analyst scoring |
+| 2026-04-02 | I need you to write a publicat... | Multi-step structured execution with exp | 8.9 | Passed analyst scoring |
+| 2026-04-04 | I need a Teaching Note for Sai... | Use clear section headers | 8.5 | Passed analyst scoring |
+| 2026-04-04 | I need a Teaching Note.
+
+STEP ... | Strengthen knowledge base grounding | 8.5 | Passed analyst scoring |
+| 2026-04-04 | Teaching Note needed.
+
+STEP 1 ... | Reference theoretical frameworks | 8.5 | Passed analyst scoring |
+| 2026-04-04 | Note needed.
+
+STEP 1 — HARVARD... | Use clear section headers | 8.5 | Passed analyst scoring |
+| 2026-04-04 | Teaching Note for Sai Tex Ltd.... | Use clear section headers | 8.5 | Passed analyst scoring |
+| 2026-04-04 | I need you to write a publicat... | Anchor every claim to specific case data | 8.1 | Passed analyst scoring |
 | (Learner populates) | | | | |

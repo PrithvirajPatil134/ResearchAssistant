@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Eval Principles Guard",
+  "description": "After writing to any agent file, verify the eval principles are being followed — no heuristic-only scoring for quality, fail-fast on empty content, etc.",
+  "version": "1",
+  "when": {
+    "type": "postToolUse",
+    "toolTypes": [
+      "write"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "If the tool just modified analyst.py or reviewer.py, verify: (1) heuristic pre-check catches empty/broken output with score 0, (2) LLM evaluation is used for real quality assessment, (3) pass threshold is reasonable (7.5 for analyst, 6.0 for reviewer). Reference .kiro/steering/eval-principles.md."
+  }
+}

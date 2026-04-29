@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Check Agent Writing Style",
+  "description": "After any write tool use (fsWrite, strReplace, editCode, fsAppend), checks if the file path is submission-ready academic content (workspace/, output/, literature review/ with Submission/Paper/Teaching/Case/revised in the name). If it is, scans against the human-authored-writing steering rule.",
+  "version": "1",
+  "when": {
+    "type": "postToolUse",
+    "toolTypes": [
+      "write"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "If the tool just wrote or modified a file, check the file path. ONLY if the path contains 'workspace/' OR 'output/' OR 'assignment/' OR the filename contains 'Submission' OR 'Paper' OR 'Teaching' OR 'Case' OR 'revised' (in a literature review, workspace, assignment, or output folder), then you MUST scan the content against .kiro/steering/human-authored-writing.md. Check for: (1) banned words (delve, tapestry, nuanced, landscape, multifaceted, leverage, utilize, streamline, foster, facilitate, harness, robust, seamless, scalable, comprehensive, pivotal, groundbreaking, transformative, revolutionary, game-changing, cutting-edge, remarkable, crucial, significant, aforementioned, underscores, underpin, elucidate, myriad, plethora, paradigm), (2) banned phrases, (3) banned sentence openers, (4) uniform sentence rhythm, (5) narrator voice, (6) announcing structure patterns, (7) em dash ban: search for the em dash character '—'. There must be ZERO em dashes. This is a zero-tolerance rule. Replace all em dashes with periods and new sentences, commas, colons, semicolons, or parentheses. (8) Academic tone: flag and rewrite any casual, conversational, or colloquial language. Avoid informal phrasing such as 'works like this', 'here is the problem', 'the cycle feeds itself', 'the takeaway', 'that said', 'at the end of the day'. Use formal academic register throughout: prefer 'the analysis demonstrates' over 'this shows', 'it is evident that' over 'clearly', 'the preceding analysis indicates' over 'the takeaway'. Maintain third-person perspective and impersonal constructions where appropriate. If ANY violation is found, fix it immediately. If the file is NOT submission-ready content (e.g., code, config, Excel scripts, hook files, steering files, search logs), SKIP this check entirely."
+  }
+}

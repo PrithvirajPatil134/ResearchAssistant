@@ -1,0 +1,18 @@
+{
+  "enabled": true,
+  "name": "Lint Agent Code",
+  "description": "Runs Python syntax check when agent or workflow files are edited to catch issues before running workflows",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "src/research_assistant/agents/*.py",
+      "src/research_assistant/workflows/*.py",
+      "src/research_assistant/core/*.py"
+    ]
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "python -m py_compile ${file}"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "enabled": true,
+  "name": "New Agent Convention Check",
+  "description": "When a new Python file is created in the agents or workflows directory, remind to follow project conventions",
+  "version": "1",
+  "when": {
+    "type": "fileCreated",
+    "patterns": [
+      "src/research_assistant/agents/*.py",
+      "src/research_assistant/workflows/*.py"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A new agent or workflow file was just created. Verify it follows the project conventions: inherits from BaseAgent (for agents), is registered in __init__.py, and has proper logging. Check the steering file at .kiro/steering/research-assistant.md for standards."
+  }
+}

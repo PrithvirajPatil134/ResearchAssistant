@@ -40,14 +40,29 @@ class AIConfig:
 
 
 @dataclass
+class PerformanceConfig:
+    """Performance tuning configuration.
+    
+    Controls which optional workflow steps run. All default to enabled.
+    CLI flags and environment variables can override for speed.
+    """
+    parallel_eval_enabled: bool = True       # Run Analyst+Reviewer+Evaluator concurrently
+    max_reasoning_iterations: int = 5        # Max iterations in reasoning loop
+    learner_llm_calls: bool = True           # Post-completion LLM calls (lesson/strategy extraction)
+    cross_space_enabled: bool = False        # Cross-space knowledge access (off by default)
+    session_memory_enabled: bool = True      # Load/save session memory between runs
+
+
+@dataclass
 class Config:
     """
     Main configuration class for Research Assistant.
     
-    Loads configuration from:
-    1. Default values
+    Loads configuration from (in priority order):
+    1. Default values (this dataclass)
     2. config.yaml file (if exists)
     3. Environment variables (override)
+    4. CLI flags (highest priority, applied by caller)
     """
     
     # Directory paths
@@ -59,6 +74,7 @@ class Config:
     tokens: TokenConfig = field(default_factory=TokenConfig)
     logging: LoggingConfig = field(default_factory=LoggingConfig)
     ai: AIConfig = field(default_factory=AIConfig)
+    performance: PerformanceConfig = field(default_factory=PerformanceConfig)
     
     # Current session
     current_persona: Optional[str] = None
@@ -107,6 +123,11 @@ class Config:
             for key, value in yaml_config["ai"].items():
                 if hasattr(self.ai, key):
                     setattr(self.ai, key, value)
+        
+        if "performance" in yaml_config:
+            for key, value in yaml_config["performance"].items():
+                if hasattr(self.performance, key):
+                    setattr(self.performance, key, value)
     
     def _apply_env_overrides(self) -> None:
         """Apply environment variable overrides."""
@@ -125,6 +146,18 @@ class Config:
         # Logging
         if os.getenv("RA_LOG_LEVEL"):
             self.logging.log_level = os.getenv("RA_LOG_LEVEL")
+        
+        # Performance overrides
+        if os.getenv("RA_PARALLEL_EVAL"):
+            self.performance.parallel_eval_enabled = os.getenv("RA_PARALLEL_EVAL").lower() in ("true", "1", "yes")
+        if os.getenv("RA_MAX_ITERATIONS"):
+            self.performance.max_reasoning_iterations = int(os.getenv("RA_MAX_ITERATIONS"))
+        if os.getenv("RA_LEARNER_LLM"):
+            self.performance.learner_llm_calls = os.getenv("RA_LEARNER_LLM").lower() in ("true", "1", "yes")
+        if os.getenv("RA_CROSS_SPACE"):
+            self.performance.cross_space_enabled = os.getenv("RA_CROSS_SPACE").lower() in ("true", "1", "yes")
+        if os.getenv("RA_SESSION_MEMORY"):
+            self.performance.session_memory_enabled = os.getenv("RA_SESSION_MEMORY").lower() in ("true", "1", "yes")
     
     def _ensure_directories(self) -> None:
         """Ensure required directories exist."""
@@ -178,6 +211,13 @@ class Config:
                 "model": self.ai.model,
                 "temperature": self.ai.temperature,
                 "max_response_tokens": self.ai.max_response_tokens,
+            },
+            "performance": {
+                "parallel_eval_enabled": self.performance.parallel_eval_enabled,
+                "max_reasoning_iterations": self.performance.max_reasoning_iterations,
+                "learner_llm_calls": self.performance.learner_llm_calls,
+                "cross_space_enabled": self.performance.cross_space_enabled,
+                "session_memory_enabled": self.performance.session_memory_enabled,
             },
             "current_persona": self.current_persona,
             "current_workflow": self.current_workflow,

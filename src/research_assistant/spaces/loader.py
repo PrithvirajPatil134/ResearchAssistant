@@ -174,6 +174,71 @@ class SpaceLoader:
         logger.info(f"Loaded space: {space_name} ({len(space.knowledge_sources)} sources)")
         return space
     
+    def load_cross_space_knowledge(
+        self,
+        primary_space: Persona,
+        cross_space_enabled: bool = False,
+    ) -> List[KnowledgeSource]:
+        """
+        Load knowledge from other spaces that the primary space declares as sources.
+        
+        Cross-space access is read-only. Each source is tagged with its origin space.
+        Returns empty list if cross_space_enabled is False or no cross_space_sources configured.
+        """
+        if not cross_space_enabled:
+            return []
+        
+        cross_config = primary_space.knowledge_base_config.get("cross_space_sources", [])
+        if not cross_config:
+            return []
+        
+        cross_sources = []
+        
+        for ref in cross_config:
+            ref_space_name = ref.get("space", "")
+            access_mode = ref.get("access", "read_only")
+            allowed_types = ref.get("knowledge_types", [])
+            
+            if access_mode != "read_only":
+                logger.warning(
+                    f"[CROSS_SPACE] Skipping {ref_space_name}: "
+                    f"only read_only access is supported, got '{access_mode}'"
+                )
+                continue
+            
+            # Load the referenced space
+            try:
+                ref_space = self.load(ref_space_name)
+            except ValueError:
+                logger.warning(f"[CROSS_SPACE] Referenced space not found: {ref_space_name}")
+                continue
+            
+            # Filter knowledge sources by allowed types
+            for source in ref_space.knowledge_sources:
+                if allowed_types and source.source_type not in allowed_types:
+                    continue
+                
+                # Tag with origin space for provenance tracking
+                tagged_source = KnowledgeSource(
+                    path=source.path,
+                    source_type=source.source_type,
+                    content=source.content,
+                    metadata={
+                        **source.metadata,
+                        "cross_space_origin": ref_space_name,
+                        "cross_space_access": "read_only",
+                    },
+                )
+                cross_sources.append(tagged_source)
+            
+            logger.info(
+                f"[CROSS_SPACE] Loaded {len([s for s in cross_sources if s.metadata.get('cross_space_origin') == ref_space_name])} "
+                f"sources from {ref_space_name} (types: {allowed_types or 'all'})"
+            )
+        
+        logger.info(f"[CROSS_SPACE] Total cross-space sources: {len(cross_sources)}")
+        return cross_sources
+    
     def _extract_agent_prompts(self, prompts_config: Dict) -> Dict[str, Dict[str, str]]:
         """Extract agent-specific prompts from config."""
         agent_prompts = {}

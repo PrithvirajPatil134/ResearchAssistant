@@ -17,12 +17,33 @@ import click
 
 @click.group()
 @click.option("--verbose", "-v", is_flag=True, help="Enable verbose output")
+@click.option("--skip-parallel-eval", is_flag=True, help="Skip parallel evaluation (faster)")
+@click.option("--skip-learner-llm", is_flag=True, help="Skip post-completion LLM calls (lesson/strategy extraction)")
+@click.option("--max-iterations", type=int, default=None, help="Max reasoning iterations (default: 5)")
+@click.option("--cross-space", is_flag=True, help="Enable cross-space knowledge access")
 @click.version_option(version="0.1.0", prog_name="ra")
 @click.pass_context
-def cli(ctx: click.Context, verbose: bool):
+def cli(ctx: click.Context, verbose: bool, skip_parallel_eval: bool,
+        skip_learner_llm: bool, max_iterations: Optional[int], cross_space: bool):
     """Research Assistant - AI-powered academic workflow automation."""
     ctx.ensure_object(dict)
     ctx.obj["verbose"] = verbose
+    
+    # Store performance overrides from CLI flags
+    ctx.obj["perf_overrides"] = {}
+    if skip_parallel_eval:
+        ctx.obj["perf_overrides"]["parallel_eval_enabled"] = False
+    if skip_learner_llm:
+        ctx.obj["perf_overrides"]["learner_llm_calls"] = False
+    if max_iterations is not None:
+        ctx.obj["perf_overrides"]["max_reasoning_iterations"] = max_iterations
+    if cross_space:
+        ctx.obj["perf_overrides"]["cross_space_enabled"] = True
+
+
+def _apply_perf_overrides(ctx: click.Context) -> dict:
+    """Extract performance overrides from CLI context for passing to invoker."""
+    return ctx.obj.get("perf_overrides", {})
 
 
 @cli.command()
@@ -49,6 +70,7 @@ def explain(ctx: click.Context, topic: str, persona: str):
         workflow_name="explain",
         persona_name=persona,
         initial_state={"topic": topic},
+        perf_overrides=_apply_perf_overrides(ctx),
     )
     
     if result.success:
@@ -80,6 +102,7 @@ def review(ctx: click.Context, submission_path: Path, persona: str, rubric: Opti
         workflow_name="review",
         persona_name=persona,
         initial_state=state,
+        perf_overrides=_apply_perf_overrides(ctx),
     )
     
     if result.success:
@@ -104,10 +127,61 @@ def guide(ctx: click.Context, assignment: str, persona: str):
         workflow_name="guide",
         persona_name=persona,
         initial_state={"assignment": assignment},
+        perf_overrides=_apply_perf_overrides(ctx),
     )
     
     if result.success:
         click.echo(click.style(f"✅ Guidance saved: {result.output_path}", fg="green"))
+    else:
+        click.echo(click.style(f"❌ Error: {result.error}", fg="red"), err=True)
+        ctx.exit(1)
+
+
+@cli.command()
+@click.argument("task")
+@click.option("--persona", "-p", required=True, help="Persona name")
+@click.pass_context
+def research(ctx: click.Context, task: str, persona: str):
+    """Run a full research workflow (lit review, methodology, roadmap).
+    
+    Output: spaces/{SPACE}/output/research_{timestamp}.md
+    """
+    from research_assistant.workflows import WorkflowInvoker
+    
+    result = WorkflowInvoker.invoke(
+        workflow_name="research",
+        persona_name=persona,
+        initial_state={"task": task, "topic": task},
+        perf_overrides=_apply_perf_overrides(ctx),
+    )
+    
+    if result.success:
+        click.echo(click.style(f"✅ Research saved: {result.output_path}", fg="green"))
+    else:
+        click.echo(click.style(f"❌ Error: {result.error}", fg="red"), err=True)
+        ctx.exit(1)
+
+
+@cli.command()
+@click.argument("task")
+@click.option("--persona", "-p", required=True, help="Persona name")
+@click.pass_context
+def quant(ctx: click.Context, task: str, persona: str):
+    """Get quantitative analysis guidance (method selection, analysis plan).
+    
+    Output: spaces/{SPACE}/output/quant_{timestamp}.md
+    """
+    from research_assistant.workflows import WorkflowInvoker
+    
+    result = WorkflowInvoker.invoke(
+        workflow_name="quant",
+        persona_name=persona,
+        initial_state={"task": task, "topic": task},
+        perf_overrides=_apply_perf_overrides(ctx),
+    )
+    
+    if result.success:
+        click.echo(click.style(f"✅ Analysis saved: {result.output_path}", fg="green"))
     else:
         click.echo(click.style(f"❌ Error: {result.error}", fg="red"), err=True)
         ctx.exit(1)
@@ -148,6 +222,7 @@ def workflow_run(ctx: click.Context, name: str, task: str, persona: str):
         workflow_name=name,
         persona_name=persona,
         initial_state={"task": task, "topic": task, "assignment": task},
+        perf_overrides=_apply_perf_overrides(ctx),
     )
     
     if result.success:

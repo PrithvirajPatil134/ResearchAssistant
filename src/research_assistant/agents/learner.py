@@ -66,6 +66,95 @@ class LearnerAgent(BaseAgent):
         self._learnings: List[Learning] = []
         self._mentor_preferences: Dict[str, Any] = {}
         self._reasoning_patterns: List[ReasoningPattern] = []
+        self._lessons_log: List[str] = []  # Compacted one-line lessons from past runs
+    
+    def load_lessons(self, persona_dir) -> List[str]:
+        """Load compacted lessons from the persona's lessons log file."""
+        from pathlib import Path
+        
+        lessons_path = Path(persona_dir) / "doc" / "lessons_learned.md"
+        if not lessons_path.exists():
+            return []
+        
+        lessons = []
+        for line in lessons_path.read_text().split('\n'):
+            line = line.strip()
+            if line and not line.startswith('#') and not line.startswith('---'):
+                lessons.append(line)
+        
+        self._lessons_log = lessons
+        logger.info(f"[LEARNER] Loaded {len(lessons)} lessons from {lessons_path.name}")
+        return lessons
+    
+    def store_lesson(self, persona_dir, lesson: str, query: str, score: float) -> None:
+        """Store a compacted one-line lesson from this run."""
+        from pathlib import Path
+        
+        lessons_path = Path(persona_dir) / "doc" / "lessons_learned.md"
+        lessons_path.parent.mkdir(parents=True, exist_ok=True)
+        
+        # Create file with header if it doesn't exist
+        if not lessons_path.exists():
+            lessons_path.write_text(
+                "# Lessons Learned\n\n"
+                "Compacted entries from the active learning log. "
+                "Each entry is a one-line summary of a graduated lesson.\n\n---\n\n"
+            )
+        
+        # Format: [date] [score] lesson text
+        date_str = datetime.now().strftime("%Y-%m-%d")
+        entry = f"- [{date_str}] [score:{score:.1f}] {lesson}\n"
+        
+        with open(lessons_path, 'a') as f:
+            f.write(entry)
+        
+        self._lessons_log.append(entry.strip())
+        logger.info(f"[LEARNER] Stored lesson: {lesson[:80]}...")
+    
+    def extract_lesson_with_llm(self, query: str, reasoning: str, score: float, feedback: str) -> Optional[str]:
+        """Use LLM to extract a compacted one-line lesson from this run."""
+        try:
+            from ..core import get_llm_client
+            llm = get_llm_client()
+            
+            prompt = f"""Analyze this workflow execution and extract ONE concise lesson learned.
+
+Query: {query[:500]}
+Score: {score}/10
+Feedback: {feedback[:500]}
+Output excerpt: {reasoning[:1000]}
+
+Previous lessons (avoid duplicates):
+{chr(10).join(self._lessons_log[-10:]) if self._lessons_log else '(none yet)'}
+
+Write ONE sentence (max 150 chars) capturing the most important lesson.
+Format: what worked well OR what to avoid next time.
+Output ONLY the lesson text, nothing else."""
+
+            response = llm.generate(
+                prompt,
+                system_prompt="You are a learning analyst. Output only a single concise lesson sentence."
+            )
+            
+            if response.success and response.content:
+                lesson = response.content.strip().strip('"').strip("'")[:150]
+                return lesson
+        except Exception as e:
+            logger.warning(f"[LEARNER] LLM lesson extraction failed: {e}")
+        
+        # Fallback: generate a simple lesson from the score
+        if score >= 8.0:
+            return f"Query type '{query[:40]}...' succeeded with score {score:.1f}"
+        else:
+            return f"Query type '{query[:40]}...' scored {score:.1f} — needs improvement in grounding"
+    
+    def get_lessons_for_prompt(self) -> str:
+        """Get lessons formatted for inclusion in LLM prompts."""
+        if not self._lessons_log:
+            return ""
+        
+        recent = self._lessons_log[-15:]  # Last 15 lessons
+        return "\n## LESSONS FROM PREVIOUS RUNS (apply these):\n" + "\n".join(recent)
     
     def execute(self, **kwargs) -> AgentResult:
         """Main execution - learn from provided feedback."""
@@ -572,6 +661,115 @@ Output only the summary text, no quotes or formatting."""
             "average_score": sum(scores) / len(scores),
             "common_strategies": [s for s, _ in common],
         }
+    
+    # =========================================================================
+    # Session Memory (cross-session persistence)
+    # =========================================================================
+    
+    def load_session_memory(self, persona_dir) -> str:
+        """
+        Load session memory from the space's doc directory.
+        
+        Returns the memory content as a string for injection into warm-start context.
+        Returns empty string if no session memory exists.
+        """
+        from pathlib import Path
+        
+        memory_path = Path(persona_dir) / "doc" / "session_memory.md"
+        if not memory_path.exists():
+            return ""
+        
+        content = memory_path.read_text().strip()
+        if not content:
+            return ""
+        
+        logger.info(f"[LEARNER] Loaded session memory: {len(content)} chars from {memory_path.name}")
+        return f"\n## SESSION MEMORY (from previous runs):\n{content}"
+    
+    def save_session_memory(
+        self,
+        persona_dir,
+        query: str,
+        score: float,
+        strategies: List[str],
+        cross_space_origins: List[str],
+        llm=None,
+    ) -> None:
+        """
+        Save/update session memory for cross-session persistence.
+        
+        Appends a summary of this run. If the file exceeds ~2K tokens (~8000 chars),
+        uses LLM to compress it. Otherwise just appends.
+        """
+        from pathlib import Path
+        
+        memory_path = Path(persona_dir) / "doc" / "session_memory.md"
+        memory_path.parent.mkdir(parents=True, exist_ok=True)
+        
+        # Build entry for this run
+        date_str = datetime.now().strftime("%Y-%m-%d %H:%M")
+        entry_parts = [f"- [{date_str}] score:{score:.1f} | {query[:80]}"]
+        if strategies:
+            entry_parts.append(f"  strategies: {', '.join(strategies[:3])}")
+        if cross_space_origins:
+            entry_parts.append(f"  cross-space: {', '.join(set(cross_space_origins))}")
+        new_entry = "\n".join(entry_parts) + "\n"
+        
+        # Read existing content
+        existing = ""
+        if memory_path.exists():
+            existing = memory_path.read_text()
+        
+        # If file doesn't exist yet, create with header
+        if not existing:
+            existing = "# Session Memory\n\nRecent queries, strategies, and patterns.\n\n"
+        
+        updated = existing + new_entry
+        
+        # Check if compression is needed (~2K tokens = ~8000 chars)
+        if len(updated) > 8000 and llm:
+            updated = self._compress_session_memory(updated, llm)
+        
+        memory_path.write_text(updated)
+        logger.info(f"[LEARNER] Saved session memory: {len(updated)} chars")
+    
+    def _compress_session_memory(self, content: str, llm) -> str:
+        """
+        Compress session memory to ~2K tokens using LLM summarization.
+        
+        Keeps the header and compresses the entries into a summary.
+        Only called when the file exceeds ~8000 chars.
+        """
+        try:
+            prompt = f"""Compress this session memory to under 1500 words while preserving:
+1. The 5 most recent query summaries with scores
+2. Top strategies that consistently worked (mentioned 2+ times)
+3. Any user preferences or patterns observed
+4. Cross-space combinations that produced good results
+
+Current session memory:
+{content[:6000]}
+
+Output the compressed memory in the same markdown format.
+Start with "# Session Memory" header. Keep it concise."""
+
+            response = llm.generate(
+                prompt,
+                system_prompt="You are a memory compression agent. Output only the compressed markdown."
+            )
+            
+            if response.success and response.content and len(response.content) > 100:
+                compressed = response.content.strip()
+                logger.info(
+                    f"[LEARNER] Compressed session memory: {len(content)} -> {len(compressed)} chars"
+                )
+                return compressed
+        except Exception as e:
+            logger.warning(f"[LEARNER] Session memory compression failed: {e}")
+        
+        # Fallback: keep last 6000 chars (most recent entries)
+        header = "# Session Memory\n\nRecent queries, strategies, and patterns.\n\n"
+        return header + content[-6000:]
     
     # =========================================================================
     # Workflow Doc Update Methods

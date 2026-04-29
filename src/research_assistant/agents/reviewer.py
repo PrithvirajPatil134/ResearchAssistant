@@ -1,11 +1,17 @@
 """
-Reviewer Agent - Reviews content against standards and examples.
+Reviewer Agent - LLM-powered content review against standards.
+
+Two-phase review:
+1. Fast heuristic pre-check (catches critical format issues)
+2. LLM-based review with workflow-specific rubric
 """
 
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Any
 from datetime import datetime
 import logging
+import json
+import re
 
 from .base import BaseAgent, AgentResult
 
@@ -30,15 +36,52 @@ class GuidelineCheck:
     notes: str
 
 
+# Workflow-specific review rubrics for the LLM reviewer
+REVIEW_RUBRICS = {
+    "guide": """Review this GUIDANCE output. A good guide should:
+- Help the student think, NOT give direct answers
+- Reference specific KB materials and frameworks
+- Include reflection questions
+- Provide structured approach without doing the work
+- Be actionable and specific, not generic""",
+
+    "explain": """Review this EXPLANATION output. A good explanation should:
+- Define concepts using KB terminology exactly
+- Include theoretical foundations with proper attribution
+- Progress from simple to complex
+- Include practical applications
+- Be academically rigorous but accessible""",
+
+    "review": """Review this REVIEW output. A good review should:
+- Identify both strengths and weaknesses
+- Reference specific criteria from course materials
+- Provide constructive, actionable feedback
+- Be thorough but encouraging
+- Suggest concrete next steps""",
+
+    "research": """Review this RESEARCH output. A good research output should:
+- Identify clear research gaps with evidence
+- Map to theoretical frameworks
+- Suggest appropriate methodologies with justification
+- Consider validity, reliability, and ethical implications
+- Provide a structured research roadmap""",
+
+    "quant": """Review this QUANTITATIVE ANALYSIS output. A good quant output should:
+- Use appropriate statistical methods for the data type
+- Report all relevant statistics (test statistic, p-value, effect size, CI)
+- Check and report assumption violations
+- Interpret results in context, not just numbers
+- Include limitations and caveats""",
+}
+
+
 class ReviewerAgent(BaseAgent):
     """
-    Reviews outputs against standards and guidelines.
+    LLM-powered content reviewer with workflow-specific rubrics.
     
-    Key responsibilities:
-    - Validate against industry standards
-    - Compare with provided examples
-    - Check adherence to persona guidelines
-    - Provide structured feedback
+    Phase 1: Heuristic pre-check (critical format issues, empty content)
+    Phase 2: LLM review with workflow-specific rubric
+    Falls back to heuristic-only if LLM unavailable.
     """
     
     def __init__(self, memory, context_guard):
@@ -48,28 +91,22 @@ class ReviewerAgent(BaseAgent):
         self._guidelines: List[str] = []
     
     def _apply_persona_config(self, config: Dict[str, Any]) -> None:
-        """Apply persona-specific review standards."""
         self._standards = config.get("standards", [])
     
     def execute(self, **kwargs) -> AgentResult:
-        """Main execution - review content."""
         content = kwargs.get("content")
         if not content:
             return AgentResult(success=False, output=None)
-        
         result = self.review_against_standards(content)
-        return AgentResult(success=True, output=result, tokens_used=200)
+        return AgentResult(success=True, output=result, tokens_used=500)
     
     def set_standards(self, standards: List[str]) -> None:
-        """Set review standards."""
         self._standards = standards
     
     def set_examples(self, examples: List[Dict[str, Any]]) -> None:
-        """Set reference examples."""
         self._examples = examples
     
     def set_guidelines(self, guidelines: List[str]) -> None:
-        """Set guidelines to check."""
         self._guidelines = guidelines
     
     def review_against_standards(
@@ -78,30 +115,172 @@ class ReviewerAgent(BaseAgent):
         persona: Optional[Dict[str, Any]] = None,
         workflow_name: Optional[str] = None,
         user_query: Optional[str] = None,
+        contract: Optional[Any] = None,
     ) -> ReviewResult:
-        """Review content against configured standards and workflow-specific criteria."""
-        issues = []
+        """Review content with heuristic pre-check + LLM evaluation."""
+        self.log_operation("review_against_standards", 150)
+        self._contract = contract  # Store for use in _llm_review
+        
+        # Phase 1: Heuristic pre-check for critical issues
+        critical_issues = self._check_critical_issues(content, workflow_name, user_query)
+        if any(i.get("severity") == "critical" for i in critical_issues):
+            return ReviewResult(
+                overall_score=1.0,
+                meets_standards=False,
+                issues=critical_issues,
+                suggestions=["Fix critical issues before resubmitting"],
+                strengths=[],
+            )
+        
+        # Phase 2: LLM-based review
+        llm_result = self._llm_review(content, workflow_name, user_query)
+        if llm_result:
+            return llm_result
+        
+        # Fallback: heuristic review
+        return self._heuristic_review(content, workflow_name, user_query, critical_issues)
+    
+    def _llm_review(
+        self,
+        content: str,
+        workflow_name: Optional[str],
+        user_query: Optional[str],
+    ) -> Optional[ReviewResult]:
+        """
+        LLM-powered review — iterative, like a human reviewer.
+        
+        Pass 1: Identify strengths (what works well)
+        Pass 2: Identify issues (what needs fixing)
+        Pass 3: Generate actionable suggestions informed by passes 1-2
+        """
+        try:
+            from ..core import get_llm_client
+            llm = get_llm_client()
+            
+            rubric = REVIEW_RUBRICS.get(workflow_name or "guide", REVIEW_RUBRICS["guide"])
+            content_excerpt = content[:5000]
+            query_excerpt = (user_query or 'Not provided')[:800]
+            standards_text = '\n'.join(f'- {s}' for s in self._standards[:5]) if self._standards else '(none)'
+            
+            base_context = f"""## QUERY: {query_excerpt}
+## OUTPUT (excerpt): {content_excerpt}
+## RUBRIC: {rubric}
+## STANDARDS: {standards_text}"""
+
+            # Level 3: Inject dispatch contract for intent-aware review
+            if hasattr(self, '_contract') and self._contract and hasattr(self._contract, 'to_reviewer_prompt'):
+                base_context += f"\n\n{self._contract.to_reviewer_prompt()}"
+            
+            sys_prompt = "You are a strict academic reviewer. Output ONLY valid JSON."
+            
+            # Pass 1: Strengths
+            r1 = llm.generate(
+                f"""{base_context}
+
+TASK: Identify 2-4 specific STRENGTHS of this output. What works well?
+Respond with ONLY: {{"strengths": ["strength 1", "strength 2"]}}""",
+                sys_prompt
+            )
+            
+            strengths = []
+            if r1.success:
+                m = re.search(r'\{.*?\}', r1.content, re.DOTALL)
+                if m:
+                    try:
+                        strengths = json.loads(m.group(0)).get("strengths", [])
+                    except (json.JSONDecodeError, ValueError):
+                        pass
+            
+            # Pass 2: Issues (informed by strengths)
+            r2 = llm.generate(
+                f"""{base_context}
+
+## STRENGTHS ALREADY IDENTIFIED: {json.dumps(strengths)}
+
+TASK: Now identify ISSUES — what needs fixing? Classify each as critical/major/minor.
+Respond with ONLY: {{"issues": [{{"type": "...", "severity": "critical|major|minor", "message": "..."}}], "score": <0-10>}}""",
+                sys_prompt
+            )
+            
+            issues = []
+            score = 6.0
+            if r2.success:
+                m = re.search(r'\{.*\}', r2.content, re.DOTALL)
+                if m:
+                    try:
+                        data = json.loads(m.group(0))
+                        raw_issues = data.get("issues", [])
+                        issues = [i if isinstance(i, dict) else {"message": str(i), "severity": "minor", "type": "general"} for i in raw_issues]
+                        score = float(data.get("score", 6))
+                    except (json.JSONDecodeError, ValueError):
+                        pass
+            
+            # Pass 3: Suggestions (informed by both strengths and issues)
+            r3 = llm.generate(
+                f"""{base_context}
+
+## STRENGTHS: {json.dumps(strengths)}
+## ISSUES: {json.dumps([i.get('message','') for i in issues])}
+
+TASK: Given the strengths and issues above, provide 2-4 specific, actionable SUGGESTIONS for improvement.
+Respond with ONLY: {{"suggestions": ["suggestion 1", "suggestion 2"]}}""",
+                sys_prompt
+            )
+            
+            suggestions = []
+            if r3.success:
+                m = re.search(r'\{.*?\}', r3.content, re.DOTALL)
+                if m:
+                    try:
+                        suggestions = json.loads(m.group(0)).get("suggestions", [])
+                    except (json.JSONDecodeError, ValueError):
+                        pass
+            
+            meets = score >= 6.0 and not any(i.get("severity") == "critical" for i in issues)
+            
+            logger.info(f"[REVIEWER] Score: {score}/10, {len(strengths)} strengths, {len(issues)} issues, {len(suggestions)} suggestions")
+            
+            return ReviewResult(
+                overall_score=score,
+                meets_standards=meets,
+                issues=issues,
+                suggestions=suggestions,
+                strengths=strengths,
+            )
+            
+        except Exception as e:
+            logger.warning(f"[REVIEWER] LLM review error: {e}")
+            return None
+    
+    def _check_critical_issues(self, content: str, workflow_name: Optional[str], user_query: Optional[str]) -> List[Dict[str, Any]]:
+        """Fast heuristic check for critical issues."""
+        critical = []
+        content_lower = content.lower()
+        
+        if len(content.split()) < 30:
+            critical.append({"type": "empty", "severity": "critical", "message": "Content too short or empty"})
+        
+        empty_phrases = ["topic is empty", "need you to specify", "please specify"]
+        if user_query and any(p in content_lower for p in empty_phrases):
+            critical.append({"type": "empty_topic", "severity": "critical", "message": "Output claims topic is empty when user provided input"})
+        
+        no_kb = ["i don't have access to", "i cannot access", "no specific information"]
+        if any(p in content_lower for p in no_kb):
+            critical.append({"type": "no_kb", "severity": "critical", "message": "Output not grounded in knowledge base"})
+        
+        if workflow_name == "guide" and "explained by:" in content_lower:
+            if "guidance:" not in content_lower and "objective" not in content_lower:
+                critical.append({"type": "wrong_format", "severity": "critical", "message": "Guide workflow used explain template"})
+        
+        return critical
+    
+    def _heuristic_review(self, content: str, workflow_name: Optional[str], user_query: Optional[str], existing_issues: List) -> ReviewResult:
+        """Fallback heuristic review."""
+        issues = list(existing_issues)
         suggestions = []
         strengths = []
-        score = 7.0  # Base score
+        score = 7.0
         
-        # CRITICAL: Check for workflow-specific issues (auto-fail conditions)
-        critical_issues = self._check_critical_issues(content, workflow_name, user_query)
-        for issue in critical_issues:
-            issues.append(issue)
-            score -= 3.0  # Critical issues heavily penalize score
-        
-        # Check workflow-specific format
-        if workflow_name:
-            workflow_issues, workflow_strengths = self._validate_workflow_format(
-                content, workflow_name, user_query
-            )
-            issues.extend(workflow_issues)
-            strengths.extend(workflow_strengths)
-            if workflow_issues:
-                score -= len(workflow_issues) * 0.5
-        
-        # Check length
         word_count = len(content.split())
         if word_count < 100:
             issues.append({"type": "length", "severity": "major", "message": "Content too short"})
@@ -109,206 +288,43 @@ class ReviewerAgent(BaseAgent):
         elif word_count > 500:
             strengths.append("Comprehensive content")
         
-        # Check structure
-        if "##" in content or content.count("\n\n") > 2:
+        if "##" in content:
             strengths.append("Good structure with sections")
         else:
-            suggestions.append("Consider adding section headers")
+            suggestions.append("Add section headers for clarity")
         
-        # Check standards compliance
-        for standard in self._standards:
-            # Simple keyword check - would use AI in production
-            if standard.lower() not in content.lower():
-                suggestions.append(f"Address: {standard}")
-        
-        # Cap score at 0-10 range
-        score = max(0.0, min(10.0, score))
-        meets_standards = score >= 6.0 and not any(i.get("severity") == "critical" for i in issues)
-        
-        self.log_operation("review_against_standards", 150)
+        score = max(0.0, min(10.0, score - len(issues) * 0.5))
         
         return ReviewResult(
             overall_score=score,
-            meets_standards=meets_standards,
+            meets_standards=score >= 6.0 and not any(i.get("severity") == "critical" for i in issues),
             issues=issues,
             suggestions=suggestions,
             strengths=strengths,
         )
     
-    def _check_critical_issues(
-        self,
-        content: str,
-        workflow_name: Optional[str],
-        user_query: Optional[str],
-    ) -> List[Dict[str, Any]]:
-        """Check for critical issues that should auto-fail the review."""
-        critical_issues = []
-        content_lower = content.lower()
-        
-        # Critical Issue 1: Empty topic response when user provided input
-        empty_topic_phrases = [
-            "topic is empty",
-            "topic field is empty",
-            "topic required",
-            "need you to specify",
-            "please specify what",
-            "awaiting topic selection",
-        ]
-        if user_query and any(phrase in content_lower for phrase in empty_topic_phrases):
-            critical_issues.append({
-                "type": "empty_topic_response",
-                "severity": "critical",
-                "message": "Output claims 'topic is empty' when user provided input",
-            })
-        
-        # Critical Issue 2: Wrong workflow format (explain template for guide, etc.)
-        if workflow_name == "guide":
-            # Guide should NOT use explain-style headers for concept explanation
-            if "explained by:" in content_lower and "prof." in content_lower:
-                if "guidance:" not in content_lower and "objective" not in content_lower:
-                    critical_issues.append({
-                        "type": "wrong_workflow_format",
-                        "severity": "critical",
-                        "message": "Guide workflow used explain template format",
-                    })
-        
-        # Critical Issue 3: No KB grounding
-        generic_phrases = [
-            "i don't have access to",
-            "i cannot access",
-            "no specific information",
-        ]
-        if any(phrase in content_lower for phrase in generic_phrases):
-            critical_issues.append({
-                "type": "no_kb_grounding",
-                "severity": "critical",
-                "message": "Output not grounded in knowledge base materials",
-            })
-        
-        return critical_issues
-    
-    def _validate_workflow_format(
-        self,
-        content: str,
-        workflow_name: str,
-        user_query: Optional[str],
-    ) -> tuple:
-        """Validate content matches expected workflow format."""
-        issues = []
-        strengths = []
-        content_lower = content.lower()
-        query_lower = (user_query or "").lower()
-        
-        if workflow_name == "explain":
-            # Explain should have educational structure
-            if "##" in content and ("definition" in content_lower or "concept" in content_lower):
-                strengths.append("Proper explain format with sections")
-            
-        elif workflow_name == "guide":
-            # Check if objective generation request
-            objective_triggers = ["objective", "generate objective", "create objective", "thesis objective"]
-            is_objective_request = any(t in query_lower for t in objective_triggers)
-            
-            if is_objective_request:
-                # Must have objective-specific format
-                if "the objective of this research is to" in content_lower:
-                    strengths.append("Follows Prof. Cardasso objective format")
-                else:
-                    issues.append({
-                        "type": "missing_objective_format",
-                        "severity": "major",
-                        "message": "Objective should start with 'The objective of this research is to...'",
-                    })
-                
-                if "business context" in content_lower:
-                    strengths.append("Includes business context section")
-                else:
-                    issues.append({
-                        "type": "missing_business_context",
-                        "severity": "major",
-                        "message": "Objective missing Business Context section",
-                    })
-            
-            # General guide checks
-            if "reflection question" in content_lower or "framework" in content_lower:
-                strengths.append("Includes guiding elements")
-        
-        elif workflow_name == "review":
-            if "strength" in content_lower and "weakness" in content_lower:
-                strengths.append("Proper review format with strengths/weaknesses")
-            elif "suggestion" in content_lower or "improve" in content_lower:
-                strengths.append("Provides improvement guidance")
-        
-        elif workflow_name == "research":
-            if "gap" in content_lower or "source" in content_lower:
-                strengths.append("Identifies research gaps/sources")
-        
-        return issues, strengths
-    
-    def compare_with_examples(
-        self,
-        content: str,
-        examples: Optional[List[Dict[str, Any]]] = None,
-    ) -> Dict[str, Any]:
-        """Compare content with reference examples."""
+    def compare_with_examples(self, content: str, examples: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
         examples = examples or self._examples
-        
-        comparisons = []
-        for ex in examples[:3]:  # Limit to 3 examples
-            comparisons.append({
-                "example": ex.get("name", "Example"),
-                "similarity": 0.7,  # Placeholder
-                "notes": "Structure comparison",
-            })
-        
         self.log_operation("compare_with_examples", 100)
-        
-        return {
-            "comparisons": comparisons,
-            "overall_alignment": 0.75,
-        }
+        return {"comparisons": [], "overall_alignment": 0.75}
     
-    def check_guidelines(
-        self,
-        content: str,
-        guidelines: Optional[List[str]] = None,
-    ) -> List[GuidelineCheck]:
-        """Check content against guidelines."""
+    def check_guidelines(self, content: str, guidelines: Optional[List[str]] = None) -> List[GuidelineCheck]:
         guidelines = guidelines or self._guidelines
-        checks = []
-        
-        for guideline in guidelines:
-            # Simple check - would use AI in production
-            compliant = len(content) > 50
-            checks.append(GuidelineCheck(
-                guideline=guideline,
-                compliant=compliant,
-                notes="Checked" if compliant else "Review needed",
-            ))
-        
         self.log_operation("check_guidelines", 80)
-        return checks
+        return [GuidelineCheck(guideline=g, compliant=len(content) > 50, notes="Checked") for g in guidelines]
     
     def generate_feedback(self, review: ReviewResult) -> str:
-        """Generate human-readable feedback from review."""
         lines = [f"## Review Score: {review.overall_score}/10", ""]
-        
         if review.strengths:
             lines.append("### Strengths")
-            for s in review.strengths:
-                lines.append(f"- {s}")
+            lines.extend(f"- {s}" for s in review.strengths)
             lines.append("")
-        
         if review.issues:
             lines.append("### Issues")
-            for i in review.issues:
-                lines.append(f"- {i['message']}")
+            lines.extend(f"- {i.get('message', i) if isinstance(i, dict) else i}" for i in review.issues)
             lines.append("")
-        
         if review.suggestions:
             lines.append("### Suggestions")
-            for s in review.suggestions:
-                lines.append(f"- {s}")
-        
+            lines.extend(f"- {s}" for s in review.suggestions)
         self.log_operation("generate_feedback", 30)
         return "\n".join(lines)

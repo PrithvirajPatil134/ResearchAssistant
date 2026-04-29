@@ -1,0 +1,65 @@
+# CognitiveInfrastructure recall database
+.kiro/recall.db
+.kiro/recall.db-shm
+.kiro/recall.db-wal
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+*.egg-info/
+venv/
+.venv/
+
+# OS
+.DS_Store
+**/.DS_Store
+
+# Editor
+.vscode/
+.idea/
+
+# Binary knowledge files (papers, datasets, templates)
+# Kept externally in cloud storage, not committed to git
+*.pdf
+*.docx
+*.pptx
+*.xlsx
+*.sav
+*.COV
+*.cov
+
+# Allow named output deliverables (our published work)
+!src/research_assistant/spaces/**/output/*_PUBLICATION.md
+!src/research_assistant/spaces/**/output/*_PUBLICATION.docx
+!src/research_assistant/spaces/**/output/*_v*.md
+!src/research_assistant/spaces/**/output/*_v*.docx
+!src/research_assistant/spaces/**/output/*revised*.md
+!src/research_assistant/spaces/**/output/*revised*.docx
+!src/research_assistant/spaces/**/output/*TermPaper*.md
+!src/research_assistant/spaces/**/output/*TermPaper*.docx
+
+# MS Office lock files — ALWAYS excluded (placed after negations to win)
+**/~$*
+
+# Timestamped output files (throwaway intermediate runs)
+# Matches patterns like explain_20260125_182722.md, guide_20260131_143052.md
+src/research_assistant/spaces/**/output/*_20[0-9][0-9][0-1][0-9][0-3][0-9]_*.md
+
+# Intermediate artifacts and caches
+src/research_assistant/spaces/**/artifacts/
+src/research_assistant/spaces/**/cache/
+src/research_assistant/spaces/**/workspace/
+
+# Logs
+data/logs/
+logs/*.jsonl
+src/logs/*.jsonl
+
+# Drafts and intermediate summaries
+data/drafts/
+data/sources/
+
+# Unrelated files bucket
+unrelated-files/

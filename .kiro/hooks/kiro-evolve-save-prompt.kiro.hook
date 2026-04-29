@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Kiro Evolve: Save User Prompt",
+  "description": "Captures user prompts to daily transcript files in ~/.kiro/transcripts/ for Kiro Evolve weekly review system.",
+  "version": "1",
+  "when": {
+    "type": "promptSubmit"
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "bash scripts/kiro_evolve_save_transcript.sh"
+  }
+}

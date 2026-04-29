@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Kiro Evolve: Check All (Review/Dream/Cleanup)",
+  "description": "Manual trigger for Kiro Evolve checks. Runs review, dream, and cleanup checks. Each script has internal date/count gates and exits silently if not due. User triggers this from the Kiro UI when they want to see if any knowledge work is due.",
+  "version": "1",
+  "when": {
+    "type": "userTriggered"
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "bash scripts/kiro_evolve_check_review.sh && bash scripts/kiro_evolve_check_dream.sh && bash scripts/kiro_evolve_check_cleanup.sh"
+  }
+}

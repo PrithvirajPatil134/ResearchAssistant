@@ -5,6 +5,30 @@ what remains. One entry per work session or wave.
 
 ---
 
+## 2026-07-27 — Wave 6.5 + 6.2 DONE
+
+**Wave 6.5 (stale wiki indexes) — DONE.** Built `scripts/rebuild-wiki-index.py`
+(regenerates per-type sections from page frontmatter via venv PyYAML; preserves
+header + prose tail; skips non-standard indexes). Rebuilt QNTR (was Sources(0),
+now 24/6/2/2/1), CRO (4/1), DBA (14/5/1/1). CW skipped (non-standard, no pages).
+ra-wiki-lint warnings 210 → 180 (the 29 not-in-index warnings resolved), 0 errors.
+Commit 0e31a8a.
+
+**Wave 6.2 (schedule maintenance tier) — DONE (artifacts).** `crontab.example`
+already existed (my earlier "missing" claim was wrong — it just was never
+installed; crontab -l = 0 entries). Added the rebuild-wiki-index and storage-audit
+weekly jobs. Built `scripts/install-crontab.sh`: idempotent (marked block, re-run
+replaces not duplicates), with --dry-run and --uninstall. Dry-run verified; the
+user's crontab was NOT modified. Installing cron is an explicit user step
+(`bash scripts/install-crontab.sh`) because it changes the user environment.
+Commit 6aeca7e.
+
+**Remaining in Wave 6:** 6.1 (CLOSED — pipeline-output writing enforcement lives
+in the pre/post-stitch eval agents, confirmed during 6.6); 6.4 (ingest the ~169
+uncaptured knowledge/comm files + resolve orphans — content work, not migration).
+
+---
+
 ## 2026-07-27 — Wave 6.6 DONE (eval mechanism confirmed + repaired)
 
 **Eval mechanism confirmed in place, with one real defect fixed.** Confirmation

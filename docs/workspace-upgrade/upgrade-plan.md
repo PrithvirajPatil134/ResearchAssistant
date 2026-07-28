@@ -62,10 +62,10 @@ corrective feedback is observable.
 
 | # | Task | New file | CC event | Status |
 |---|---|---|---|---|
-| 2.1 | Wiki-lookup-before-drafting classifier | `.claude/hooks/wiki-lookup.sh` | UserPromptSubmit | TODO |
-| 2.2 | Human-authored-writing post-write gate (consolidates check-agent-writing + check-submission-writing) | `.claude/hooks/writing-gate.sh` | PostToolUse (Edit\|Write\|MultiEdit) | TODO |
-| 2.3 | py_compile lint on edited agent/workflow/core Python | `.claude/hooks/py-lint.sh` | PostToolUse (Edit\|Write) | TODO |
-| 2.4 | Register 2.1-2.3 in settings.json | `.claude/settings.json` | — | TODO |
+| 2.1 | Wiki-lookup-before-drafting classifier | `.claude/hooks/wiki-lookup.sh` | UserPromptSubmit | DONE |
+| 2.2 | Human-authored-writing post-write gate (consolidates check-agent-writing + check-submission-writing) | `.claude/hooks/writing-gate.sh` | PostToolUse (Edit\|Write\|MultiEdit) | DONE |
+| 2.3 | py_compile lint on edited agent/workflow/core Python | `.claude/hooks/py-lint.sh` | PostToolUse (Edit\|Write\|MultiEdit) | DONE |
+| 2.4 | Register 2.1-2.3 in settings.json (SessionStart + permissions preserved) | `.claude/settings.json` | — | DONE |
 
 ## Wave 3 — SKIPPED (evolve transcript-reflection loop)
 

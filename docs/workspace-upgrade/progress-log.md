@@ -5,6 +5,43 @@ what remains. One entry per work session or wave.
 
 ---
 
+## 2026-07-27 — Wave 2 complete (enforcement layer rebuilt as CC hooks)
+
+**Wave 2 — DONE, verified against the documented hook contract.** The Kiro
+enforcement hooks (inert under CC because CC never reads `.kiro/hooks/`) are
+rebuilt as Claude Code hooks in `.claude/hooks/`, registered in
+`.claude/settings.json`. Kiro originals preserved.
+
+New files (all `bash -n` clean, executable):
+- `.claude/hooks/wiki-lookup.sh` — UserPromptSubmit. Injects the 6-category
+  task-grounding protocol (communication/document/infrastructure/research/ingest/
+  general) as stdout context on exit 0. Phrased as factual statements per the
+  doc's prompt-injection caution. Carries the Kiro classifier; paths canonical.
+- `.claude/hooks/writing-gate.sh` — PostToolUse (Edit|Write|MultiEdit). On a
+  submission-ready write (workspace/|output/|assignment/ or Submission|Paper|
+  Teaching|Case|revised in the name; code/config skipped), emits additionalContext
+  to scan against human-authored-writing.md. Consolidates the two Kiro writing
+  hooks. Non-blocking (PostToolUse cannot block; tool already ran).
+- `.claude/hooks/py-lint.sh` — PostToolUse (Edit|Write|MultiEdit). On agent/
+  workflow/core Python writes, runs py_compile; exit 2 + stderr surfaces syntax
+  errors to Claude. No-op elsewhere.
+
+settings.json: SessionStart + permissions preserved; UserPromptSubmit and
+PostToolUse added.
+
+**Verification (6 cases, all pass):** valid JSON + SessionStart intact;
+wiki-lookup injects on exit 0; writing-gate emits additionalContext for a
+submission file and no-ops for a .sh; py-lint returns exit 2 with the exact
+SyntaxError for broken agent Python and exit 0 for non-agent files.
+
+Caveat: tests confirm the scripts honor the documented stdin/exit contract.
+Live routing of real CC events through them activates on next SessionStart
+(hooks load at session start, like skills and the slim context).
+
+**Remaining:** Waves 4, 5 TODO.
+
+---
+
 ## 2026-07-27 — Wave 1 complete (directory migration finished)
 
 **Wave 1 — DONE, verified.** All operational reads/writes moved off the legacy

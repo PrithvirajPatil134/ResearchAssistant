@@ -5,7 +5,13 @@
       "Edit(/.claude/skills/doctor/**)",
       "Bash(bash scripts/ra-wiki-lint.sh)",
       "Bash(awk '{print $NF}')",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(git commit -q -m 'feat\\(workspace\\): Kiro→Claude Code upgrade foundation + audit plan *)",
+      "Bash(python3 -c ' *)",
+      "Bash(git commit -q -m 'fix\\(workspace\\): Wave 1 — finish spaces/ → src/research_assistant/spaces/ migration *)",
+      "Bash(python3 -m json.tool)",
+      "Bash(python3 -c \"import json; d=json.load\\(open\\('.kiro/hooks/check-submission-writing.json'\\)\\); h=d['hooks'][0]; print\\('trigger:', h.get\\('trigger'\\)\\); print\\('patterns:', h.get\\('patterns'\\) or h.get\\('action',{}\\).get\\('patterns'\\) or 'see action'\\); print\\('action.type:', h['action']['type']\\)\")",
+      "Bash(git commit -q -m 'feat\\(hooks\\): Wave 2 — rebuild enforcement layer as Claude Code hooks *)"
     ]
   },
   "hooks": {
@@ -15,6 +21,31 @@
           {
             "type": "command",
             "command": "$CLAUDE_PROJECT_DIR/scripts/discover-claude-context.sh"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/wiki-lookup.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/writing-gate.sh"
+          },
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/py-lint.sh"
           }
         ]
       }

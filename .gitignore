@@ -3,6 +3,9 @@
 .kiro/recall.db-shm
 .kiro/recall.db-wal
 
+# GPU agent sentinel files (transient, written by spawn-gpu-agent.sh)
+.kiro/.gpu-agent-done/
+
 # Python
 __pycache__/
 *.pyc
@@ -61,5 +64,22 @@ src/logs/*.jsonl
 data/drafts/
 data/sources/
 
+# Claude Code user-specific local settings (shared settings.json is committed)
+.claude/local/
+
+# Auto-generated CLAUDE.md (rebuilt each session by discover-claude-context.sh)
+CLAUDE.md
+
 # Unrelated files bucket
 unrelated-files/
+
+# Obsidian volatile state (shareable config is tracked)
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/cache/
+data/wiki/.obsidian/workspace.json
+data/wiki/.obsidian/workspace-mobile.json
+data/wiki/.obsidian/cache/
+
+# Obsidian scratch/base files (not knowledge content)
+*.base

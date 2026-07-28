@@ -108,17 +108,38 @@ invariant fails if any script/agent references the bare legacy path.
 
 | # | Task | Status |
 |---|---|---|
-| 5.1 | Migrate `principal-agent-theory.md` (unique) into canonical with valid frontmatter | TODO |
-| 5.2 | Migrate the Gioia notes source (unique) into canonical | TODO |
-| 5.3 | Reconcile `berente-2021` (legacy `validated` 16.7KB richer vs canonical `working` 4.9KB) | TODO |
-| 5.4 | Delete empty legacy `spaces/*/wiki` (diff + approval first) | TODO |
-| 5.5 | Add `harness-doctor.sh` invariant: no bare `spaces/*/wiki` references anywhere | TODO |
+| 5.1 | Migrate `principal-agent-theory.md` (unique) into canonical with valid frontmatter | DONE |
+| 5.2 | Migrate the Gioia notes source (unique) into canonical (`gioia-2013-qualitative-rigor.md`) | DONE |
+| 5.3 | Reconcile `berente-2021`: keep canonical (5 cross-refs), port 3 unique legacy sections | DONE |
+| 5.4 | Delete empty legacy `spaces/*/wiki` (output/ deliverables kept) | DONE |
+| 5.5 | Add `harness-doctor.sh` check 4 (no bare `spaces/*/wiki` refs) + `.claude/hooks/README.md` | DONE |
+
+Wave 5 note: check 4 immediately caught a real leftover the 5-cluster audit missed
+(`obsidian-graph-linker.py` string markers). On inspection that script was already
+canonical-correct (its discovery roots are `src/research_assistant/spaces`), so the
+match was benign; the guard regex was tightened to a PCRE negative-lookbehind so
+canonical paths never match, and the script's dead `EXCLUDED_TREE` (pointing at the
+deleted legacy tree) was removed. The guard earning a catch on its first run is the
+point.
+
+## Wave 6 — Close the coverage gaps surfaced by the critical review (TODO)
+
+These were found by self-audit AFTER the main waves; logged honestly rather than
+declaring the upgrade complete. None is a silent-failure regression; they are
+gaps in enforcement reach and scheduling.
+
+| # | Task | Why | Status |
+|---|---|---|---|
+| 6.1 | Enforce writing/py-lint on subagent + pipeline writes | Main-session PostToolUse hooks do NOT see writes by dispatched subagents or by `long-doc-orchestrate.sh`. Options: per-agent `hooks:` frontmatter, OR verify `ra-pre/post-stitch-eval` + `ra-prose-editor` already enforce the full banned-list. | TODO |
+| 6.2 | Schedule the deterministic maintenance tier | `crontab -l` shows 0 entries; no `crontab.example` exists. `ra-wiki-lint`, `learner-archive`, `ingest-cleanup`, `scratchpad-archive`, `ra-storage-audit` run only if invoked by hand. Install cron OR wrap as skills / scheduled tasks. | TODO |
+| 6.3 | Live long-doc pipeline run (end-to-end proof) | Wave 1 fixed the pipeline's paths but it was never RUN. A real dispatch producing a brain package from the 67-page tree is the only true proof. | TODO |
+| 6.4 | Ingest the 169-file coverage backlog + resolve 29 orphan pages | Surfaced by the now-honest lint check 6. Content work, separate from the CC migration. | TODO |
 
 ## Cross-cutting acceptance (definition of done for the whole upgrade)
 
-1. `harness-doctor.sh` all green, including the new legacy-path invariant.
-2. `ra-wiki-lint.sh` all 7 checks active and honest (no false "all clean").
-3. A live long-doc dispatch produces a brain package built from the 67-page tree.
-4. Wave-2 hooks demonstrably fire and give corrective feedback.
+1. `harness-doctor.sh` all green, including the legacy-path invariant. ✓ (Wave 5)
+2. `ra-wiki-lint.sh` all 7 checks active and honest (no false "all clean"). ✓ (Wave 1)
+3. A live long-doc dispatch produces a brain package built from the 67-page tree. ⧗ (Wave 6.3)
+4. Wave-2 hooks demonstrably fire and give corrective feedback. ✓ (UserPromptSubmit verified live; PostToolUse verified against contract, subagent reach = Wave 6.1)
 5. Every new file sits in its correct place: hooks in `.claude/hooks/`, plan in
-   `docs/workspace-upgrade/`, skills in `.claude/skills/`.
+   `docs/workspace-upgrade/`, skills in `.claude/skills/`. ✓

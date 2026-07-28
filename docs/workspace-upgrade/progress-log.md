@@ -5,6 +5,46 @@ what remains. One entry per work session or wave.
 
 ---
 
+## 2026-07-27 — Wave 5 complete (legacy tree reconciled + regression guard) + Wave 6 logged
+
+**Wave 5 — DONE, verified.** The legacy `spaces/*/wiki` tree is reconciled and
+removed with zero content loss.
+
+- 5.1: `principal-agent-theory.md` (unique, 22.8KB) migrated to
+  `src/research_assistant/spaces/QNTR/wiki/concepts/`; added the 3 missing required
+  fields (created, originating_space, applicable_to).
+- 5.2: Gioia source notes migrated to
+  `src/research_assistant/spaces/QNTR/wiki/sources/gioia-2013-qualitative-rigor.md`
+  (clean slug); added type/created/originating_space/applicable_to.
+- 5.3: `berente-2021` — kept the canonical page (5 cross-refs point at it) and
+  ported the 3 sections unique to the legacy validated copy (Open Questions,
+  Tensions with Other Sources, Cross-Space Promotion Notes). Canonical 4.9KB→9.1KB.
+- 5.4: deleted `spaces/QNTR/wiki` only. All `spaces/*/output/` deliverables (~19
+  files) left untouched — the legacy tree was NOT wholesale-deletable, contrary to
+  the first plan draft.
+- 5.5: added harness-doctor check 4 (no bare `spaces/*/wiki` refs) and
+  `.claude/hooks/README.md`.
+
+**The regression guard paid off immediately.** Check 4's first run FAILED on
+`obsidian-graph-linker.py` — a script in NONE of the 5 audit clusters. Verified it
+was actually canonical-correct (discovery roots are `src/research_assistant/spaces`;
+the flagged lines are string markers that legitimately match inside canonical
+paths). Tightened the guard to a PCRE negative-lookbehind so canonical never
+matches, and removed the script's dead `EXCLUDED_TREE` (pointed at the deleted
+legacy tree). harness-doctor: ALL GREEN (4/4).
+
+**Wave 6 logged (NOT done).** Critical self-review surfaced coverage gaps that the
+main waves did not close, recorded honestly rather than declaring victory:
+- 6.1 subagent/pipeline write enforcement (main-session PostToolUse hooks don't
+  see subagent or script writes).
+- 6.2 the maintenance tier is unscheduled (0 cron entries).
+- 6.3 the long-doc pipeline was path-fixed but never RUN end-to-end.
+- 6.4 the 169-file ingest backlog + 29 orphan pages (content work).
+
+**State:** Waves 0-5 complete. Wave 6 is the honest open list.
+
+---
+
 ## 2026-07-27 — Wave 4 complete (23 agents CC-compliant + hardened)
 
 **Wave 4 — DONE, verified.** All 23 `.claude/agents/*.md` are now full Claude

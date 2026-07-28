@@ -221,12 +221,14 @@ echo "## 6. Coverage Gap (knowledge/communication files without wiki source page
 echo ""
 
 gap_count=0
-for space_dir in "${WORKSPACE_ROOT}"/spaces/*/; do
+# Driver iterates the CANONICAL tree (knowledge/communication dirs live only
+# there). alt_wiki_source is the legacy fallback for the source-page lookup.
+for space_dir in "${WORKSPACE_ROOT}"/src/research_assistant/spaces/*/; do
   if [ ! -d "$space_dir" ]; then continue; fi
   space_name="$(basename "$space_dir")"
 
   wiki_source_dir="${space_dir}wiki/sources"
-  alt_wiki_source="${WORKSPACE_ROOT}/src/research_assistant/spaces/${space_name}/wiki/sources"
+  alt_wiki_source="${WORKSPACE_ROOT}/spaces/${space_name}/wiki/sources"
 
   for src_dir in "${space_dir}knowledge" "${space_dir}communication"; do
     if [ ! -d "$src_dir" ]; then continue; fi
@@ -271,12 +273,12 @@ echo ""
 orphan_image_script="${WORKSPACE_ROOT}/scripts/image-orphan-scan.sh"
 if [ -x "$orphan_image_script" ] || [ -f "$orphan_image_script" ]; then
   orphan_img_count=0
-  for img_dir in "${WORKSPACE_ROOT}"/spaces/*/communication/images; do
+  for img_dir in "${WORKSPACE_ROOT}"/src/research_assistant/spaces/*/communication/images; do
     if [ ! -d "$img_dir" ]; then continue; fi
     while IFS= read -r img; do
       if [ -z "$img" ]; then continue; fi
       img_name="$(basename "$img")"
-      refs=$( (grep -rl "$img_name" "${WORKSPACE_ROOT}/spaces" "${WORKSPACE_ROOT}/data" 2>/dev/null || true) | wc -l | tr -d ' ')
+      refs=$( (grep -rl "$img_name" "${WORKSPACE_ROOT}/src/research_assistant/spaces" "${WORKSPACE_ROOT}/data" 2>/dev/null || true) | wc -l | tr -d ' ')
       if [ "$refs" -eq 0 ]; then
         orphan_img_count=$((orphan_img_count + 1))
         log_warning "Orphan image: ${img##${WORKSPACE_ROOT}/}"

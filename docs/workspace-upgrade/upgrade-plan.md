@@ -38,11 +38,21 @@ a live long-doc brain-assembly dispatch reads the 67-page canonical tree.
 | 1.12 | ra-email-drafter write target → canonical | `ra-email-drafter.md:33` | in-place | TODO |
 | 1.13 | ra-orchestrator guard wording → canonical | `ra-orchestrator.md:77` | in-place | TODO |
 | 1.14 | ra-wiki-ingestor explicit canonical `_index.md` | `ra-wiki-ingestor.md:35,40` | in-place | TODO |
-| 1.15 | 7 writer agents: citation-format examples → canonical | ~lines 20-22 each | in-place, low-sev | TODO |
+| 1.15 | Citation-format examples (`[spaces/{SPACE}/knowledge/...]`) in 11 agents | ~lines 20-22 each | DEFERRED — see note | RECLASSIFIED |
 
-Open decision (blocks 1.3): delivery dir — hard switch to canonical, or
-prefer-canonical/fallback-legacy (mirrors `long-doc-orchestrate.sh:1179`)?
-Recommendation: fallback pattern (safer; still finds old deliverables).
+Decisions resolved:
+- 1.3 delivery dir: RESOLVED — prefer-canonical/fallback-legacy pattern applied
+  (mirrors `long-doc-orchestrate.sh:1179`). New docs land canonical; old ones stay
+  discoverable.
+- 1.15: RECLASSIFIED and DEFERRED. On inspection these are NOT operational path
+  bugs — they are citation-format (provenance-string) examples that match the
+  "Accepted Sources" block in `no-assumption-rule.md` VERBATIM. Changing them in
+  agents alone would make 11 agents inconsistent with the governing steering rule,
+  and the `[spaces/...]` provenance convention is also used across ~92 existing
+  wiki pages. Changing the convention is a separate, larger task (steering rule +
+  all agents + existing citations together), not a Wave-1 path fix. Tracked for a
+  future dedicated decision; NOT a silent-failure bug (agents read the correct tree
+  now; only the human-readable citation prefix differs).
 
 ## Wave 2 — Rebuild the enforcement layer as Claude Code hooks (new files)
 
@@ -62,18 +72,28 @@ corrective feedback is observable.
 Out of scope by decision (2026-07-27). Claude Code memory + maintained wiki
 cover this role. Deterministic learner tier retained. No work here.
 
-## Wave 4 — Harden the 23 agent definitions
+## Wave 4 — Make all 23 agents fully Claude Code-compatible and hardened
 
-Acceptance: ALL 23 agents pin a 1M model; all agents carry the full sourcing
-Hard Rule; gap/review agents carry the absence-claims guard; ingestor contract
-mandates canonical `target_path`.
+Every agent definition must be a valid, complete Claude Code subagent that has
+everything Claude Code expects to invoke and run it correctly, in addition to
+the sourcing/model hardening. First step: read the Claude Code sub-agents doc
+(https://code.claude.com/docs/en/sub-agents) and derive the full expected
+frontmatter/spec (required + recommended fields: name, description, tools,
+model, and any others), then audit all 23 against that spec before editing.
+
+Acceptance: ALL 23 agents conform to the current Claude Code subagent spec
+(valid frontmatter, correct field names, sensible tool grants, explicit model);
+ALL 23 pin a 1M model; all carry the full sourcing Hard Rule; gap/review agents
+carry the absence-claims guard; ingestor contract mandates canonical `target_path`.
 
 | # | Task | Scope | Status |
 |---|---|---|---|
-| 4.1 | Pin `model:` (1M) on ALL 23 agents (not just heavy readers) — uniform 1M so no agent can silently inherit a smaller default | all `.claude/agents/*.md` | TODO |
-| 4.2 | Upgrade 15 short-form Hard Rules to full form | 15 agents | TODO |
-| 4.3 | Add "No Absolute-Absence Claims" guard | ra-gap-table-builder, ra-litreview-builder, ra-methodology-advisor | TODO |
-| 4.4 | Mandate canonical `target_path` in ingestor contract | ra-wiki-ingestor | TODO |
+| 4.0 | Derive the current CC subagent spec from docs; audit all 23 for compliance (frontmatter validity, field names, tool grants, description quality for auto-selection, any missing required/recommended fields) | all `.claude/agents/*.md` | TODO |
+| 4.1 | Bring every agent into full CC-spec compliance (fix any invalid/missing fields found in 4.0) | all `.claude/agents/*.md` | TODO |
+| 4.2 | Pin `model:` (1M) on ALL 23 agents — uniform 1M so no agent can silently inherit a smaller default | all `.claude/agents/*.md` | TODO |
+| 4.3 | Upgrade 15 short-form Hard Rules to full form | 15 agents | TODO |
+| 4.4 | Add "No Absolute-Absence Claims" guard | ra-gap-table-builder, ra-litreview-builder, ra-methodology-advisor | TODO |
+| 4.5 | Mandate canonical `target_path` in ingestor contract | ra-wiki-ingestor | TODO |
 
 ## Wave 5 — Reconcile legacy tree + regression guards (destructive; explicit approval)
 

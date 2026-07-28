@@ -132,8 +132,9 @@ gaps in enforcement reach and scheduling.
 |---|---|---|---|
 | 6.1 | Enforce writing/py-lint on subagent + pipeline writes | Main-session PostToolUse hooks do NOT see writes by dispatched subagents or by `long-doc-orchestrate.sh`. Options: per-agent `hooks:` frontmatter, OR verify `ra-pre/post-stitch-eval` + `ra-prose-editor` already enforce the full banned-list. | TODO |
 | 6.2 | Schedule the deterministic maintenance tier | `crontab -l` shows 0 entries; no `crontab.example` exists. `ra-wiki-lint`, `learner-archive`, `ingest-cleanup`, `scratchpad-archive`, `ra-storage-audit` run only if invoked by hand. Install cron OR wrap as skills / scheduled tasks. | TODO |
-| 6.3 | Live long-doc pipeline run (end-to-end proof) | Wave 1 fixed the pipeline's paths but it was never RUN. A real dispatch producing a brain package from the 67-page tree is the only true proof. | TODO |
+| 6.3 | Live long-doc pipeline run (end-to-end proof) | Wave 1 fixed the pipeline's paths but it was never RUN. | DONE — ra-brain-assembler read 29 canonical QNTR pages, wrote 10 grounded brain files, verified on disk. Proves Waves 1+4+5 together. |
 | 6.4 | Ingest the 169-file coverage backlog + resolve 29 orphan pages | Surfaced by the now-honest lint check 6. Content work, separate from the CC migration. | TODO |
+| 6.5 | Regenerate stale wiki `_index.md` files | Found during 6.3: QNTR `_index.md` reports 0 sources/concepts while 24+6 exist on disk. The brain-assembler survived by trusting the filesystem, but a stale index is a real reliability hazard for anything that trusts it. Needs an index-regeneration pass/script per space. | TODO |
 
 ## Cross-cutting acceptance (definition of done for the whole upgrade)
 

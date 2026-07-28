@@ -5,6 +5,39 @@ what remains. One entry per work session or wave.
 
 ---
 
+## 2026-07-27 — Wave 6.3 PASS (live pipeline proof) + wiki tracked
+
+**Wiki tracking (durability gap) — DONE.** The canonical wiki
+(src/research_assistant/spaces/*/wiki) + shared wiki (data/wiki) were on disk but
+never git-tracked. Added 95 wiki .md pages; gitignored *.base. Commit 7469e5e.
+ra-wiki-lint 0 errors at commit time.
+
+**Wave 6.3 live long-doc pipeline run — PASS.** Dispatched the hardened
+`ra-brain-assembler` (Wave 4: 1M pin, canonical paths, strengthened sourcing)
+against QNTR for a real literature_review. Verified against disk, not trusted:
+- Read 29 canonical wiki content files from src/research_assistant/spaces/QNTR/wiki
+  (the 34-page tree), NOT the deleted 3-page legacy tree. Wave 1 path fix proven.
+- Wrote 10 brain files (voice, argument-map, terminology, methodology-context,
+  advisor-guidance, literature-map, constraints, exhibits-plan, outline,
+  decisions.log) to .kiro/.long-doc/qntr-agentic-governance-litreview-verify/brain/.
+  Confirmed present with real sizes. Grounding spot-checked: cited pages exist.
+- Derived a coherent thesis + 5 wiki-backed arguments; raised 1 [WIKI GAP]
+  (consultancy governance-ROI report), no [THESIS GAP].
+
+This one run validated the whole chain: Wave 1 (canonical read), Wave 4 (hardened
+agent), Wave 5 (legacy gone / canonical intact), and no-assumption discipline
+inside the dispatched agent.
+
+**NEW BUG surfaced by the run (logged as Wave 6.5):** QNTR `_index.md` is STALE —
+its headers say "Sources (0) / Concepts (0) / Methods (0)" while the filesystem
+holds 24 sources + 6 concepts. The agent correctly trusted the filesystem over the
+stale index (no-assumption rule) and read the real files — the exact silent-failure
+this run was checking. Root cause: `_index.md` files were never regenerated as
+pages were added. This is content-maintenance (same family as the 29 not-in-index
+warnings), NOT a migration defect. Added as Wave 6.5.
+
+---
+
 ## 2026-07-27 — Wave 5 complete (legacy tree reconciled + regression guard) + Wave 6 logged
 
 **Wave 5 — DONE, verified.** The legacy `spaces/*/wiki` tree is reconciled and

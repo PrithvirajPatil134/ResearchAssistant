@@ -88,12 +88,18 @@ carry the absence-claims guard; ingestor contract mandates canonical `target_pat
 
 | # | Task | Scope | Status |
 |---|---|---|---|
-| 4.0 | Derive the current CC subagent spec from docs; audit all 23 for compliance (frontmatter validity, field names, tool grants, description quality for auto-selection, any missing required/recommended fields) | all `.claude/agents/*.md` | TODO |
-| 4.1 | Bring every agent into full CC-spec compliance (fix any invalid/missing fields found in 4.0) | all `.claude/agents/*.md` | TODO |
-| 4.2 | Pin `model:` (1M) on ALL 23 agents — uniform 1M so no agent can silently inherit a smaller default | all `.claude/agents/*.md` | TODO |
-| 4.3 | Upgrade 15 short-form Hard Rules to full form | 15 agents | TODO |
-| 4.4 | Add "No Absolute-Absence Claims" guard | ra-gap-table-builder, ra-litreview-builder, ra-methodology-advisor | TODO |
-| 4.5 | Mandate canonical `target_path` in ingestor contract | ra-wiki-ingestor | TODO |
+| 4.0 | Derive the current CC subagent spec from docs; audit all 23 for compliance | all `.claude/agents/*.md` | DONE |
+| 4.1 | Bring every agent into full CC-spec compliance | all `.claude/agents/*.md` | DONE (frontmatter was valid; only model field missing) |
+| 4.2 | Pin `model: claude-opus-4-8[1m]` (verified against availableModels) on ALL 23 | all `.claude/agents/*.md` | DONE |
+| 4.3 | Upgrade short-form Hard Rules to strengthened form (14 identical weak ones) | 14 agents | DONE |
+| 4.4 | Add "No Absolute-Absence Claims" guard | ra-gap-table-builder, ra-litreview-builder, ra-methodology-advisor | DONE |
+| 4.5 | Mandate canonical `target_path` in ingestor contract | ra-wiki-ingestor | DONE |
+
+Note on 4.2: the spec-audit subagent recommended `model: opus` or `claude-opus-4-5`
+and claimed `[1m]` is non-standard. Verified against `~/.claude/settings.json`
+`availableModels` (with `enforceAvailableModels: true`): `claude-opus-4-8[1m]` IS
+a registered id here. Using the subagent's guess would have written an
+unregistered id into 23 files. Pinned the verified id instead.
 
 ## Wave 5 — Reconcile legacy tree + regression guards (destructive; explicit approval)
 

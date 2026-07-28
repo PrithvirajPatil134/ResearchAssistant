@@ -5,6 +5,39 @@ what remains. One entry per work session or wave.
 
 ---
 
+## 2026-07-27 — Wave 4 complete (23 agents CC-compliant + hardened)
+
+**Wave 4 — DONE, verified.** All 23 `.claude/agents/*.md` are now full Claude
+Code subagents and carry the hardened contracts.
+
+- 4.0/4.1: spec-audit (via claude-code-guide subagent) confirmed all 23 already
+  had valid name/description/tools frontmatter; the only gap was a missing
+  `model:` field. Cross-checked against the 23 raw frontmatter blocks.
+- 4.2: pinned `model: claude-opus-4-8[1m]` on all 23 (exactly one line each,
+  inserted after `tools:`). VERIFIED the id against `~/.claude/settings.json`
+  `availableModels` (enforceAvailableModels:true) — the spec agent had wrongly
+  claimed `[1m]` was non-standard and suggested `opus`/`claude-opus-4-5`, which
+  would have been an unregistered id. Trusting-but-verifying caught it.
+- 4.3: 14 agents shared an identical weak one-line Hard Rule (dropped
+  "citation, source, quotation" and the override clause). Strengthened all 14 to
+  include those terms, the override clause, and a pointer to
+  `no-assumption-rule.md`. The other 9 already had full-form or stronger. Net:
+  0 agents left on the weak rule.
+- 4.4: added an explicit "No Absolute-Absence Claims" guard to the 3 agents that
+  make gap statements (gap-table-builder, litreview-builder, methodology-advisor).
+- 4.5: mandated a canonical `target_path:` in ra-wiki-ingestor (space →
+  src/research_assistant/spaces/..., shared → data/wiki/shared/...), closing the
+  cluster-2 footgun where ingest-commit.sh would write to whatever tree the
+  ingestor named.
+
+Verification: 23/23 frontmatter compliant, all carry full/strengthened sourcing
+rule, absence guard in exactly 3, target_path mandate present, harness-doctor
+ALL GREEN.
+
+**Remaining:** Wave 5 (legacy-tree reconciliation + regression guard, destructive).
+
+---
+
 ## 2026-07-27 — Wave 2 complete (enforcement layer rebuilt as CC hooks)
 
 **Wave 2 — DONE, verified against the documented hook contract.** The Kiro

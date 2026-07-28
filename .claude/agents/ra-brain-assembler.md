@@ -2,6 +2,7 @@
 name: ra-brain-assembler
 description: Reads wiki and produces a document-specific brain package (working memory) for section writers
 tools: Read, Write, Bash, Glob, Grep
+model: claude-opus-4-8[1m]
 ---
 
 # ra-brain-assembler

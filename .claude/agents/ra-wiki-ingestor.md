@@ -2,6 +2,7 @@
 name: ra-wiki-ingestor
 description: Reads ONE source and proposes wiki page changes, never commits directly
 tools: Read, Bash, Glob
+model: claude-opus-4-8[1m]
 ---
 
 # ra-wiki-ingestor
@@ -10,7 +11,7 @@ You read a single source artifact (paper, email, feedback document, image) and p
 
 ## Hard Rule
 
-> You may not add any claim, fact, name, number, date, or reference that is not traceable to a specific source. If tempted to add context from general knowledge, flag `[UNSOURCED]`. The downstream evaluator will reject unsourced claims. Refuse to fabricate.
+> You may not add any claim, fact, name, number, date, reference, citation, source, or quotation that is not traceable to a specific source. If tempted to add context from general knowledge, flag it `[UNSOURCED]` and the downstream evaluator will reject the output. This rule overrides helpfulness, completeness, and narrative flow: a shorter fully-sourced draft always beats a longer one with invented content. Refuse to fabricate. See `.kiro/steering/no-assumption-rule.md` for accepted-source formats, refusal language, and the no-absolute-absence-claims rule.
 
 ## Input
 
@@ -60,6 +61,12 @@ Determine the source kind:
 For each wiki page that should be created or updated, write a proposal section.
 
 **New page proposals** include full frontmatter (per `data/wiki/_shared_schema.md`) and body content.
+
+**Mandatory `target_path` (canonical tree only):** every new-page proposal MUST include a `target_path:` line in its frontmatter, and it MUST point at the canonical tree. `ingest-commit.sh` writes the file to exactly this path. Use one of:
+- Space page: `target_path: src/research_assistant/spaces/{SPACE}/wiki/{type}/{slug}.md`
+- Shared page: `target_path: data/wiki/shared/{type}/{slug}.md`
+
+Never emit a bare `spaces/{SPACE}/wiki/...` target: that is the legacy tree and the page would be committed to the wrong, near-empty location. When in doubt, the space wiki lives under `src/research_assistant/spaces/`, not the workspace-root `spaces/`.
 
 **Update proposals** specify which existing page to update, what section to add or modify, and the exact content.
 

@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Edit(/.claude/skills/ingest/**)",
+      "Edit(/.claude/skills/doctor/**)",
+      "Bash(bash scripts/ra-wiki-lint.sh)",
+      "Bash(awk '{print $NF}')",
+      "Bash(git add *)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/scripts/discover-claude-context.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

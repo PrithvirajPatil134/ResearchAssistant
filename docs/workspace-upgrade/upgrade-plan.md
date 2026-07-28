@@ -1,0 +1,98 @@
+# Upgrade Plan — Kiro → Claude Code
+
+Master plan. Waves are independently approvable and ordered by impact-to-risk.
+See `audit-findings.md` for the evidence behind each task and `progress-log.md`
+for what has actually been done. Update the status column as work lands.
+
+Status legend: TODO / IN PROGRESS / DONE / BLOCKED / SKIPPED
+
+## Wave 0 — Foundation (already complete before this plan)
+
+| # | Task | Status |
+|---|---|---|
+| 0.1 | Slim CLAUDE.md via `discover-claude-context.sh` (141k→40k base context) | DONE |
+| 0.2 | `harness-doctor.sh` context invariants + warn-only SessionStart wiring | DONE |
+| 0.3 | Four skills: `/consensus-search`, `/longdoc`, `/ingest`, `/doctor` | DONE |
+| 0.4 | `ra-wiki-lint.sh` checks 1-5 (dual-tree scan, wikilink `\|`-split, ref resolution) | DONE |
+| 0.5 | Fix 4 shared-wiki pages missing `originating_space` | DONE |
+
+## Wave 1 — Finish the directory migration (mechanical, low-risk, high-impact)
+
+Acceptance: no script or agent def reads/writes the bare `spaces/*/wiki` legacy
+tree for operational purposes; `ra-wiki-lint.sh` passes with checks 6-7 active;
+a live long-doc brain-assembly dispatch reads the 67-page canonical tree.
+
+| # | Task | File:line | Type | Status |
+|---|---|---|---|---|
+| 1.1 | Brain-assembler wiki read → canonical | `long-doc-orchestrate.sh:290` | in-place | TODO |
+| 1.2 | Devil's-advocate eval read → canonical | `long-doc-orchestrate.sh:1019` | in-place | TODO |
+| 1.3 | Delivery dir → canonical (prefer/fallback) | `long-doc-orchestrate.sh:1362` | in-place, NEEDS DECISION | TODO |
+| 1.4 | Lint checks 6-7 driver loops → canonical | `ra-wiki-lint.sh:224,274` | in-place | TODO |
+| 1.5 | Rollback safety-net glob → add canonical | `ingest-rollback.sh:99` | in-place | TODO |
+| 1.6 | Storage-audit image globs → canonical | `ra-storage-audit.sh:82,125` | in-place | TODO |
+| 1.7 | Weekly-status wiki/orphan/seed globs → canonical | `ra-weekly-status.sh:63,97,116` | in-place | TODO |
+| 1.8 | Image-orphan-scan → canonical OR consolidate onto `orphan-image-check.sh` | `image-orphan-scan.sh:32,47` | in-place/consolidate | TODO |
+| 1.9 | ra-brain-assembler 5 operational reads → canonical | `ra-brain-assembler.md:51,62,100,117,129` | in-place | TODO |
+| 1.10 | ra-wiki-reviewer live-page + schema reads → canonical | `ra-wiki-reviewer.md:18,20` | in-place | TODO |
+| 1.11 | ra-wiki-linter scan roots → canonical | `ra-wiki-linter.md:44-46` | in-place | TODO |
+| 1.12 | ra-email-drafter write target → canonical | `ra-email-drafter.md:33` | in-place | TODO |
+| 1.13 | ra-orchestrator guard wording → canonical | `ra-orchestrator.md:77` | in-place | TODO |
+| 1.14 | ra-wiki-ingestor explicit canonical `_index.md` | `ra-wiki-ingestor.md:35,40` | in-place | TODO |
+| 1.15 | 7 writer agents: citation-format examples → canonical | ~lines 20-22 each | in-place, low-sev | TODO |
+
+Open decision (blocks 1.3): delivery dir — hard switch to canonical, or
+prefer-canonical/fallback-legacy (mirrors `long-doc-orchestrate.sh:1179`)?
+Recommendation: fallback pattern (safer; still finds old deliverables).
+
+## Wave 2 — Rebuild the enforcement layer as Claude Code hooks (new files)
+
+New wrapper scripts in `.claude/hooks/`, registered in `.claude/settings.json`.
+Kiro originals untouched. Acceptance: each hook fires on its CC event and its
+corrective feedback is observable.
+
+| # | Task | New file | CC event | Status |
+|---|---|---|---|---|
+| 2.1 | Wiki-lookup-before-drafting classifier | `.claude/hooks/wiki-lookup.sh` | UserPromptSubmit | TODO |
+| 2.2 | Human-authored-writing post-write gate (consolidates check-agent-writing + check-submission-writing) | `.claude/hooks/writing-gate.sh` | PostToolUse (Edit\|Write\|MultiEdit) | TODO |
+| 2.3 | py_compile lint on edited agent/workflow/core Python | `.claude/hooks/py-lint.sh` | PostToolUse (Edit\|Write) | TODO |
+| 2.4 | Register 2.1-2.3 in settings.json | `.claude/settings.json` | — | TODO |
+
+## Wave 3 — SKIPPED (evolve transcript-reflection loop)
+
+Out of scope by decision (2026-07-27). Claude Code memory + maintained wiki
+cover this role. Deterministic learner tier retained. No work here.
+
+## Wave 4 — Harden the 23 agent definitions
+
+Acceptance: ALL 23 agents pin a 1M model; all agents carry the full sourcing
+Hard Rule; gap/review agents carry the absence-claims guard; ingestor contract
+mandates canonical `target_path`.
+
+| # | Task | Scope | Status |
+|---|---|---|---|
+| 4.1 | Pin `model:` (1M) on ALL 23 agents (not just heavy readers) — uniform 1M so no agent can silently inherit a smaller default | all `.claude/agents/*.md` | TODO |
+| 4.2 | Upgrade 15 short-form Hard Rules to full form | 15 agents | TODO |
+| 4.3 | Add "No Absolute-Absence Claims" guard | ra-gap-table-builder, ra-litreview-builder, ra-methodology-advisor | TODO |
+| 4.4 | Mandate canonical `target_path` in ingestor contract | ra-wiki-ingestor | TODO |
+
+## Wave 5 — Reconcile legacy tree + regression guards (destructive; explicit approval)
+
+Acceptance: legacy `spaces/*/wiki` removed with zero content loss; a doctor
+invariant fails if any script/agent references the bare legacy path.
+
+| # | Task | Status |
+|---|---|---|
+| 5.1 | Migrate `principal-agent-theory.md` (unique) into canonical with valid frontmatter | TODO |
+| 5.2 | Migrate the Gioia notes source (unique) into canonical | TODO |
+| 5.3 | Reconcile `berente-2021` (legacy `validated` 16.7KB richer vs canonical `working` 4.9KB) | TODO |
+| 5.4 | Delete empty legacy `spaces/*/wiki` (diff + approval first) | TODO |
+| 5.5 | Add `harness-doctor.sh` invariant: no bare `spaces/*/wiki` references anywhere | TODO |
+
+## Cross-cutting acceptance (definition of done for the whole upgrade)
+
+1. `harness-doctor.sh` all green, including the new legacy-path invariant.
+2. `ra-wiki-lint.sh` all 7 checks active and honest (no false "all clean").
+3. A live long-doc dispatch produces a brain package built from the 67-page tree.
+4. Wave-2 hooks demonstrably fire and give corrective feedback.
+5. Every new file sits in its correct place: hooks in `.claude/hooks/`, plan in
+   `docs/workspace-upgrade/`, skills in `.claude/skills/`.

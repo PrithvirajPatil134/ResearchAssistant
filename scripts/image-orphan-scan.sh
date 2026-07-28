@@ -2,7 +2,7 @@
 # image-orphan-scan.sh — Detect unreferenced images older than 60 days
 # Writes report to: data/logs/orphan-images-YYYY-MM-DD.md
 # Does NOT auto-delete. Report only.
-# Schedule: Weekly Sunday 09:45 (see crontab.example)
+# Run on demand (housekeeping/report; no scheduler needed). Suggested cadence: Weekly Sunday 09:45.
 # macOS bash 3.2 compatible
 
 set -euo pipefail

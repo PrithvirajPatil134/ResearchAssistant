@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ra-weekly-status.sh — Weekly observability report
 # Writes: data/logs/status/weekly_YYYY-MM-DD.md
-# Schedule: Sunday 09:00 via cron (see crontab.example)
+# Run on demand (housekeeping/report; no scheduler needed). Suggested cadence: Sunday 09:00 via cron.
 # macOS bash 3.2 compatible
 
 set -euo pipefail

@@ -3,7 +3,7 @@
 # Checks: schema compliance, cross-reference integrity, source citations,
 #          orphan detection, staleness, coverage gaps, image orphans
 # Exit 0 = no errors (warnings OK). Exit 1 = errors found.
-# Schedule: Weekly Sunday 09:15 (see crontab.example)
+# Run on demand (housekeeping/report; no scheduler needed). Suggested cadence: Weekly Sunday 09:15.
 # macOS bash 3.2 compatible
 
 set -euo pipefail

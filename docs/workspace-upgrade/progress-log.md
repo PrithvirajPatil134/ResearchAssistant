@@ -5,6 +5,32 @@ what remains. One entry per work session or wave.
 
 ---
 
+## 2026-07-27 — Wave 6.2 REDONE (event-driven, cron cut as noise)
+
+User pushback (correct): "why install crontab? what if I forget? no noise." Cron
+was the wrong tool — the maintenance scripts are reports + disk housekeeping with
+NO correctness risk if never run, and cron misses runs when the Mac sleeps (false
+"handled") and buries output in logs. Reframed 6.2 around the real principle:
+zero-effort, zero-noise.
+
+- Index drift (the only item with a whiff of correctness) is now EVENT-DRIVEN:
+  `ingest-commit.sh` auto-rebuilds the affected space's `_index.md` at commit time
+  (the only moment pages change), silently, best-effort (never fails the commit).
+  No timer, no memory, no per-session cost.
+- Deleted `crontab.example` + `scripts/install-crontab.sh` (committed earlier this
+  session) as noise. Cron never installed.
+- Reports (ra-wiki-lint, ra-storage-audit, ra-weekly-status, image-orphan-scan)
+  stay pull-only — run on demand when a symptom shows.
+- Fixed 7 script headers that pointed at the now-deleted crontab.example
+  (→ "Run on demand ... Suggested cadence: X").
+
+Noted, not fixed (avoid scope creep): ra-weekly-status.sh still reads the dead
+`.kiro/.gpu-agent-done` sentinel metric (Agent tool doesn't write it) and a stale
+auto-ingest hook path — a report inaccuracy, not a correctness risk. Left for if/
+when that report is actually used.
+
+---
+
 ## 2026-07-27 — Wave 6.5 + 6.2 DONE
 
 **Wave 6.5 (stale wiki indexes) — DONE.** Built `scripts/rebuild-wiki-index.py`

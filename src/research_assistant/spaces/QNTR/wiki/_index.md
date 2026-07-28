@@ -1,7 +1,7 @@
 # QNTR Wiki Index
 
 **Space**: QNTR (Quantitative Research Methods)
-**Last updated**: 2026-05-07
+**Last updated**: 2026-07-27 (auto-rebuilt)
 **Schema**: [`_schema.md`](./_schema.md)
 **Log**: [`_log.md`](./_log.md)
 
@@ -9,51 +9,71 @@ This file is the content catalog for the QNTR wiki. Every wiki page must be list
 
 ---
 
-## Sources (0)
+## Sources (24)
 
-_No source pages yet. Run `ra ingest --persona QNTR --source <path>` to add one._
+| Page | Authors | Year | Maturity |
+|------|---------|------|----------|
+| [abou-ali-2025-agentic-ai-survey](./sources/abou-ali-2025-agentic-ai-survey.md) | Abou Ali, Mohamad, Dornaika, Fadi, Charafeddine, Jinan | 2025 | seed |
+| [bayram-2024-trustworthy-ml-production-mlops](./sources/bayram-2024-trustworthy-ml-production-mlops.md) | Bayram, Firas, Ahmed, Bestoun S. | 2024 | seed |
+| [berente-2021-managing-ai](./sources/berente-2021-managing-ai.md) | Berente, N., Gu, B., Recker, J., Santhanam, R. | 2021 | working |
+| [diamantopoulos-2011-formative-measures-cbsem](./sources/diamantopoulos-2011-formative-measures-cbsem.md) | Diamantopoulos, A. | 2011 | seed |
+| [enholm-2022-ai-in-is-research](./sources/enholm-2022-ai-in-is-research.md) | Collins, C., Dennehy, D., Conboy, K., Mikalef, P. | 2022 | seed |
+| [eulerich-2024-dark-side-rpa](./sources/eulerich-2024-dark-side-rpa.md) | Eulerich, M., Waddoups, N., Wagener, M., Wood, D. A. | 2024 | working |
+| [gioia-2013-qualitative-rigor](./sources/gioia-2013-qualitative-rigor.md) | Dennis A. Gioia, Kevin G. Corley, Aimee L. Hamilton | 2013 | working |
+| [haase-2024-interdisciplinary-directions](./sources/haase-2024-interdisciplinary-directions.md) | Haase, J., Kremser, W., Leopold, H., Mendling, J., Onnasch, L., Plattfaut, R. | 2024 | working |
+| [han-2017-relative-strategic-emphasis](./sources/han-2017-relative-strategic-emphasis.md) | Han, K., Mittal, V., Zhang, Y. | 2017 | seed |
+| [holgersson-2024-open-innovation-ai](./sources/holgersson-2024-open-innovation-ai.md) | Holgersson, M., Dahlander, L., Chesbrough, H. W., Bogers, M. L. A. M. | 2024 | working |
+| [jarrahi-ritala-2025-principal-agent](./sources/jarrahi-ritala-2025-principal-agent.md) | Jarrahi, M. H., Ritala, P. | 2025 | working |
+| [kolt-2025-governing-ai-agents](./sources/kolt-2025-governing-ai-agents.md) | Kolt, N. | 2025 | seed |
+| [lu-2024-responsible-ai-pattern-catalogue](./sources/lu-2024-responsible-ai-pattern-catalogue.md) | Lu, Q., Zhu, L., Xu, X., Whittle, J., Zowghi, D., Jacquet, A. | 2024 | seed |
+| [mantymaki-2022-defining-organizational-ai-governance](./sources/mantymaki-2022-defining-organizational-ai-governance.md) | Mäntymäki, Matti, Minkkinen, Matti, Birkstedt, Teemu, Viljanen, Mika | 2022 | seed |
+| [mikalef-2021-ai-capability](./sources/mikalef-2021-ai-capability.md) | Mikalef, P., Gupta, M. | 2021 | seed |
+| [mishra-2022-ai-focus-firm-performance](./sources/mishra-2022-ai-focus-firm-performance.md) | Mishra, Sagarika, Ewing, Michael T., Cooper, Holly B. | 2022 | seed |
+| [mokander-2022-ethics-based-auditing-case-study](./sources/mokander-2022-ethics-based-auditing-case-study.md) | Mökander, Jakob, Floridi, Luciano | 2022 | seed |
+| [papagiannidis-2025-responsible-ai-governance](./sources/papagiannidis-2025-responsible-ai-governance.md) | Papagiannidis, E., Mikalef, P., Conboy, K. | 2025 | seed |
+| [pathirannehelage-2024-ai-augmented-decision-making](./sources/pathirannehelage-2024-ai-augmented-decision-making.md) | Herath Pathirannehelage, Savindu, Shrestha, Yash Raj, von Krogh, Georg | 2024 | seed |
+| [recker-2023-human-machine-ensembles](./sources/recker-2023-human-machine-ensembles.md) | Recker, J., von Briel, F., Yoo, Y., Nagaraj, V., McManus, M. | 2023 | working |
+| [rinta-kahila-2021-algorithmic-decision-making-destructiveness](./sources/rinta-kahila-2021-algorithmic-decision-making-destructiveness.md) | Rinta-Kahila, Tapani, Someh, Ida, Gillespie, Nicole, Indulska, Marta, Gregor, Shirley | 2021 | seed |
+| [sapkota-2025-ai-agents-vs-agentic-ai](./sources/sapkota-2025-ai-agents-vs-agentic-ai.md) | Sapkota, Ranjan, Roumeliotis, Konstantinos I., Karkee, Manoj | 2025 | seed |
+| [taeihagh-2025-governance-generative-ai](./sources/taeihagh-2025-governance-generative-ai.md) | Taeihagh, A. | 2025 | working |
+| [vu-2025-agentic-bpm-governance](./sources/vu-2025-agentic-bpm-governance.md) | Vu, H., Klievtsova, N., Leopold, H., Rinderle-Ma, S., Kampik, T. | 2025 | seed |
 
-<!--
-Entries go here as the 7 papers get ingested. Expected format:
+## Concepts (6)
 
-| Page | Authors | Year | Tags | Maturity |
-|------|---------|------|------|----------|
-| [berente-2021-managing-ai](./sources/berente-2021-managing-ai.md) | Berente et al. | 2021 | ai-governance, autonomy, inscrutability | seed |
--->
-
-## Concepts (0)
-
-_No concept pages yet. Concept pages auto-create when a concept appears in 2+ sources._
-
-<!--
 | Page | Aliases | Sources | Maturity |
 |------|---------|---------|----------|
-| [principal-agent-theory](./concepts/principal-agent-theory.md) | PAT, agency theory | 3 | working |
--->
+| [formative-construct-measurement](./concepts/formative-construct-measurement.md) | formative vs reflective, formative indicators, MIMIC model, causal indicators | 1 | seed |
+| [gap-table-positioning](./concepts/gap-table-positioning.md) | Table 1 positioning, Han et al. table, literature positioning table | 1 | seed |
+| [governance-maturity](./concepts/governance-maturity.md) | AI governance maturity, governance maturity construct, responsible AI governance practices | 3 | working |
+| [principal-agent-theory](./concepts/principal-agent-theory.md) | agency theory, principal-agent problem, principal-agent relationship, PA theory | 3 | working |
+| [shadow-ai](./concepts/shadow-ai.md) | shadow IT, dark bots, unregistered automation, unauthorized AI | 2 | working |
+| [workflow-control-rigidity](./concepts/workflow-control-rigidity.md) | control rigidity, autonomy-control balance, degree of automation | 4 | working |
 
 ## Entities (2)
 
 | Page | Kind | Role | Maturity |
 |------|------|------|----------|
-| [prof-prashar](./entities/prof-prashar.md) | person | QNTR Course Mentor, Term Paper Advisor | working |
+| [prof-prashar](./entities/prof-prashar.md) | person | QNTR Course Mentor, Term Paper Advisor, and Co-Author (meta-analysis on Agentic AI Governance and Enterprise Risk) | working |
 | [prof-priyanka-suresh](./entities/prof-priyanka-suresh.md) | person | Literature Review Workshop Instructor | seed |
 
-## Syntheses (1)
+## Syntheses (2)
 
 | Page | Target Deliverable | Current Version | Maturity |
 |------|-------------------|-----------------|----------|
-| [agentic-ai-governance-term-paper](./syntheses/agentic-ai-governance-term-paper.md) | Agentic AI Governance Term Paper | v2 | working |
+| [agentic-ai-governance-term-paper](./syntheses/agentic-ai-governance-term-paper.md) | Agentic AI Governance and Its Impact on Enterprise Risk and Business Performance | v2 | working |
+| [cs-vs-management-governance-gap](./syntheses/cs-vs-management-governance-gap.md) | The CS-vs-Management Governance Gap | — | seed |
 
-## Methods (0)
+## Methods (1)
 
-_No method pages yet. Method pages appear when the `quant` workflow runs or when methods are referenced in sources._
+| Page | Title | Maturity |
+|------|-------|----------|
+| [building-block-search-strategy](./methods/building-block-search-strategy.md) | Building Block Search Strategy | seed |
 
 ## Comparisons (0)
 
-_No comparison pages yet. Comparison pages appear during lint when two sources address the same question differently._
+_No comparison pages yet._
 
 ---
-
 ## Recently Updated
 
 _Populated by ingest and workflow runs. Most recent 10 entries._

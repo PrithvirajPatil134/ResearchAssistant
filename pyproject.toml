@@ -24,6 +24,12 @@ classifiers = [
 dependencies = [
     "click>=8.0",
     "pyyaml>=6.0",
+    # Binary-file reading (scripts/read_binary.py) — required by the ingest
+    # pipeline and the binary-file-reading steering rule.
+    "PyPDF2>=3.0",
+    "python-docx>=1.1",
+    "python-pptx>=0.6",
+    "openpyxl>=3.1",
 ]
 
 [project.optional-dependencies]

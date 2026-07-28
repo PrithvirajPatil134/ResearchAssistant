@@ -80,6 +80,36 @@ def extract_xlsx(path, sheet_name=None, meta_only=False):
     wb.close()
 
 
+def extract_pptx(path, meta_only=False):
+    from pptx import Presentation
+    prs = Presentation(path)
+    total_slides = len(prs.slides)
+
+    if meta_only:
+        print(f"[PPTX] {os.path.basename(path)}")
+        print(f"Slides: {total_slides}")
+        return
+
+    print(f"[PPTX: {total_slides} slides]")
+    for i, slide in enumerate(prs.slides, 1):
+        texts = []
+        for shape in slide.shapes:
+            if shape.has_text_frame:
+                for para in shape.text_frame.paragraphs:
+                    line = "".join(run.text for run in para.runs).strip()
+                    if line:
+                        texts.append(line)
+            if shape.has_table:
+                for row in shape.table.rows:
+                    cells = [c.text.strip() for c in row.cells]
+                    if any(cells):
+                        texts.append(" | ".join(cells))
+        if texts:
+            print(f"\n--- Slide {i} ---")
+            for t in texts:
+                print(t)
+
+
 def main():
     parser = argparse.ArgumentParser(description="Extract text from binary files")
     parser.add_argument("path", help="Path to file")
@@ -109,8 +139,11 @@ def main():
     elif ext == ".xlsx":
         extract_xlsx(path, args.sheet, args.meta)
 
+    elif ext == ".pptx":
+        extract_pptx(path, args.meta)
+
     else:
-        print(f"[ERROR] Unsupported format: {ext}. Supported: .pdf, .docx, .xlsx")
+        print(f"[ERROR] Unsupported format: {ext}. Supported: .pdf, .docx, .pptx, .xlsx")
         sys.exit(1)
 
 

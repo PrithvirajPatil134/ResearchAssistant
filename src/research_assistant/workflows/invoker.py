@@ -794,7 +794,7 @@ CRITICAL FILE RULES:
                             for cont_attempt in range(max_continuations):
                                 is_truncated = (
                                     len(stage_output) > 1000
-                                    and stage_output[-1] not in '.!?"\')\]\n—–|}\n*'
+                                    and stage_output[-1] not in '.!?"\')]\n—–|}*'
                                     and not stage_output.rstrip().endswith('---')
                                     and not stage_output.rstrip().endswith('*')
                                 )

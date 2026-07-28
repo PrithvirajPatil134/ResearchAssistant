@@ -5,6 +5,39 @@ what remains. One entry per work session or wave.
 
 ---
 
+## 2026-07-27 — Wave 6.6 DONE (eval mechanism confirmed + repaired)
+
+**Eval mechanism confirmed in place, with one real defect fixed.** Confirmation
+grounded in the actual files:
+- Agent-based gate (CC-primary): ra-content-evaluator (4 criteria, hard-fail on
+  ANY unsourced claim → score 0, structured pass/fail/hard_fail verdict);
+  ra-pre-stitch-eval + ra-post-stitch-eval enforce human-authored-writing.md
+  (banned vocab, em-dash grep = gate failure, citation coverage). This also
+  ANSWERS Wave 6.1: the writing standard IS enforced on pipeline output by these
+  eval agents, not by the main-session PostToolUse hook.
+- Scoring engine run_eval.py: threshold 7.5, heuristic fail-fast (empty/echoed/
+  tool-artifact → 0) per eval-principles.md.
+
+**Defect found + fixed (Wave 6.6):** build_contract.py and run_eval.py import the
+research_assistant package (needs pyyaml+click). System Homebrew python3 3.14
+(PEP 668) lacks them → tools crashed with ModuleNotFoundError: yaml. Worse,
+claude-dispatch.sh swallowed the failure (2>/dev/null || true) and proceeded with
+an EMPTY contract — the shell eval gate ran silently degraded.
+- Fix: project `.venv` (gitignored) with `pip install -e .` (declares click+pyyaml).
+- claude-dispatch.sh + jig-compare.sh resolve `RA_PYTHON` = .venv/bin/python3 if
+  present, else python3; eval-tool calls use it (inline stdlib python3 -c left as-is).
+- claude-dispatch.sh now WARNS LOUDLY (with stderr detail) if the contract build
+  yields nothing, instead of silently masking a degraded gate.
+- Fixed a real SyntaxWarning in invoker.py:797 (invalid \] \) escapes → cleaned
+  the char set, membership preserved). Verified end-to-end: build_contract +
+  run_eval both work via venv; run_eval correctly failed a thin placeholder.
+- Memory written: eval-mechanism-requires-venv (recreate with venv + pip -e . if
+  .venv is ever deleted).
+
+**Remaining:** 6.2 (scheduling), 6.4 (ingest backlog), 6.5 (stale indexes).
+
+---
+
 ## 2026-07-27 — Wave 6.3 PASS (live pipeline proof) + wiki tracked
 
 **Wiki tracking (durability gap) — DONE.** The canonical wiki

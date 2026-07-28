@@ -135,6 +135,7 @@ gaps in enforcement reach and scheduling.
 | 6.3 | Live long-doc pipeline run (end-to-end proof) | Wave 1 fixed the pipeline's paths but it was never RUN. | DONE — ra-brain-assembler read 29 canonical QNTR pages, wrote 10 grounded brain files, verified on disk. Proves Waves 1+4+5 together. |
 | 6.4 | Ingest the 169-file coverage backlog + resolve 29 orphan pages | Surfaced by the now-honest lint check 6. Content work, separate from the CC migration. | TODO |
 | 6.5 | Regenerate stale wiki `_index.md` files | Found during 6.3: QNTR `_index.md` reports 0 sources/concepts while 24+6 exist on disk. The brain-assembler survived by trusting the filesystem, but a stale index is a real reliability hazard for anything that trusts it. Needs an index-regeneration pass/script per space. | TODO |
+| 6.6 | Fix the eval-tool Python runtime | build_contract.py / run_eval.py import the research_assistant package (needs pyyaml+click); system python3 (PEP 668) lacks them, so the shell eval gate ran degraded — and claude-dispatch.sh SILENTLY proceeded with an empty contract. | DONE — created `.venv` (gitignored) with `pip install -e .`; `claude-dispatch.sh`+`jig-compare.sh` resolve `RA_PYTHON`=.venv/bin/python3; claude-dispatch now warns loudly on empty contract; fixed a SyntaxWarning in invoker.py:797. |
 
 ## Cross-cutting acceptance (definition of done for the whole upgrade)
 

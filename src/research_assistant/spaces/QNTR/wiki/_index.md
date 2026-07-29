@@ -85,14 +85,17 @@ This file is the content catalog for the QNTR wiki. Every wiki page must be list
 | [building-block-search-strategy](./methods/building-block-search-strategy.md) | Building Block Search Strategy | seed |
 | [quant-rigor-best-practices](./methods/quant-rigor-best-practices.md) | Quantitative Research Rigor: Best-Practice Checklist | seed |
 
-## References (4)
+## References (7)
 
 | Page | Title | Maturity |
 |------|-------|----------|
 | [abdc-jql-2022-journal-ranking](./references/abdc-jql-2022-journal-ranking.md) | ABDC Journal Quality List 2022 (with 2010-2019 back-lists) | seed |
 | [abdc-jql-2025-journal-ranking](./references/abdc-jql-2025-journal-ranking.md) | ABDC Journal Quality List 2025 (Consultation Draft, 30 Jan 2025) | seed |
+| [abs-academic-journal-guide](./references/abs-academic-journal-guide.md) | ABS Academic Journal Guide (Chartered ABS, UK Business) | seed |
+| [core-rankings-computing](./references/core-rankings-computing.md) | CORE Rankings (Computing) — ICORE Conference Portal | seed |
 | [jcri-impact-factors-2025](./references/jcri-impact-factors-2025.md) | JCR Impact Factor List 2025 | seed |
 | [qntr-variability-supp-material](./references/qntr-variability-supp-material.md) | QNTR Supplementary Material — Measures of Variability (Session 1-2) | seed |
+| [wl-law-journal-rankings](./references/wl-law-journal-rankings.md) | Washington & Lee Law Journal Rankings | seed |
 
 ## Comparisons (0)
 

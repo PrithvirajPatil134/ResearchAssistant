@@ -12,10 +12,12 @@ first_seen: sources/diamantopoulos-2011-formative-measures-cbsem
 sources:
   - wiki/sources/diamantopoulos-2011-formative-measures-cbsem
   - wiki/sources/diamantopoulos-2008-advancing-formative
+  - wiki/sources/hildebrandt-temme-2006-formative-csa
 tags: [formative-constructs, measurement-model, cbsem, pls-sem, methodology]
 draws_from:
   - wiki/sources/diamantopoulos-2011-formative-measures-cbsem.md
   - wiki/sources/diamantopoulos-2008-advancing-formative.md
+  - wiki/sources/hildebrandt-temme-2006-formative-csa.md
 target_path: src/research_assistant/spaces/QNTR/wiki/concepts/formative-construct-measurement.md
 ---
 
@@ -78,6 +80,18 @@ A formative measurement model is inherently underidentified on its own. Three so
 
 [Source: wiki/sources/diamantopoulos-2011-formative-measures-cbsem.md, §Key Arguments, §Findings]
 
+### Checking Identification: The Graphical Transformation Procedure
+
+The "2+ emitted paths" rule tells you what a formative construct needs to be identified; Hildebrandt and Temme (2006) add a way to verify identification for a specific *larger* recursive model. Their three-step procedure: (I) transform the model into an equivalent one without composite latent variables (CLVs); (II) check identification of the transformed model; (III) confirm the original parameters can be unambiguously recovered from the transformed ones. The transformation replaces each CLV with its formative indicators and connects the variables the CLV fed into with double-headed arrows, then routes the indicators directly to those variables. Applying this, they show the Law and Wong (1999) job-perception model — which MacKenzie, Podsakoff and Jarvis (2005) had judged underidentified because its two outgoing paths led to *causally related* constructs — is in fact identified. The correction matters for any model where a formative construct points to two downstream constructs that are themselves related: two emitted paths are necessary, but "need not be unrelated in a larger model." The procedure is restricted to recursive models (no feedback loops, no correlated disturbances).
+
+[Source: wiki/sources/hildebrandt-temme-2006-formative-csa.md, §Key Arguments, PDF pp.5-7]
+
+### Endogenous Formative Constructs: Specify Indirect Effects, Not Just Covariances
+
+Diamantopoulos, Riefler and Roth (2008) show that construct *position* (exogenous vs. endogenous) sets the direction of misspecification bias. Hildebrandt and Temme (2006) raise a separate specification issue for a formative construct that is truly endogenous — i.e. driven by remote causes beyond its own indicators (they call the indicator-only case a "quasi-exogenous" CLV and the remote-cause case an "endogenous" CLV). The common practice treats the formative indicators as exogenous and only estimates covariances between the remote cause and those indicators, which confines the remote cause's influence to its direct path to the construct. If the causal process actually runs through the indicators, this omits indirect effects: the correctly specified total effect is the direct path plus the paths through the indicators. Depending on the coefficient signs, the remote cause's true impact is then under- or over-estimated. The trap is that the two specifications are empirically indistinguishable — identical overall fit — so no fit index will flag the error. For governance maturity, if any modelled antecedent drives the construct through specific governance practices (indicators) rather than only "directly," those indirect paths must be specified.
+
+[Source: wiki/sources/hildebrandt-temme-2006-formative-csa.md, §Key Arguments, PDF pp.8-9]
+
 ### Consequences of Misspecification
 
 Specifying a formative construct reflectively (the common Type I error) biases structural estimates, and standard fit indices do not catch it. Reviewing six empirical studies, Diamantopoulos, Riefler and Roth (2008) show the bias direction depends on the construct's position: a misspecified *exogenous* construct has its structural effect *overestimated* (simulated 335%–555%, averaging 429% across the cited studies), while a misspecified *endogenous* construct has its antecedents' effects *underestimated* (88%–93%, averaging 84%). The mechanism is variance: a reflectively-treated formative construct loses variance because its variance then equals only the common variance of its measures rather than their total variance. Critically, CFI, GFI, SRMR and RMSEA remained "highly acceptable" for misspecified models; only chi-square per degree of freedom gave a weak signal. For the governance-maturity construct, which sits as an exogenous driver of risk and performance, this means a reflective mistake would inflate its apparent effect and pass unnoticed by conventional fit checks.
@@ -92,7 +106,9 @@ The two sources are complementary: Diamantopoulos tells you why CBSEM is superio
 
 Diamantopoulos, Riefler and Roth (2008, Journal of Business Research) is the review-and-evidence companion to Diamantopoulos (2011, MIS Quarterly). The 2011 paper is the LISREL/CSA estimation how-to; the 2008 paper supplies the empirical case for why correct specification matters (misspecification bias and the failure of fit indices to detect it) and a typology of higher-order formative constructs (Type I aggregate, Type II, and the non-estimable Type III). Where they overlap — underidentification, the 2+ emitted paths rule, the census-of-indicators requirement — they agree, giving two independent sources for the same identification strategy.
 
-[Source: wiki/sources/diamantopoulos-2008-advancing-formative.md, §3–§5, pp.1205–1216]
+Hildebrandt and Temme (2006, SFB 649 discussion paper) is the covariance-structure-analysis specification-and-identification treatment. It sits alongside the two Diamantopoulos pages: Diamantopoulos (2011) supplies the LISREL estimation mechanics, Diamantopoulos, Riefler and Roth (2008) supplies the misspecification evidence and the higher-order typology, and Hildebrandt and Temme add (a) an operational graphical procedure to verify that a given recursive model is identified, correcting a prior "underidentified" verdict, and (b) the specification rule for endogenous formative constructs (model the remote cause's indirect effects through the indicators, not only its direct effect). All three agree on the core underidentification result and the 2+ emitted-paths requirement, giving the concept three independent sources.
+
+[Source: wiki/sources/diamantopoulos-2008-advancing-formative.md, §3–§5, pp.1205–1216; wiki/sources/hildebrandt-temme-2006-formative-csa.md, §Summary, PDF pp.2-9]
 
 ## Application to Research
 

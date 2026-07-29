@@ -64,6 +64,24 @@ Specific recommended combinational rules from the Conclusion [source, p.27-28]:
 
 These are the fit thresholds an SEM-based analysis is expected to report. The Prashar co-authored paper and the DBA thesis both use SEM (per ingest brief), so this source anchors the fit-reporting standard for those deliverables. Note: the cross-space applicability to the DBA thesis is asserted by the ingest brief, not by this source; the source itself makes no claim about any specific downstream study.
 
+## Related SEM-methodology source in this wiki
+
+`shi-2017-model-size-effect-sem.md` (Shi, Lee, & Terry, 2017) studies the raw likelihood ratio chi-square test statistic and how its Type I error rate inflates with model size (driven by the number of observed variables p and free parameters q). That paper explicitly flags the model size effect on practical, chi-square-based fit indexes (e.g., CFI) as future work, which is the territory this Hu & Bentler (1999) page covers. The two are complementary: the exact-fit test statistic (Shi et al.) versus the derived index cutoffs (Hu & Bentler).
+
+**Citation**: [src/research_assistant/spaces/QNTR/knowledge/Key method readings/2017 - Shi et al - Revisiting the model size effect in SEM.pdf, p.20]
+
+## Refinement: small degrees of freedom
+
+Shi, DiStefano, Maydeu-Olivares, & Lee (2021), "Evaluating SEM Model Fit with Small Degrees of Freedom" (see `shi-2021-sem-fit-small-df.md`), show that the three indices do not behave equally as degrees of freedom (df) shrink. They report that RMSEA rises sharply and over-rejects correctly specified or close-fitting models at small df, while SRMR and CFI are far less sensitive to df, and they recommend relying more on SRMR and CFI when df is very small (e.g., df=2) [shi-2021-sem-fit-small-df.md, source p.2; p.26]. Their advice is consistent with the two-index strategy documented above, not a rejection of it [shi-2021-sem-fit-small-df.md, source p.27]. This is the second QNTR source to address SEM fit-index cutoffs, which cleared the two-source bar for the shared SEM fit-index method page now created at `data/wiki/shared/methods/sem-fit-index-evaluation.md`.
+
+**Citation**: [src/research_assistant/spaces/QNTR/knowledge/Key method readings/2021 - Shi et al - Evaluating SEM model fit with small df.pdf, p.2; p.26; p.27]
+
+## Related: equivalence-testing alternative
+
+Marcoulides & Yuan (2016), "New Ways to Evaluate Goodness of Fit," proposes equivalence testing with T-size adjusted fit indexes as an alternative to judging fit by the fixed cutoffs this paper established; it cites Hu & Bentler (1998, 1999) as the guidelines being reconsidered. See `./marcoulides-yuan-2016-goodness-of-fit.md`.
+
+**Citation**: [src/research_assistant/spaces/QNTR/knowledge/Key method readings/2016 - Marcoulides and Yuan - New Ways to Evaluate Goodness of Fit.pdf, p.2]
+
 ## Note on downstream method page
 
-This source alone establishes the SEM fit-index cutoff standard. A shared method page on SEM fit-index reporting is warranted but is deferred (see the manifest log) so it can cross-reference actual SEM usage in the Prashar paper and DBA thesis rather than assert those links here.
+This source established the SEM fit-index cutoff standard. With Shi (2017), Shi (2021), and Marcoulides & Yuan (2016) now ingested in the same manifest, the shared method page on SEM fit-index evaluation was created at `data/wiki/shared/methods/sem-fit-index-evaluation.md`. It gathers the fixed-cutoff standard (this page), the model-size effect on the raw chi-square (Shi 2017), the small-df caveats (Shi 2021), and the equivalence-testing alternative (Marcoulides & Yuan 2016) into a single reference, cross-referencing each source page for detail.

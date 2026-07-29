@@ -122,3 +122,13 @@ When a mediation (indirect) effect is itself expected to depend on a moderator, 
 - An SPSS macro (MODMED) implements all five models [same source, pp.207-210].
 
 **Citation**: [src/research_assistant/spaces/QNTR/knowledge/Key method readings/2007 - Preacher et al - Addressing moderated mediation hypotheses.pdf, pp.186, 191-210]
+
+## The Causal-Steps Power Critique (MacKinnon, Fairchild & Fritz 2007)
+
+MacKinnon, Fairchild & Fritz (2007), "Mediation Analysis" (Annual Review of Psychology 58:593-614), is the mediation-methods review that documents the limits of the causal-steps test taught above. A 14-method simulation found the widely used causal-steps methods have very low power to detect mediated effects [src/research_assistant/spaces/QNTR/knowledge/Key method readings/2007 - MacKinnon et al - Medation analysis.pdf, p.601]. The chief culprit is the requirement of a significant overall X-to-Y relation, which severely reduces power, especially under complete mediation; detecting a small-a, small-b effect at .8 power via the causal-steps test required roughly 21,000 subjects (Fritz & MacKinnon 2007) [same source, p.601].
+
+Their recommended alternative: test the significance of the a path (X to M) and the b path (M to Y) jointly, and if both are significant conclude mediation; report confidence limits from the distribution of the product or the bootstrap rather than normal-theory limits, because the product a*b is not normally distributed [same source, pp.601, 607-608]. The a*b (product-of-coefficients) and c - c' (difference-in-coefficients) estimators are algebraically equivalent under OLS/ML for the single-mediator model but diverge for logistic/probit, multilevel, and survival models [same source, p.599].
+
+Full source page: `src/research_assistant/spaces/QNTR/wiki/sources/mackinnon-2007-mediation-analysis.md`.
+
+**Citation**: [src/research_assistant/spaces/QNTR/knowledge/Key method readings/2007 - MacKinnon et al - Medation analysis.pdf, pp.599, 601, 607-608]

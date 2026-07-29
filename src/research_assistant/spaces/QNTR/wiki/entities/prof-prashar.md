@@ -11,11 +11,13 @@ maturity: working
 tags: [advisor, qntr-mentor, methodology-guidance, term-paper-reviewer, scale-development]
 schema_version: "1.0"
 created: 2026-05-03
-last_updated: 2026-06-27
+last_updated: 2026-07-28
 originating_space: QNTR
+target_path: src/research_assistant/spaces/QNTR/wiki/entities/prof-prashar.md
 applicable_to: [term_paper, research_paper, thesis]
 draws_from: []
-mentions_in_sources: []
+mentions_in_sources:
+  - sources/prashar-maity-2024-cbib-internal-branding
 mentions_in_syntheses:
   - syntheses/agentic-ai-governance-term-paper
 mentions_in_communications:
@@ -35,6 +37,17 @@ cross_space_presence:
 
 Associate Professor in the Marketing Area at IIM Sambalpur. Teaches Quantitative Research Methods (QNTR) and advises the user's term paper on Agentic AI Governance. Subject expertise covers Quantitative Research Methods, Brand Management Research, Scale Development, and Statistical Analysis.
 [Source: `spaces/QNTR/persona.yaml`, identity fields]
+
+## Authored Work (Methodological Exemplar)
+
+- **Prashar, A. & Maity, M. (2024). "Integrated community-based internal branding — A holistic approach to internal branding for B2B organizations." *Industrial Marketing Management*, 120, 62–77.** First author. On this paper his affiliation is listed as Head of Marketing & Communications, Hub India Design, Ericsson India Global Services Pvt. Ltd. (email atul.prashar@iiml.org), which differs from the IIM Sambalpur affiliation recorded elsewhere on this page. Recorded as provenance; not reconciled here.
+  [Source: `knowledge/Session 1-4/S1-2 QNTR 2025 - Model research article.pdf`, p.1; wiki `sources/prashar-maity-2024-cbib-internal-branding.md`]
+
+- The paper documents his methodological signature: a **narrative literature review used to build a conceptual model**, followed by a **quantitative test via CB-SEM (SPSS AMOS 26)** with **mediation** (bias-corrected bootstrapping) and **multi-group moderation** analysis, plus a **nested alternate-model comparison** (Δχ² tests). Constructs are second-order and **reflective**, with full reliability/validity reporting (Cronbach α, composite reliability, AVE, Fornell–Larcker). [Source: same PDF, p.2, p.7–13]
+
+- This design mirrors guidance he gave the user: "Phase 1 of method should be a literature review step (SLR, narrative review, or meta-analysis of the focal relationship)" and the recommendation to reason through mediation/moderation and to compare against prior work in the discussion. [CONJECTURE: the parallel between his authored method and his advice is an inference; the advice itself is sourced to `feedback/response_prof_prashar_termpaper_review_20260505.md`, §Method and §Contribution.]
+
+  [Source: `knowledge/Session 1-4/S1-2 QNTR 2025 - Model research article.pdf`, pp.1–15; `feedback/response_prof_prashar_termpaper_review_20260505.md`, §Method / §Contribution]
 
 ## Key Guidance
 
@@ -152,12 +165,13 @@ Primary advisor for the Agentic AI Governance term paper (QNTR) and confirmed co
 
 ## Provenance
 
-- **last_updated**: 2026-05-07
+- **last_updated**: 2026-07-28
 - **source files**:
   - `src/research_assistant/spaces/QNTR/persona.yaml` (identity, expertise)
   - `src/research_assistant/spaces/QNTR/communication/email_prof_prashar_submission_date_20260502.md` (May 2 email)
   - `src/research_assistant/spaces/QNTR/feedback/response_prof_prashar_termpaper_review_20260505.md` (May 3 feedback)
   - `src/research_assistant/spaces/QNTR/communication/email_prashar_response_coauthor_20260507.md` (May 7 co-authorship acceptance)
+  - `src/research_assistant/spaces/QNTR/knowledge/Session 1-4/S1-2 QNTR 2025 - Model research article.pdf` (Prashar & Maity 2024, authored-work exemplar; added 2026-07-28, manifest 20260728-191528-4d4d9b02)
 
 ---
 

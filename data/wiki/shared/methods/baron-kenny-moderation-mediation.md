@@ -7,7 +7,8 @@ applicable_to: [thesis, research_paper, quantitative_study]
 maturity: working
 originating_space: shared
 created: 2026-05-23
-last_updated: 2026-05-23
+last_updated: 2026-07-28
+target_path: data/wiki/shared/methods/baron-kenny-moderation-mediation.md
 ---
 
 # Baron & Kenny: Moderation and Mediation
@@ -110,3 +111,14 @@ Regression approaches assume perfect measurement reliability. SEM with latent va
 ### Centering Recommendation
 
 Center continuous moderators before creating product terms: produces meaningful main-effect interpretations, eliminates non-essential multicollinearity, and does not alter the moderation test significance or the c coefficient [Understanding and Using Mediators and Moderators.pdf, p.15].
+
+## Conditional Indirect Effects (Preacher, Rucker & Hayes 2007)
+
+When a mediation (indirect) effect is itself expected to depend on a moderator, the Baron & Kenny causal-steps test is not enough. Preacher, Rucker & Hayes (2007), "Addressing Moderated Mediation Hypotheses" (Multivariate Behavioral Research 42(1):185-227), unify these cases under the term **conditional indirect effect**: the magnitude of an indirect effect at a particular value of a moderator [src/research_assistant/spaces/QNTR/knowledge/Key method readings/2007 - Preacher et al - Addressing moderated mediation hypotheses.pdf, p.186]. Full source page: `src/research_assistant/spaces/QNTR/wiki/sources/preacher-2007-moderated-mediation.md`.
+
+- They enumerate five model shapes (Models 1-5) for how an indirect effect can be conditional on a moderator, e.g., W moderates the a path (a1 + a3 W)b1, or the b path a1(b1 + b3 W), or both [same source, pp.193-198].
+- Testing uses bootstrapped confidence intervals (percentile, bias-corrected, BCa) or first-/second-order delta-method standard errors; the null of no conditional indirect effect is rejected when the CI excludes 0 [same source, pp.198-203].
+- Probing extends simple slopes and the Johnson-Neyman region-of-significance / confidence-band tools from interaction probing to indirect effects [same source, pp.191-192, 200-203].
+- An SPSS macro (MODMED) implements all five models [same source, pp.207-210].
+
+**Citation**: [src/research_assistant/spaces/QNTR/knowledge/Key method readings/2007 - Preacher et al - Addressing moderated mediation hypotheses.pdf, pp.186, 191-210]

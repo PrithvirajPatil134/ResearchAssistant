@@ -3,6 +3,7 @@ title: "The CS-vs-Management Governance Gap"
 type: synthesis
 maturity: seed
 created: 2026-05-07
+last_updated: 2026-07-28
 originating_space: QNTR
 applicable_to: [QNTR, DBA]
 schema_version: "1.0"
@@ -13,7 +14,9 @@ draws_from:
   - spaces/QNTR/wiki/sources/papagiannidis-2025-responsible-ai-governance.md
   - spaces/QNTR/wiki/sources/vu-2025-agentic-bpm-governance.md
   - spaces/QNTR/wiki/sources/enholm-2022-ai-in-is-research.md
+  - spaces/QNTR/wiki/sources/dafoe-2018-ai-governance-research-agenda.md
 tags: [research-gap, positioning, governance-to-risk, bridge-paper]
+target_path: src/research_assistant/spaces/QNTR/wiki/syntheses/cs-vs-management-governance-gap.md
 ---
 
 ## Thesis Statement
@@ -67,6 +70,14 @@ But two critical weaknesses prevent Vu et al. from being the bridge paper:
 [Source: QNTR/wiki/sources/enholm-2022-ai-in-is-research.md, §Key Arguments, §Key Quotes]
 
 This confirms the gap from within the IS discipline's own self-assessment.
+
+### The Macro Frame: Dafoe (2018)
+
+**Dafoe (2018)** predates both the CS-architecture and management-outcome literatures and defines the field they both sit inside. He frames "the AI governance problem" as "the problem of devising global norms, policies, and institutions to best ensure the beneficial development and use of advanced AI" (p.i), and separates AI governance (institutions and contexts) from AI safety (how AI is technically built) (p.6). This gives the gap synthesis a third level of analysis above the CS-vs-management axis: Kolt and Lu prescribe architecture, Mikalef and Papagiannidis measure organizational outcomes, and Dafoe defines the field and its risk structure at the societal scale.
+
+Dafoe does not close the enterprise-level bridge. He operates at the civilizational level and offers no firm-level measurement (p.i, pp.2-3). But two of his framings strengthen the gap argument without resorting to absence claims. First, his important/tractable/neglected heuristic explains why the enterprise-outcome question is under-studied: cross-cutting governance questions "do not directly and exclusively contribute to an actor's profit or power" (p.13). Second, his alignment-in-capitalism analogy (Enron, Deepwater Horizon, Theranos, Volkswagen) frames misaligned AI as a corporate-governance failure, which is the mechanism the enterprise-risk pathway assumes but does not yet measure (p.27).
+
+[Source: QNTR/wiki/sources/dafoe-2018-ai-governance-research-agenda.md, p.i, p.6, p.13, p.27]
 
 ## How Sources Connect
 

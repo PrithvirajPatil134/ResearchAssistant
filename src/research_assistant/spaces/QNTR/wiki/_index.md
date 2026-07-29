@@ -1,7 +1,7 @@
 # QNTR Wiki Index
 
 **Space**: QNTR (Quantitative Research Methods)
-**Last updated**: 2026-07-27 (auto-rebuilt)
+**Last updated**: 2026-07-29 (auto-rebuilt)
 **Schema**: [`_schema.md`](./_schema.md)
 **Log**: [`_log.md`](./_log.md)
 
@@ -9,20 +9,25 @@ This file is the content catalog for the QNTR wiki. Every wiki page must be list
 
 ---
 
-## Sources (24)
+## Sources (30)
 
 | Page | Authors | Year | Maturity |
 |------|---------|------|----------|
 | [abou-ali-2025-agentic-ai-survey](./sources/abou-ali-2025-agentic-ai-survey.md) | Abou Ali, Mohamad, Dornaika, Fadi, Charafeddine, Jinan | 2025 | seed |
 | [bayram-2024-trustworthy-ml-production-mlops](./sources/bayram-2024-trustworthy-ml-production-mlops.md) | Bayram, Firas, Ahmed, Bestoun S. | 2024 | seed |
 | [berente-2021-managing-ai](./sources/berente-2021-managing-ai.md) | Berente, N., Gu, B., Recker, J., Santhanam, R. | 2021 | working |
+| [dafoe-2018-ai-governance-research-agenda](./sources/dafoe-2018-ai-governance-research-agenda.md) | Dafoe, Allan | 2018 | seed |
+| [deng-2025-ai-agents-security-survey](./sources/deng-2025-ai-agents-security-survey.md) | Deng, Z., Guo, Y., Han, C., Ma, W., Xiong, J., Wen, S., Xiang, Y. | 2025 | seed |
+| [diamantopoulos-2008-advancing-formative](./sources/diamantopoulos-2008-advancing-formative.md) | Diamantopoulos, A., Riefler, P., Roth, K. P. | 2008 | seed |
 | [diamantopoulos-2011-formative-measures-cbsem](./sources/diamantopoulos-2011-formative-measures-cbsem.md) | Diamantopoulos, A. | 2011 | seed |
 | [enholm-2022-ai-in-is-research](./sources/enholm-2022-ai-in-is-research.md) | Collins, C., Dennehy, D., Conboy, K., Mikalef, P. | 2022 | seed |
 | [eulerich-2024-dark-side-rpa](./sources/eulerich-2024-dark-side-rpa.md) | Eulerich, M., Waddoups, N., Wagener, M., Wood, D. A. | 2024 | working |
+| [gahnberg-2021-framing-governance-artificial-agency](./sources/gahnberg-2021-framing-governance-artificial-agency.md) | Gahnberg, C. | 2021 | seed |
 | [gioia-2013-qualitative-rigor](./sources/gioia-2013-qualitative-rigor.md) | Dennis A. Gioia, Kevin G. Corley, Aimee L. Hamilton | 2013 | working |
 | [haase-2024-interdisciplinary-directions](./sources/haase-2024-interdisciplinary-directions.md) | Haase, J., Kremser, W., Leopold, H., Mendling, J., Onnasch, L., Plattfaut, R. | 2024 | working |
 | [han-2017-relative-strategic-emphasis](./sources/han-2017-relative-strategic-emphasis.md) | Han, K., Mittal, V., Zhang, Y. | 2017 | seed |
 | [holgersson-2024-open-innovation-ai](./sources/holgersson-2024-open-innovation-ai.md) | Holgersson, M., Dahlander, L., Chesbrough, H. W., Bogers, M. L. A. M. | 2024 | working |
+| [hu-bentler-1999-cutoff-criteria-fit-indexes](./sources/hu-bentler-1999-cutoff-criteria-fit-indexes.md) | Hu, Li-tze, Bentler, Peter M. | 1999 | seed |
 | [jarrahi-ritala-2025-principal-agent](./sources/jarrahi-ritala-2025-principal-agent.md) | Jarrahi, M. H., Ritala, P. | 2025 | working |
 | [kolt-2025-governing-ai-agents](./sources/kolt-2025-governing-ai-agents.md) | Kolt, N. | 2025 | seed |
 | [lu-2024-responsible-ai-pattern-catalogue](./sources/lu-2024-responsible-ai-pattern-catalogue.md) | Lu, Q., Zhu, L., Xu, X., Whittle, J., Zowghi, D., Jacquet, A. | 2024 | seed |
@@ -32,6 +37,7 @@ This file is the content catalog for the QNTR wiki. Every wiki page must be list
 | [mokander-2022-ethics-based-auditing-case-study](./sources/mokander-2022-ethics-based-auditing-case-study.md) | Mökander, Jakob, Floridi, Luciano | 2022 | seed |
 | [papagiannidis-2025-responsible-ai-governance](./sources/papagiannidis-2025-responsible-ai-governance.md) | Papagiannidis, E., Mikalef, P., Conboy, K. | 2025 | seed |
 | [pathirannehelage-2024-ai-augmented-decision-making](./sources/pathirannehelage-2024-ai-augmented-decision-making.md) | Herath Pathirannehelage, Savindu, Shrestha, Yash Raj, von Krogh, Georg | 2024 | seed |
+| [preacher-2007-moderated-mediation](./sources/preacher-2007-moderated-mediation.md) | Preacher, K. J., Rucker, D. D., Hayes, A. F. | 2007 | seed |
 | [recker-2023-human-machine-ensembles](./sources/recker-2023-human-machine-ensembles.md) | Recker, J., von Briel, F., Yoo, Y., Nagaraj, V., McManus, M. | 2023 | working |
 | [rinta-kahila-2021-algorithmic-decision-making-destructiveness](./sources/rinta-kahila-2021-algorithmic-decision-making-destructiveness.md) | Rinta-Kahila, Tapani, Someh, Ida, Gillespie, Nicole, Indulska, Marta, Gregor, Shirley | 2021 | seed |
 | [sapkota-2025-ai-agents-vs-agentic-ai](./sources/sapkota-2025-ai-agents-vs-agentic-ai.md) | Sapkota, Ranjan, Roumeliotis, Konstantinos I., Karkee, Manoj | 2025 | seed |
@@ -42,7 +48,7 @@ This file is the content catalog for the QNTR wiki. Every wiki page must be list
 
 | Page | Aliases | Sources | Maturity |
 |------|---------|---------|----------|
-| [formative-construct-measurement](./concepts/formative-construct-measurement.md) | formative vs reflective, formative indicators, MIMIC model, causal indicators | 1 | seed |
+| [formative-construct-measurement](./concepts/formative-construct-measurement.md) | formative vs reflective, formative indicators, MIMIC model, causal indicators | 2 | working |
 | [gap-table-positioning](./concepts/gap-table-positioning.md) | Table 1 positioning, Han et al. table, literature positioning table | 1 | seed |
 | [governance-maturity](./concepts/governance-maturity.md) | AI governance maturity, governance maturity construct, responsible AI governance practices | 3 | working |
 | [principal-agent-theory](./concepts/principal-agent-theory.md) | agency theory, principal-agent problem, principal-agent relationship, PA theory | 3 | working |

@@ -1,9 +1,9 @@
 ---
 title: "Formative Construct Measurement"
 type: concept
-maturity: seed
+maturity: working
 created: 2026-05-07
-last_updated: 2026-05-07
+last_updated: 2026-07-28
 originating_space: QNTR
 applicable_to: [research_paper, term_paper, thesis]
 schema_version: "1.0"
@@ -11,9 +11,12 @@ aliases: ["formative vs reflective", "formative indicators", "MIMIC model", "cau
 first_seen: sources/diamantopoulos-2011-formative-measures-cbsem
 sources:
   - wiki/sources/diamantopoulos-2011-formative-measures-cbsem
+  - wiki/sources/diamantopoulos-2008-advancing-formative
 tags: [formative-constructs, measurement-model, cbsem, pls-sem, methodology]
 draws_from:
   - wiki/sources/diamantopoulos-2011-formative-measures-cbsem.md
+  - wiki/sources/diamantopoulos-2008-advancing-formative.md
+target_path: src/research_assistant/spaces/QNTR/wiki/concepts/formative-construct-measurement.md
 ---
 
 ## Definition
@@ -75,11 +78,21 @@ A formative measurement model is inherently underidentified on its own. Three so
 
 [Source: wiki/sources/diamantopoulos-2011-formative-measures-cbsem.md, §Key Arguments, §Findings]
 
+### Consequences of Misspecification
+
+Specifying a formative construct reflectively (the common Type I error) biases structural estimates, and standard fit indices do not catch it. Reviewing six empirical studies, Diamantopoulos, Riefler and Roth (2008) show the bias direction depends on the construct's position: a misspecified *exogenous* construct has its structural effect *overestimated* (simulated 335%–555%, averaging 429% across the cited studies), while a misspecified *endogenous* construct has its antecedents' effects *underestimated* (88%–93%, averaging 84%). The mechanism is variance: a reflectively-treated formative construct loses variance because its variance then equals only the common variance of its measures rather than their total variance. Critically, CFI, GFI, SRMR and RMSEA remained "highly acceptable" for misspecified models; only chi-square per degree of freedom gave a weak signal. For the governance-maturity construct, which sits as an exogenous driver of risk and performance, this means a reflective mistake would inflate its apparent effect and pass unnoticed by conventional fit checks.
+
+[Source: wiki/sources/diamantopoulos-2008-advancing-formative.md, §4.1–§4.3, pp.1208–1211]
+
 ## How Sources Relate
 
 Diamantopoulos (2011) provides the methodological theory; Mikalef and Gupta (2021) provide the applied example in AI research. Mikalef and Gupta built "AI capability" as a third-order formative construct, validated it with PLS-SEM, and linked it to firm performance. They demonstrate that the formative approach works for AI-related organizational constructs and that non-technical dimensions (inter-departmental coordination, change capacity) can have higher formative weights than technical ones.
 
 The two sources are complementary: Diamantopoulos tells you why CBSEM is superior for formative measurement; Mikalef and Gupta show that PLS works adequately in practice (their study published in Information & Management, an A* journal). The choice between them depends on sample size, publication target, and whether global fit assessment is needed.
+
+Diamantopoulos, Riefler and Roth (2008, Journal of Business Research) is the review-and-evidence companion to Diamantopoulos (2011, MIS Quarterly). The 2011 paper is the LISREL/CSA estimation how-to; the 2008 paper supplies the empirical case for why correct specification matters (misspecification bias and the failure of fit indices to detect it) and a typology of higher-order formative constructs (Type I aggregate, Type II, and the non-estimable Type III). Where they overlap — underidentification, the 2+ emitted paths rule, the census-of-indicators requirement — they agree, giving two independent sources for the same identification strategy.
+
+[Source: wiki/sources/diamantopoulos-2008-advancing-formative.md, §3–§5, pp.1205–1216]
 
 ## Application to Research
 
@@ -108,12 +121,12 @@ The agentic AI governance research model has governance maturity (formative IV) 
 
 ## Open Questions
 
-1. If governance maturity is a higher-order formative construct (structural + relational + procedural practices forming three sub-constructs that form the overall construct), what is the minimum sample size for a third-order CBSEM model?
+1. If governance maturity is a higher-order formative construct (structural + relational + procedural practices forming three sub-constructs that form the overall construct), what is the minimum sample size for a third-order CBSEM model? Diamantopoulos, Riefler and Roth (2008) frame this as a Type I aggregate model (formative first-order, formative second-order) but do not resolve identification for higher-order formative models, referring readers elsewhere [wiki/sources/diamantopoulos-2008-advancing-formative.md, §3, §5.3.3, pp.1205–1215].
 2. Should the zero-error constraint be adopted (simpler but strong assumption) or should additional reflective outcomes be included to form a MIMIC model?
-3. How does the formative specification interact with mediation testing (control rigidity as mediator)? Formative IVs in mediation models have additional identification complexities Diamantopoulos does not address.
+3. How does the formative specification interact with mediation testing (control rigidity as mediator)? Formative IVs in mediation models have additional identification complexities Diamantopoulos does not address. Diamantopoulos, Riefler and Roth (2008) flag formative constructs in endogenous or moderator positions as conceptually unsettled, citing Wiley (2005) that "there is no mechanism by which an antecedent variable can influence a formative index" [wiki/sources/diamantopoulos-2008-advancing-formative.md, §6, p.1216].
 4. Prashar suggests this "might require a different set of analysis techniques than the usual SEM and regression." Does this mean PLS-SEM is the practical choice despite Diamantopoulos's preference for CBSEM?
 
-[Source: wiki/sources/diamantopoulos-2011-formative-measures-cbsem.md, §Limitations; QNTR/feedback/response_prof_prashar_termpaper_review_20260505.md, §Method]
+[Source: wiki/sources/diamantopoulos-2011-formative-measures-cbsem.md, §Limitations; wiki/sources/diamantopoulos-2008-advancing-formative.md, §3, §5.3.3, §6; QNTR/feedback/response_prof_prashar_termpaper_review_20260505.md, §Method]
 
 ---
 

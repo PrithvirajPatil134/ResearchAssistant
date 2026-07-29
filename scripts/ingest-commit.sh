@@ -37,7 +37,14 @@ fi
 
 MERGED_FILES=()
 for f in "$MERGED_DIR"/*; do
-  [ -f "$f" ] && MERGED_FILES+=("$f")
+  [ -f "$f" ] || continue
+  # Skip underscore-prefixed helper files (e.g. _index.md, _log_entry.md).
+  # These are not content pages and carry no target_path: the wiki _index is
+  # auto-rebuilt after commit, and _log_entry.md is appended to the space _log.
+  case "$(basename "$f")" in
+    _*) continue ;;
+  esac
+  MERGED_FILES+=("$f")
 done
 
 if [ "${#MERGED_FILES[@]}" -eq 0 ]; then

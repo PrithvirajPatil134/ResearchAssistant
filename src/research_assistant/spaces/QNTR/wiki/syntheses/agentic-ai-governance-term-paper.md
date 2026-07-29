@@ -5,7 +5,7 @@ maturity: working
 tags: [term-paper, agentic-ai, governance, enterprise-risk, qntr]
 schema_version: "1.0"
 created: 2026-05-07
-last_updated: 2026-05-07
+last_updated: 2026-07-28
 originating_space: QNTR
 applicable_to: [term_paper, research_paper, thesis]
 target_deliverable: "Agentic AI Governance and Its Impact on Enterprise Risk and Business Performance"
@@ -21,6 +21,8 @@ draws_from:
   QNTR:
     - wiki/entities/prof-prashar
     - wiki/entities/prof-priyanka-suresh
+    - wiki/sources/deng-2025-ai-agents-security-survey
+target_path: src/research_assistant/spaces/QNTR/wiki/syntheses/agentic-ai-governance-term-paper.md
 ---
 
 ## Current State
@@ -40,6 +42,20 @@ Do firms that adopt more mature governance practices for agentic AI experience f
 3. Responsible AI governance frameworks (Mikalef et al., 2025, Information and Management)
 
 [Source: `spaces/DBA/communication/email_dr_trebucq_research_topic_20260427.md`, lines 15-16]
+
+_Framing reference (not a model anchor):_ Dafoe (2018), "AI Governance: A Research Agenda" (Centre for the Governance of AI, University of Oxford), supplies the field-level definition of AI governance and the AI-safety-vs-AI-governance distinction used to frame the literature review's opening. It operates at the societal/global level and does not inform the enterprise-level IV-to-DV design; it is cited for scope-setting and for the neglectedness framing of the gap (Dafoe's important/tractable/neglected heuristic, p.13). Provenance: provided by Dr. Trebucq (DBA), May 1 2026, per the correction note below.
+
+[Source: QNTR/wiki/sources/dafoe-2018-ai-governance-research-agenda.md, p.5, p.6, p.13]
+
+_Available alternative lens (not an adopted anchor):_ Gahnberg (2021, *Policy and Society*) offers an alternative agency lens the paper could draw on. It frames the governance object as the *material agency* of artificial agents and structures governance as rules over four agent properties (performance measure, environment, actions, percepts). It is complementary to, not a substitute for, the principal-agent anchor (Kolt 2025). Whether to adopt this framing is a decision for the author; it is recorded here as available literature, not as part of the chosen theoretical model.
+
+[Source: QNTR/wiki/sources/gahnberg-2021-framing-governance-artificial-agency.md, p.2, p.7, p.8]
+
+## Evidence Base for the Dependent Variable
+
+Deng et al. (2025), "AI Agents Under Threat" (ACM Computing Surveys 57(7), Article 182), supplies the technical catalog of AI-agent failure modes that the dependent variable (reportable incidents, financial losses, compliance failures) is meant to capture. Their six-class threat taxonomy (perception, brain, action, agent2environment, agent2agent, agent2memory) provides candidate incident categories, and the survey documents quantified and real-world harms usable as enterprise-risk exhibits: multi-million-dollar losses from imitation attacks via prompt injection, the Character.AI chatbot-suicide case, the Morris II self-replicating worm, Meta's Cicero deception, and a warning about automated trading agents colluding at scale.
+
+[Source: `wiki/sources/deng-2025-ai-agents-security-survey.md`; underlying pages `[source_path, p.8, p.10, p.21-24]`]
 
 ## Method (as proposed in v2)
 

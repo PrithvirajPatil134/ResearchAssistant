@@ -5,6 +5,45 @@ what remains. One entry per work session or wave.
 
 ---
 
+## 2026-07-28 — Follow-ups cleared + blind wiki validation
+
+Two parallel subagent batches after the ingest.
+
+**Batch A — 4 fixers (all done, commits 8d324f5 + 4b06082):**
+- `reference` page type + references/ subdir registered in both schemas.
+- rebuild-wiki-index.py made reference-aware (+ shared methods _index row added
+  by hand) — closes the discoverability bug the blind tests found.
+- ra-synthesizer + ra-wiki-ingestor contracts: frontmatter target_path now
+  mandatory on EVERY merged file incl. updates (closes the prof-prashar rollback).
+- 6 pre-existing absolute-absence phrasings softened; frontmatter hygiene.
+- Eisenhardt-1989: installed tesseract 5.5.3 + PyMuPDF, OCR'd 16/19 pages, stub →
+  working, pages 532-550. 3 source-corrupted pages flagged (NOT reconstructed from
+  training knowledge — no-assumption rule held). Last ingest follow-up closed.
+
+**Batch B — 5 BLIND wiki retrieval tests (fresh subagents, no context, no MEMORY,
+forbidden from training knowledge):**
+- ALL 5 retrieved correct, page-cited answers from wiki content alone: DBA thesis
+  IV method, Prashar entity resolution, governance DV evidence, SEM fit-index
+  guidance, journal-quality lookup. The Prashar tester independently reconstructed
+  the exact paper status MEMORY.md records — wiki and memory agree, both validated.
+- Tests found + we fixed 2 real index-discoverability bugs: rebuild-wiki-index.py
+  didn't know `reference` (4 QNTR reference pages invisible to index-first nav) and
+  never rebuilt data/wiki/shared/methods/_index.md (SEM method page unlisted).
+- Tracked content gaps (not bugs): index Sources table has no topic-tag column
+  (finding evidence needs title-guessing); governance DV evidence leans on one
+  secondary survey (Deng) + lacks firm-level financial-loss data (matches Prashar's
+  own McKinsey/Deloitte to-do); no CORE/ABS/W&L reference pages (steering names
+  those gates but only ABDC+JCR pointer pages exist).
+
+Verdict: the wiki works for a cold agent. Content solid, retrieval sound after the
+index fixes. lint 0 errors, harness-doctor ALL GREEN throughout.
+
+Remaining OPEN (optional, tracked): expose frontmatter tags in index Sources
+tables; add CORE/ABS/W&L reference pages; deepen the DV evidence base (financial-
+loss data); the 3 corrupt Eisenhardt pages need a born-digital copy.
+
+---
+
 ## 2026-07-28 — Wave 6.4 DONE: knowledge-ingest backlog cleared (in-scope)
 
 Ran the full ingest pipeline on the triaged in-scope backlog, parallelized across

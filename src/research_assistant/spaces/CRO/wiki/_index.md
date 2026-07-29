@@ -11,7 +11,7 @@
 | Page | Authors | Year | Maturity |
 |------|---------|------|----------|
 | [dimaggio-1995-comments-what-theory-is-not](./sources/dimaggio-1995-comments-what-theory-is-not.md) | DiMaggio, P. J. | 1995 | seed |
-| [eisenhardt-1989-building-theories-case-study](./sources/eisenhardt-1989-building-theories-case-study.md) | Eisenhardt, K. M. | 1989 | seed |
+| [eisenhardt-1989-building-theories-case-study](./sources/eisenhardt-1989-building-theories-case-study.md) | Eisenhardt, K. M. | 1989 | working |
 | [eisenhardt-graebner-2007-theory-building-opportunities](./sources/eisenhardt-graebner-2007-theory-building-opportunities.md) | Eisenhardt, K. M., Graebner, M. E. | 2007 | seed |
 | [kohli-jaworski-1990-market-orientation](./sources/kohli-jaworski-1990-market-orientation.md) | Kohli, A. K., Jaworski, B. J. | 1990 | seed |
 | [rehman-alharthi-2016-research-paradigms](./sources/rehman-alharthi-2016-research-paradigms.md) | Rehman, A. A., Alharthi, K. | 2016 | seed |

@@ -8,25 +8,25 @@
 
 ## Sources (17)
 
-| Page | Authors | Year | Maturity |
-|------|---------|------|----------|
-| [albert-2026-org-structure-database](./sources/albert-2026-org-structure-database.md) | Albert, Daniel, Eklund, John C., Tang, Lisa | 2026 | working |
-| [alekseeva-2026-ai-adoption-managerial-expertise](./sources/alekseeva-2026-ai-adoption-managerial-expertise.md) | Alekseeva, L., Azar, J., Giné, M., Samila, S. | 2026 | seed |
-| [arbulu-2026-sustainability-finance-syllabus](./sources/arbulu-2026-sustainability-finance-syllabus.md) | Arbulu, Alberto | 2026 | seed |
-| [barneto-2026-research-methodology](./sources/barneto-2026-research-methodology.md) | Barneto, Pascal | 2026 | seed |
-| [dafoe-2018-ai-governance-research-agenda](./sources/dafoe-2018-ai-governance-research-agenda.md) | Dafoe, A. | 2018 | working |
-| [dba-thesis-proposal-template](./sources/dba-thesis-proposal-template.md) | DBA Programme (institutional document) | 2026 | seed |
-| [du-research-defense-procedure](./sources/du-research-defense-procedure.md) | IAE Bordeaux (institutional document) | 2026 | seed |
-| [duquesnois-2026-business-models-innovation](./sources/duquesnois-2026-business-models-innovation.md) | Duquesnois, Franck | 2026 | seed |
-| [gestion-de-tresorerie-2026](./sources/gestion-de-tresorerie-2026.md) | Pichard, Jean-Pierre (attributed via course association) | 2026 | seed |
-| [larcker-2007-governance-index-ssrn](./sources/larcker-2007-governance-index-ssrn.md) | Larcker, D.F., Richardson, S.A., Tuna, İ. | 2007 | seed |
-| [projet-de-these-workshop-2026](./sources/projet-de-these-workshop-2026.md) | Prof. Cardoso (institutional document) | 2026 | seed |
-| [rusu-2026-questionnaire-survey-design](./sources/rusu-2026-questionnaire-survey-design.md) | Rusu, C.-R. | 2026 | seed |
-| [rusu-2026-theoretical-operational-definitions](./sources/rusu-2026-theoretical-operational-definitions.md) | Rusu, C.-R. | 2026 | seed |
-| [schaaper-2026-intl-business-economics](./sources/schaaper-2026-intl-business-economics.md) | Schaaper, Jan | 2026 | seed |
-| [ub-2026-research-databases-toolkit](./sources/ub-2026-research-databases-toolkit.md) | Mewan Pouriel (University of Bordeaux Libraries) | 2026 | seed |
-| [ub-dba-2026-syllabus](./sources/ub-dba-2026-syllabus.md) | IAE Bordeaux (institutional document) | 2026 | seed |
-| [wu-zumbo-2007-mediators-moderators](./sources/wu-zumbo-2007-mediators-moderators.md) | Wu, A.D., Zumbo, B.D. | 2007 | seed |
+| Page | Authors | Year | Maturity | Tags |
+|------|---------|------|----------|------|
+| [albert-2026-org-structure-database](./sources/albert-2026-org-structure-database.md) | Albert, Daniel, Eklund, John C., Tang, Lisa | 2026 | working | organizational-structure, top-management-team, tmt, generative-ai, gpt-4o, fine-tuning, sec-filings, 10-k, def14a, archival-data, s-and-p-500, thesis-spine, coding-method |
+| [alekseeva-2026-ai-adoption-managerial-expertise](./sources/alekseeva-2026-ai-adoption-managerial-expertise.md) | Alekseeva, L., Azar, J., Giné, M., Samila, S. | 2026 | seed | ai-adoption, managerial-demand, shift-share-iv, job-postings, lightcast, skills, organizational-change, strategic-management, thesis-spine |
+| [arbulu-2026-sustainability-finance-syllabus](./sources/arbulu-2026-sustainability-finance-syllabus.md) | Arbulu, Alberto | 2026 | seed | sustainability-finance, financial-markets, course-syllabus, dba-2026, image-only |
+| [barneto-2026-research-methodology](./sources/barneto-2026-research-methodology.md) | Barneto, Pascal | 2026 | seed | research-methods, epistemology, contribution, dba-process, barneto |
+| [dafoe-2018-ai-governance-research-agenda](./sources/dafoe-2018-ai-governance-research-agenda.md) | Dafoe, A. | 2018 | working | ai-governance, research-agenda, govai, oxford, future-of-humanity-institute, macro-governance, safety, race-dynamics |
+| [dba-thesis-proposal-template](./sources/dba-thesis-proposal-template.md) | DBA Programme (institutional document) | 2026 | seed | thesis-structure, institutional-requirements, dba-programme |
+| [du-research-defense-procedure](./sources/du-research-defense-procedure.md) | IAE Bordeaux (institutional document) | 2026 | seed | defense-procedure, proposal-structure, timeline, dba-2026 |
+| [duquesnois-2026-business-models-innovation](./sources/duquesnois-2026-business-models-innovation.md) | Duquesnois, Franck | 2026 | seed | business-model, entrepreneurship, innovation, schumpeter, bibliometrics, strategic-innovation, dba-course |
+| [gestion-de-tresorerie-2026](./sources/gestion-de-tresorerie-2026.md) | Pichard, Jean-Pierre (attributed via course association) | 2026 | seed | corporate-governance, treasury-management, french-language, image-only, dba-2026 |
+| [larcker-2007-governance-index-ssrn](./sources/larcker-2007-governance-index-ssrn.md) | Larcker, D.F., Richardson, S.A., Tuna, İ. | 2007 | seed | corporate-governance, principal-component-analysis, index-construction, construct-measurement, earnings-quality, archival |
+| [projet-de-these-workshop-2026](./sources/projet-de-these-workshop-2026.md) | Prof. Cardoso (institutional document) | 2026 | seed | thesis-structure, proposal-writing, research-objectives, dba-2026, workshop |
+| [rusu-2026-questionnaire-survey-design](./sources/rusu-2026-questionnaire-survey-design.md) | Rusu, C.-R. | 2026 | seed | questionnaire-design, survey-methodology, quantitative-research, scaling, likert, dba-2026 |
+| [rusu-2026-theoretical-operational-definitions](./sources/rusu-2026-theoretical-operational-definitions.md) | Rusu, C.-R. | 2026 | seed | theory-building, constructs, operationalization, definitions, brand-loyalty |
+| [schaaper-2026-intl-business-economics](./sources/schaaper-2026-intl-business-economics.md) | Schaaper, Jan | 2026 | seed | international-business, mnc-control, subsidiary-management, expatriates, asia, schaaper |
+| [ub-2026-research-databases-toolkit](./sources/ub-2026-research-databases-toolkit.md) | Mewan Pouriel (University of Bordeaux Libraries) | 2026 | seed | databases, academic-research, babord, scopus, ebsco, plagiarism, ai-citation, apa7, dba-2026 |
+| [ub-dba-2026-syllabus](./sources/ub-dba-2026-syllabus.md) | IAE Bordeaux (institutional document) | 2026 | seed | programme-structure, dba-2026, courses, faculty, bordeaux |
+| [wu-zumbo-2007-mediators-moderators](./sources/wu-zumbo-2007-mediators-moderators.md) | Wu, A.D., Zumbo, B.D. | 2007 | seed | mediation, moderation, causal-design, sem, moderated-mediation, mediated-moderation, research-methods |
 
 ## Concepts (0)
 

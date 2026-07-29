@@ -78,7 +78,9 @@ def render_row(kind, slug, fm):
     link = f"[{slug}](./{kind}/{slug}.md)"
     mat = fm.get("maturity", "seed")
     if kind == "sources":
-        return f"| {link} | {fmt_authors(fm.get('authors'))} | {fm.get('year','—')} | {mat} |"
+        tags = fm.get("tags") or []
+        tag_s = ", ".join(str(t) for t in tags) if isinstance(tags, list) else str(tags)
+        return f"| {link} | {fmt_authors(fm.get('authors'))} | {fm.get('year','—')} | {mat} | {tag_s or '—'} |"
     if kind == "concepts":
         aliases = fm.get("aliases") or []
         alias_s = ", ".join(aliases) if isinstance(aliases, list) else str(aliases)
@@ -94,7 +96,7 @@ def render_row(kind, slug, fm):
 
 
 HEADERS = {
-    "sources": "| Page | Authors | Year | Maturity |\n|------|---------|------|----------|",
+    "sources": "| Page | Authors | Year | Maturity | Tags |\n|------|---------|------|----------|------|",
     "concepts": "| Page | Aliases | Sources | Maturity |\n|------|---------|---------|----------|",
     "entities": "| Page | Kind | Role | Maturity |\n|------|------|------|----------|",
     "syntheses": "| Page | Target Deliverable | Current Version | Maturity |\n|------|-------------------|-----------------|----------|",

@@ -5,6 +5,61 @@ what remains. One entry per work session or wave.
 
 ---
 
+## 2026-07-28 — Wave 6.4 DONE: knowledge-ingest backlog cleared (in-scope)
+
+Ran the full ingest pipeline on the triaged in-scope backlog, parallelized across
+3 space-scoped manifests. Every batch: ra-wiki-ingestor (one per source, concurrent,
+full-text reads) → ra-synthesizer (fan-in merge, cluster reconciliation) →
+ra-wiki-reviewer (schema + sourcing hard-fail gate) → ingest-commit (atomic +
+event-driven index auto-heal). 5 git commits:
+
+- Batch 1 (c5c1d52): 6 QNTR governance+method sources (Dafoe, Gahnberg, Deng,
+  Diamantopoulos-2008, Hu-Bentler, Preacher) + additive updates.
+- CRO (7204850): eisenhardt-1989 (OCR-blocked STUB), dimaggio-1995, kohli-jaworski-1990.
+  Sources 4→7.
+- DBA (f13f0ae): alekseeva-2026, albert-2026, larcker-2007 + 2 method pages
+  (generative-ai-title-labeling, pca-governance-index-construction). Sources 14→17,
+  Methods 1→3. The thesis-spine foundation.
+- QNTR batch 2/3 (6b577f7): 9 sources (SEM-fit cluster, mediation, formative,
+  Prashar's own paper) + quant-rigor method + shared sem-fit-index-evaluation method
+  + 4 reference pages (new `reference` type / references/ subdir). Sources 30→39.
+
+Final wiki state: QNTR 39 sources / DBA 17 / CRO 7, lint 0 errors (warnings
+210→166). Every claim page-cited; reviewers verified additive updates byte-preserved
+batch-1 content.
+
+**Pipeline hardening (bugs found by real fan-out, all with atomicity holding — no
+partial commits):**
+- ingest-commit.sh: skip `_`-prefixed helper files (_index/_log_entry carry no
+  target_path); collect merged files RECURSIVELY (synthesizers may use subdirs).
+- read_binary.py (commit 9f693b5): install PyPDF2/python-docx/python-pptx/openpyxl
+  in .venv + add PPTX; the binary-reading capability had zero deps installed.
+
+**The pipeline's verification earned its keep** — caught: Deng filename year 2021→
+actual 2025; Diamantopoulos 2008 vs ingested 2011; Eisenhardt 1989 vs ingested 2007;
+Maula-Stam filename "2025" = session label, real year 2019; Mikalef-Conboy filename
+= actually Papagiannidis (already ingested); a superseded WIP draft with fabricated
+"78%" stats excluded; Prashar affiliation discrepancy recorded not resolved; 6
+wrong-depth cross-ref paths (FIX-FIRST) corrected before commit.
+
+**Consolidated follow-ups (tracked, not blocking):**
+1. OCR: eisenhardt-1989 is a stub — `brew install tesseract`, OCR the scanned PDF,
+   re-run ingestor (also confirm end-page 550).
+2. Register `reference` type + `references/` subdir in data/wiki/_shared_schema.md.
+3. Ingestor contract wording: target_path landed as `**label**` in proposals (fine —
+   synthesizer lifts it to frontmatter); one synthesizer missed it on an entity-update
+   page (prof-prashar) → manual add. Consider making the synthesizer contract explicit
+   that EVERY merged content file (new OR update) needs frontmatter target_path.
+4. Soften pre-existing absolute-absence phrasings (cs-vs-mgmt-gap, dba-thesis-proposal,
+   eisenhardt-graebner-2007, prof-prashar) — all pre-existing, flagged by reviewers.
+5. Minor frontmatter hygiene: `quantitative_study` not in applicable_to vocab;
+   hildebrandt-temme source_path/related field shape; albert maturity=working on
+   single source; a few last_updated bumps. A ra-wiki-linter pass covers these.
+6. Off-scope deferred (not thesis/paper-relevant): Sheth-2011, Tooze Crashed (book),
+   CW case-writing set (dormant), ~20 CW exemplar cases, Session/course slide decks.
+
+---
+
 ## 2026-07-27 — Wave 6.2 REDONE (event-driven, cron cut as noise)
 
 User pushback (correct): "why install crontab? what if I forget? no noise." Cron

@@ -1,15 +1,17 @@
 # DBA Wiki Index
 
 **Space**: DBA (Doctoral Business Administration)
-**Last updated**: 2026-07-27 (auto-rebuilt)
+**Last updated**: 2026-07-29 (auto-rebuilt)
 **Schema**: See `data/wiki/_shared_schema.md`
 
 ---
 
-## Sources (14)
+## Sources (17)
 
 | Page | Authors | Year | Maturity |
 |------|---------|------|----------|
+| [albert-2026-org-structure-database](./sources/albert-2026-org-structure-database.md) | Albert, Daniel, Eklund, John C., Tang, Lisa | 2026 | working |
+| [alekseeva-2026-ai-adoption-managerial-expertise](./sources/alekseeva-2026-ai-adoption-managerial-expertise.md) | Alekseeva, L., Azar, J., Giné, M., Samila, S. | 2026 | seed |
 | [arbulu-2026-sustainability-finance-syllabus](./sources/arbulu-2026-sustainability-finance-syllabus.md) | Arbulu, Alberto | 2026 | seed |
 | [barneto-2026-research-methodology](./sources/barneto-2026-research-methodology.md) | Barneto, Pascal | 2026 | seed |
 | [dafoe-2018-ai-governance-research-agenda](./sources/dafoe-2018-ai-governance-research-agenda.md) | Dafoe, A. | 2018 | working |
@@ -17,6 +19,7 @@
 | [du-research-defense-procedure](./sources/du-research-defense-procedure.md) | IAE Bordeaux (institutional document) | 2026 | seed |
 | [duquesnois-2026-business-models-innovation](./sources/duquesnois-2026-business-models-innovation.md) | Duquesnois, Franck | 2026 | seed |
 | [gestion-de-tresorerie-2026](./sources/gestion-de-tresorerie-2026.md) | Pichard, Jean-Pierre (attributed via course association) | 2026 | seed |
+| [larcker-2007-governance-index-ssrn](./sources/larcker-2007-governance-index-ssrn.md) | Larcker, D.F., Richardson, S.A., Tuna, İ. | 2007 | seed |
 | [projet-de-these-workshop-2026](./sources/projet-de-these-workshop-2026.md) | Prof. Cardoso (institutional document) | 2026 | seed |
 | [rusu-2026-questionnaire-survey-design](./sources/rusu-2026-questionnaire-survey-design.md) | Rusu, C.-R. | 2026 | seed |
 | [rusu-2026-theoretical-operational-definitions](./sources/rusu-2026-theoretical-operational-definitions.md) | Rusu, C.-R. | 2026 | seed |
@@ -45,11 +48,13 @@ _No concept pages yet._
 |------|-------------------|-----------------|----------|
 | [dba-thesis-proposal-2026](./syntheses/dba-thesis-proposal-2026.md) | DBA Thesis Proposal (DU Research Defense) | draft | working |
 
-## Methods (1)
+## Methods (3)
 
 | Page | Title | Maturity |
 |------|-------|----------|
 | [bibliometric-analysis](./methods/bibliometric-analysis.md) | Bibliometric Analysis (Bibliometrix + VOSviewer) | seed |
+| [generative-ai-title-labeling](./methods/generative-ai-title-labeling.md) | Generative-AI Labeling of Executive Titles from SEC Filings (Albert, Eklund & Tang 2026) | working |
+| [pca-governance-index-construction](./methods/pca-governance-index-construction.md) | PCA-Based Multi-Indicator Index Construction (Larcker, Richardson & Tuna 2007) | seed |
 
 ## Comparisons (0)
 

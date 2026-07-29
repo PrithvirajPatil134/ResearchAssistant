@@ -1,11 +1,12 @@
 ---
 type: deliverable_synthesis
+target_path: src/research_assistant/spaces/DBA/wiki/syntheses/dba-thesis-proposal-2026.md
 title: "DBA Thesis Proposal - Organizational Restructuring & GenAI (December 2026)"
 maturity: working
 tags: [thesis-proposal, org-restructuring, genai, punctuated-equilibrium, december-2026]
 schema_version: "1.0"
 created: 2026-06-02
-last_updated: 2026-07-16
+last_updated: 2026-07-28
 originating_space: DBA
 applicable_to: [thesis]
 target_deliverable: "DBA Thesis Proposal (DU Research Defense)"
@@ -16,6 +17,9 @@ draws_from:
     - wiki/sources/dba-thesis-proposal-template
     - wiki/sources/barneto-2026-research-methodology
     - wiki/sources/ub-dba-2026-syllabus
+    - wiki/sources/alekseeva-2026-ai-adoption-managerial-expertise
+    - wiki/sources/albert-2026-org-structure-database
+    - wiki/methods/generative-ai-title-labeling
   QNTR:
     - wiki/sources/berente-2021-managing-ai
 ---
@@ -271,7 +275,7 @@ Full text obtained and extracted:
 - Girod & Whittington (2015), Organization Science: the 0.30 structural-change-ratio threshold for distinguishing discontinuous restructuring from incremental reconfiguration [extraction: data/summaries/thesis-fulltext-extractions.md]
 - Alekseeva, Azar, Giné & Samila (2026), SMJ: firm-level AI adoption intensity from Lightcast job postings, 2010-2022 (Gold OA) [PDF: spaces/DBA/knowledge/thesis-spine-papers/; extraction: data/drafts/_staging/extract-alekseeva-results.md]
 - Albert, Eklund & Tang (2026), SMJ: organizational structure database from TMT titles in SEC 10-K/20-F/DEF 14A filings (Gold OA) [PDF: spaces/DBA/knowledge/thesis-spine-papers/; extraction: data/drafts/_staging/extract-albert-results.md]
-- Larcker, Richardson & Tuna (2007): governance index via PCA on proxy-statement variables [SSRN working-paper version; verify against published Accounting Review article] [extraction: data/drafts/_staging/extract-larcker-results.md]
+- Larcker, Richardson & Tuna (2007): governance index via exploratory PCA on 39 proxy-statement indicators reduced to 14 dimensions (eigenvalue>1, oblique rotation, |loading|>0.40, standardized equal-weighted index scores) [SSRN working-paper version; re-verify against published Accounting Review article at final citation] [wiki/sources/larcker-2007-governance-index-ssrn.md]
 
 Still paywalled, awaiting UB institutional access (Babord+, Scopus, EBSCO, or interlibrary loan):
 - Romanelli & Tushman (1994), AMJ, DOI 10.2307/256669: canonical PE coding scheme (JSTOR/AOM)

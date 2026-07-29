@@ -36,7 +36,10 @@ if [ ! -d "$MERGED_DIR" ]; then
 fi
 
 MERGED_FILES=()
-for f in "$MERGED_DIR"/*; do
+# Collect recursively: synthesizers may organize merged files flat OR under
+# subdirs (sources/, methods/, syntheses/). find -type f handles both. The real
+# destination is each file's frontmatter target_path, not its position here.
+while IFS= read -r f; do
   [ -f "$f" ] || continue
   # Skip underscore-prefixed helper files (e.g. _index.md, _log_entry.md).
   # These are not content pages and carry no target_path: the wiki _index is
@@ -45,7 +48,7 @@ for f in "$MERGED_DIR"/*; do
     _*) continue ;;
   esac
   MERGED_FILES+=("$f")
-done
+done < <(find "$MERGED_DIR" -type f -name '*.md' 2>/dev/null | sort)
 
 if [ "${#MERGED_FILES[@]}" -eq 0 ]; then
   echo "error: no files in merged/ for ${ID}" >&2

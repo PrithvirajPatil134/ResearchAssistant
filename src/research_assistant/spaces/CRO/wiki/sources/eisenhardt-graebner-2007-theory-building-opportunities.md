@@ -1,6 +1,7 @@
 ---
 title: "Theory Building from Cases: Opportunities and Challenges"
 type: source
+target_path: src/research_assistant/spaces/CRO/wiki/sources/eisenhardt-graebner-2007-theory-building-opportunities.md
 maturity: seed
 created: 2026-05-07
 originating_space: CRO
@@ -96,6 +97,10 @@ Multiple-case theory tends to be more parsimonious than single-case theory becau
 The paper references and builds on Eisenhardt's (1989b) "Building theories from case study research" (AMR, 14: 532-550), which established the foundational process including: getting started (research question), selecting cases, crafting instruments, entering the field, analyzing within-case data, searching for cross-case patterns, shaping hypotheses, enfolding literature, and reaching closure.
 
 [Source: pp. 25, 27, references p. 31]
+
+The foundational 1989 paper is now ingested as its own CRO source page (metadata-only stub pending OCR): [Eisenhardt (1989), "Building Theories From Case Study Research"](./eisenhardt-1989-building-theories-case-study.md).
+
+[Source: spaces/CRO/knowledge/Session 4_002. AMJ_1989_Eisenhardt Kathleen_Theory building from Case Study Research.pdf, p.1]
 
 ## Methodology
 

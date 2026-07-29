@@ -1,6 +1,7 @@
 ---
 title: "What Theory is Not"
 type: source
+target_path: src/research_assistant/spaces/CRO/wiki/sources/sutton-staw-1995-what-theory-is-not.md
 maturity: seed
 created: 2026-05-07
 originating_space: CRO
@@ -92,3 +93,9 @@ This paper serves as a foundational reference for crafting the theoretical secti
 - "Hypotheses are concise statements about what is expected to occur, not why it is expected to occur." (p. 377)
 - "A good theory explains, predicts, and delights." (p. 378, citing Weick 1995)
 - "Strong theory usually stems from a single or small set of research ideas." (p. 377)
+
+## Companion Commentary
+
+In the same ASQ issue (40(3)), DiMaggio (1995, pp. 391-397) published a commentary that accepts this article's "superb description of non-theory" but adds three qualifications: theory comes in more than one valid kind (covering-law, enlightenment, narrative); the best theory is a hybrid that reconciles competing values; and a theory's reception is a form of social construction that continues after it is written. DiMaggio reads Sutton and Staw as favouring a "temperate version of the narrative approach." See `sources/dimaggio-1995-comments-what-theory-is-not.md`.
+
+[Source: Session 3_comments on what theory is not_complete_20260425.pdf, pp. 2-3, 7]

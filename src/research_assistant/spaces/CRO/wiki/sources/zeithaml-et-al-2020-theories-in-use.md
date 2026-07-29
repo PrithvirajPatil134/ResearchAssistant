@@ -1,6 +1,7 @@
 ---
 title: "A Theories-in-Use Approach to Building Marketing Theory"
 type: source
+target_path: src/research_assistant/spaces/CRO/wiki/sources/zeithaml-et-al-2020-theories-in-use.md
 maturity: seed
 created: 2026-07-02
 last_updated: 2026-07-02
@@ -103,6 +104,7 @@ From the Session 7 assignment (see `communication/email_prof_mukhopadhyay_sessio
 
 - Complements `wiki/sources/eisenhardt-graebner-2007-theory-building-opportunities.md` (the case-based alternative to TIU) and `wiki/sources/sutton-staw-1995-what-theory-is-not.md` (the standard for whether the steps actually yield theory).
 - The applied assessment of TIU in the market orientation paper is written up in `output/Session7_TheoriesInUse_Review.md`.
+- The market orientation paper the professor paired with this method paper is now ingested at `wiki/sources/kohli-jaworski-1990-market-orientation.md`. It is the applied exemplar: Kohli and Jaworski describe their design as "discovery-oriented" (Kohli & Jaworski 1990, p. 1), and the two are co-authors of this TIU paper, which lists their market orientation study as a TIU exemplar.
 
 ## Limitations
 

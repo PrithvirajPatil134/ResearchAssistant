@@ -1,16 +1,19 @@
 # CRO Wiki Index
 
 **Space**: CRO (Contemporary Research in Organisations)
-**Last updated**: 2026-07-27 (auto-rebuilt)
+**Last updated**: 2026-07-29 (auto-rebuilt)
 **Schema**: See `data/wiki/_shared_schema.md`
 
 ---
 
-## Sources (4)
+## Sources (7)
 
 | Page | Authors | Year | Maturity |
 |------|---------|------|----------|
+| [dimaggio-1995-comments-what-theory-is-not](./sources/dimaggio-1995-comments-what-theory-is-not.md) | DiMaggio, P. J. | 1995 | seed |
+| [eisenhardt-1989-building-theories-case-study](./sources/eisenhardt-1989-building-theories-case-study.md) | Eisenhardt, K. M. | 1989 | seed |
 | [eisenhardt-graebner-2007-theory-building-opportunities](./sources/eisenhardt-graebner-2007-theory-building-opportunities.md) | Eisenhardt, K. M., Graebner, M. E. | 2007 | seed |
+| [kohli-jaworski-1990-market-orientation](./sources/kohli-jaworski-1990-market-orientation.md) | Kohli, A. K., Jaworski, B. J. | 1990 | seed |
 | [rehman-alharthi-2016-research-paradigms](./sources/rehman-alharthi-2016-research-paradigms.md) | Rehman, A. A., Alharthi, K. | 2016 | seed |
 | [sutton-staw-1995-what-theory-is-not](./sources/sutton-staw-1995-what-theory-is-not.md) | Sutton, R. I., Staw, B. M. | 1995 | seed |
 | [zeithaml-et-al-2020-theories-in-use](./sources/zeithaml-et-al-2020-theories-in-use.md) | Zeithaml, V. A., Jaworski, B. J., Kohli, A. K., Tuli, K. R., Ulaga, W., Zaltman, G. | 2020 | seed |

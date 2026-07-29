@@ -66,6 +66,7 @@ data/sources/
 
 # Claude Code user-specific local settings (shared settings.json is committed)
 .claude/local/
+.claude/settings.local.json
 
 # Auto-generated CLAUDE.md (rebuilt each session by discover-claude-context.sh)
 CLAUDE.md

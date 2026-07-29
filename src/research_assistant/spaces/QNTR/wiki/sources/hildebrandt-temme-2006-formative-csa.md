@@ -8,9 +8,7 @@ created: 2026-07-28
 last_updated: 2026-07-28
 originating_space: QNTR
 applicable_to: [research_paper, term_paper, thesis]
-sources:
-  - path: "knowledge/Reference Material/2006 - Hildebrandt and Temme - Formative measurement models in Covariance sturcture analysis.pdf"
-    type: pdf
+source_path: "knowledge/Reference Material/2006 - Hildebrandt and Temme - Formative measurement models in Covariance sturcture analysis.pdf"
 authors:
   - "Hildebrandt, L."
   - "Temme, D."
@@ -20,7 +18,7 @@ volume: "2006-083"
 pages: "1-14"
 ingested: 2026-07-28
 draws_from: []
-related_sources:
+related:
   - wiki/sources/diamantopoulos-2011-formative-measures-cbsem
   - wiki/sources/diamantopoulos-2008-advancing-formative
 target_path: src/research_assistant/spaces/QNTR/wiki/sources/hildebrandt-temme-2006-formative-csa.md

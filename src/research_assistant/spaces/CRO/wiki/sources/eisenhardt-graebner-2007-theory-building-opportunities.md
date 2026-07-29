@@ -116,7 +116,7 @@ Not applicable (conceptual/methodological paper). The paper's contribution is pr
 
 For the agentic AI governance research using exploratory sequential mixed methods:
 
-- Justifies the qualitative Phase 1 as appropriate when "existing research either does not address the research question at all, or does so in a way that is inadequate" (p. 26). The agentic AI governance research question meets this criterion since no existing theory specifically addresses governance of goal-directed AI agents.
+- Justifies the qualitative Phase 1 as appropriate when "existing research either does not address the research question at all, or does so in a way that is inadequate" (p. 26). The agentic AI governance research question meets this criterion since existing theory has not yet sufficiently addressed governance of goal-directed AI agents.
 - The polar types sampling strategy applies: selecting firms with very mature vs. very immature agentic AI governance for maximum construct clarity.
 - Construct tables provide the bridge between qualitative Phase 1 constructs and quantitative Phase 2 operationalization.
 - Replication logic validates the multi-case approach for building governance maturity constructs.

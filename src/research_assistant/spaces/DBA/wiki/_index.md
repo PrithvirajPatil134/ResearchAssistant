@@ -1,7 +1,7 @@
 # DBA Wiki Index
 
 **Space**: DBA (Doctoral Business Administration)
-**Last updated**: 2026-07-29 (auto-rebuilt)
+**Last updated**: 2026-07-28 (auto-rebuilt)
 **Schema**: See `data/wiki/_shared_schema.md`
 
 ---
@@ -55,6 +55,10 @@ _No concept pages yet._
 | [bibliometric-analysis](./methods/bibliometric-analysis.md) | Bibliometric Analysis (Bibliometrix + VOSviewer) | seed |
 | [generative-ai-title-labeling](./methods/generative-ai-title-labeling.md) | Generative-AI Labeling of Executive Titles from SEC Filings (Albert, Eklund & Tang 2026) | working |
 | [pca-governance-index-construction](./methods/pca-governance-index-construction.md) | PCA-Based Multi-Indicator Index Construction (Larcker, Richardson & Tuna 2007) | seed |
+
+## References (0)
+
+_No reference pages yet._
 
 ## Comparisons (0)
 

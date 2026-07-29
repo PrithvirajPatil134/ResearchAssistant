@@ -43,6 +43,7 @@ SECTIONS = [
     ("Entities", "entities"),
     ("Syntheses", "syntheses"),
     ("Methods", "methods"),
+    ("References", "references"),
     ("Comparisons", "comparisons"),
 ]
 
@@ -98,6 +99,7 @@ HEADERS = {
     "entities": "| Page | Kind | Role | Maturity |\n|------|------|------|----------|",
     "syntheses": "| Page | Target Deliverable | Current Version | Maturity |\n|------|-------------------|-----------------|----------|",
     "methods": "| Page | Title | Maturity |\n|------|-------|----------|",
+    "references": "| Page | Title | Maturity |\n|------|-------|----------|",
     "comparisons": "| Page | Title | Maturity |\n|------|-------|----------|",
 }
 EMPTY_NOTE = {
@@ -106,6 +108,7 @@ EMPTY_NOTE = {
     "entities": "_No entity pages yet._",
     "syntheses": "_No synthesis pages yet._",
     "methods": "_No method pages yet._",
+    "references": "_No reference pages yet._",
     "comparisons": "_No comparison pages yet._",
 }
 

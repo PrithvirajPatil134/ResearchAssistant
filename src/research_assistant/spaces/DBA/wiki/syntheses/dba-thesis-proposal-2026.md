@@ -183,7 +183,7 @@ The 12–13 slide deck required for the defense maps as follows against the thes
 |-------|-----------------|----------------------|
 | 1 | Institution, title, name, date | IAE Bordeaux + IIM Sambalpur logos; full thesis title; Prithviraj Patil; defense date |
 | 2 | Context of the study | GenAI adoption wave 2022–2026; magnitude of tech firm restructuring |
-| 3 | Interest of the topic | Gap: no systematic archival study of structural change patterns across firms |
+| 3 | Interest of the topic | Gap: systematic archival study of structural change patterns across firms remains scarce |
 | 4 | Research question and sub-questions | Revised RQ on aggressive vs. incremental adopters and punctuated equilibrium alignment |
 | 5 | Literature review — theories used | Punctuated equilibrium theory (Tushman/Romanelli); organizational design (Mintzberg) |
 | 6 | Literature review — theories used (continued) | Archival research methods; SEC disclosure literature |

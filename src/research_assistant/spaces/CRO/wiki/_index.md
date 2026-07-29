@@ -1,7 +1,7 @@
 # CRO Wiki Index
 
 **Space**: CRO (Contemporary Research in Organisations)
-**Last updated**: 2026-07-29 (auto-rebuilt)
+**Last updated**: 2026-07-28 (auto-rebuilt)
 **Schema**: See `data/wiki/_shared_schema.md`
 
 ---
@@ -35,6 +35,10 @@ _No synthesis pages yet._
 ## Methods (0)
 
 _No method pages yet._
+
+## References (0)
+
+_No reference pages yet._
 
 ## Comparisons (0)
 

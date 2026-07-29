@@ -21,7 +21,8 @@ wiki/
 ├── entities/        # One page per recurring person, org, framework, dataset
 ├── syntheses/       # Cross-source analysis pages, research arguments
 ├── methods/         # Methodology reference pages (SEM, regression, coding)
-└── comparisons/     # Head-to-head source comparisons
+├── comparisons/     # Head-to-head source comparisons
+└── references/      # Pointer pages for lookup artifacts (journal-ranking sheets, impact-factor lists, supplementary teaching material)
 ```
 
 ## Page Types
@@ -34,6 +35,7 @@ wiki/
 | synthesis | Multi-source argument or gap identified during research | Research thread |
 | method | A statistical or analytical method is used in the research | Method |
 | comparison | Two or more sources address the same question differently | Question-pair |
+| reference | A lookup artifact (journal-ranking sheet, impact-factor list, supplementary teaching material) needs a pointer page describing its purpose, structure, and how to use it, not a full-text transcription | Reference artifact |
 
 ## Naming Conventions
 
@@ -44,6 +46,7 @@ wiki/
 - **Synthesis pages**: kebab-case research thread. `agentic-ai-governance-term-paper.md`, `rpa-to-agentic-ai-gap.md`.
 - **Method pages**: kebab-case method name. `sem-structural-equation-modeling.md`, `qualitative-interview-coding.md`.
 - **Comparison pages**: `{source-a}-vs-{source-b}-{topic}.md`. Example: `berente-vs-taeihagh-risk-taxonomies.md`.
+- **Reference pages**: kebab-case artifact name. `abdc-jql-2022-journal-ranking.md`, `jcri-impact-factors-2025.md`.
 
 ## Frontmatter
 
@@ -51,7 +54,7 @@ Every page starts with YAML frontmatter. Fields vary by type. Common fields acro
 
 | Field | Required | Notes |
 |-------|----------|-------|
-| type | Yes | source, concept, entity, synthesis, method, comparison |
+| type | Yes | source, concept, entity, synthesis, method, comparison, reference |
 | title | Yes | Human-readable title in quotes |
 | maturity | Yes | seed, working, validated, deprecated |
 | tags | Yes | Array of kebab-case tags for faceted search |
@@ -66,6 +69,7 @@ Every page starts with YAML frontmatter. Fields vary by type. Common fields acro
 **synthesis**: sources, propositions_supported, created, last_updated.
 **method**: sources.
 **comparison**: sources.
+**reference**: source_path (path to the lookup artifact in `knowledge/`).
 
 See `entities/prof-prashar.md` for a complete entity frontmatter example.
 
@@ -139,6 +143,16 @@ Each page type has required sections. The ingest operation and wiki-ingestor age
 5. Application in Our Research
 6. Prof. Prashar's Guidance (if any)
 
+### Reference page
+1. What it is
+2. What it is for
+3. Structure (sheet/page layout, from `--meta` and header/cell peeks)
+4. How to use
+5. Caveat (if any)
+6. File (path to the artifact)
+
+Every claim traces to a specific cell, row, or page in the artifact (format: `[filename.xlsx, sheet 'X', row N]` or `[filename.pdf, p.N]`). The page points to the artifact; it does not transcribe it.
+
 ## Proposal-Based Change Model
 
 - **Pages at seed or working maturity**: Direct edits allowed.
@@ -158,6 +172,7 @@ Before writing a new page, the agent must satisfy at least one of:
 - For **synthesis**: the argument draws on 2+ source pages already in the wiki.
 - For **method**: the method is referenced in 1+ source page, or requested by a workflow run.
 - For **comparison**: two or more source pages exist and address the same question with different answers.
+- For **reference**: the lookup artifact exists in `knowledge/` and is used as a quality gate or aid (e.g., a journal-ranking list consulted during literature search), warranting a pointer page rather than a full source-page treatment.
 
 If none of these are satisfied, do not create the page. Instead, add a note to `_log.md` explaining why the creation was deferred.
 

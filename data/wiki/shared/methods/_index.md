@@ -11,3 +11,4 @@ Research methodology reference pages. Load specific pages on demand based on tas
 | `mixed-methods-sequential-design.md` | Creswell & Plano Clark (2018) + Sandip worked example | Two-phase design: qualitative builds constructs, quantitative tests them |
 | `questionnaire-survey-design.md` | Questionnaire survey design (Rusu 2026 lecture) | Designing quantitative data collection instruments; scaling responses; mapping questions to research objectives |
 | `construct-operationalization.md` | Construct operationalization: theoretical vs operational definitions (Rusu L3, Bacharach framework) | Defining constructs clearly, bridging from propositions to hypotheses, operationalizing for measurement |
+| `sem-fit-index-evaluation.md` | SEM fit-index evaluation (Hu & Bentler 1999, Shi 2017/2021, Marcoulides & Yuan 2016) | Reporting/interpreting SEM fit; choosing cutoffs; caveats for very small df or very large models; equivalence testing |

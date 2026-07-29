@@ -20,7 +20,8 @@ spaces/{SPACE}/wiki/
 ├── entities/        # People, organizations, frameworks, datasets
 ├── syntheses/       # Cross-source arguments
 ├── methods/         # Methodology reference pages
-└── comparisons/     # Head-to-head source comparisons
+├── comparisons/     # Head-to-head source comparisons
+└── references/      # Pointer pages for lookup/reference artifacts
 ```
 
 ## Cross-Space Directory
@@ -46,13 +47,14 @@ data/wiki/shared/
 | synthesis | Multi-source argument identified during research | Research thread |
 | method | A statistical or analytical method is used in the research | Method |
 | comparison | Two or more sources address the same question differently | Question-pair |
+| reference | A lookup/reference artifact (journal-ranking sheet, impact-factor list, supplementary teaching material) needs a pointer page describing its purpose, structure, and how to use it — NOT a full-text transcription | Reference artifact |
 | deliverable_synthesis | A paper/thesis/case that draws from multiple spaces | Deliverable |
 
 ## Required Frontmatter (all page types)
 
 ```yaml
 ---
-type: <source|concept|entity|synthesis|method|comparison|deliverable_synthesis>
+type: <source|concept|entity|synthesis|method|comparison|reference|deliverable_synthesis>
 title: "<human-readable title>"
 maturity: <seed|working|validated|deprecated>
 tags: [kebab-case, tag, list]
@@ -145,6 +147,12 @@ sources: [<source-a>, <source-b>]
 question: "<the specific question both sources address>"
 ```
 
+### reference
+```yaml
+source_path: "src/research_assistant/spaces/QNTR/knowledge/.../artifact.xlsx"
+```
+A `reference` page points to a lookup artifact rather than transcribing it. The body describes what the artifact is, what it is for, its structure (sheet/page layout from `--meta`), and how to use it, with every claim traced to a cell/row/page. It does not reproduce the artifact's contents. Filed under `references/`. Example pages: `spaces/QNTR/wiki/references/abdc-jql-2022-journal-ranking.md` (a journal-quality gate) and `qntr-variability-supp-material.md` (a statistics teaching aid).
+
 ### deliverable_synthesis
 ```yaml
 target_deliverable: "<Agentic AI Governance Term Paper>"
@@ -220,6 +228,7 @@ Before writing a new page:
 - **synthesis**: the argument draws on 2+ source pages already in the wiki.
 - **method**: the method is referenced in 1+ source page or requested by a workflow.
 - **comparison**: 2+ source pages exist and address the same question differently.
+- **reference**: the lookup artifact exists in `knowledge/` and is used as a gate or aid (e.g., a journal-ranking list consulted during literature search), warranting a pointer page rather than a full source-page treatment.
 - **deliverable_synthesis**: a real deliverable exists or is actively being drafted.
 
 Unsatisfied? Do not create. Log the deferred creation to `_log.md`.

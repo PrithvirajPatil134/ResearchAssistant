@@ -49,6 +49,12 @@ For each wiki page that will exist after this ingest:
 - If new: write the complete page (frontmatter + body) to `.kiro/.ingest-pending/{id}/merged/{page-path}.md`.
 - If update to existing: read the current page, apply the proposed changes, write the merged result to `.kiro/.ingest-pending/{id}/merged/{page-path}.md`.
 
+**Mandatory `target_path` on EVERY merged content file (new AND update):** `ingest-commit.sh` reads a real YAML frontmatter `target_path:` key from each merged file to route it to its canonical location. This applies to every merged content page — a brand-new page AND an update to an existing page (including entity pages). It is not optional on updates. If the merged file lacks a real frontmatter `target_path:` key, the commit errors and rolls back the whole batch. The value must point at the page's canonical location:
+- Space page: `target_path: src/research_assistant/spaces/{SPACE}/wiki/{type}/{slug}.md`
+- Shared page: `target_path: data/wiki/shared/{type}/{slug}.md`
+
+It must be a genuine frontmatter key (inside the `---` fences), not a bold markdown label. For an update, carry the existing page's canonical path through as `target_path:`. The only exempt files are underscore-prefixed helpers (`_index.md`, `_log_entry.md`) — `ingest-commit.sh` skips those and does not require the key.
+
 Respect the change model:
 - Pages at `seed` or `working`: apply changes directly.
 - Pages at `validated`: do NOT edit in place. Append `## Change Proposal` blocks with the proposed changes, source citation, and date.

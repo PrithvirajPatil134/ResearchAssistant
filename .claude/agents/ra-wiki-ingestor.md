@@ -68,7 +68,7 @@ For each wiki page that should be created or updated, write a proposal section.
 
 Never emit a bare `spaces/{SPACE}/wiki/...` target: that is the legacy tree and the page would be committed to the wrong, near-empty location. When in doubt, the space wiki lives under `src/research_assistant/spaces/`, not the workspace-root `spaces/`.
 
-**Update proposals** specify which existing page to update, what section to add or modify, and the exact content.
+**Update proposals** specify which existing page to update, what section to add or modify, and the exact content. State the intended canonical `target_path` for the page being updated clearly in the proposal (a labeled line such as `**target_path**: src/research_assistant/spaces/{SPACE}/wiki/{type}/{slug}.md` is acceptable — it need not be YAML frontmatter here). The synthesizer lifts this into real frontmatter on the merged file, and `ingest-commit.sh` requires it to route updates (including entity-page updates) to the right location. Do not leave the target_path implicit: every update proposal, not just new-page proposals, must name where the page lives.
 
 Every factual claim must cite the source with a page or section reference:
 - `[source_path, p.7]` for PDFs

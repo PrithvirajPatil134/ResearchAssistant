@@ -21,7 +21,7 @@ target_path: src/research_assistant/spaces/QNTR/wiki/syntheses/cs-vs-management-
 
 ## Thesis Statement
 
-Computer science has produced governance frameworks for AI agents (Lu et al. 2024; Kolt 2025). Management research has produced empirical evidence that AI capabilities drive business value (Mikalef and Gupta 2021) and that responsible AI governance practices can be taxonomized (Papagiannidis et al. 2025). But the bridge paper connecting agentic governance maturity to firm-level risk and performance outcomes does not exist. Vu et al. (2025) come closest but lack quantitative validation and draw from participants with no actual agentic AI experience. Collins et al. (2022) confirm that the "dark side" of AI remains substantially understudied in IS. This is the gap the agentic AI governance research fills: it connects what CS prescribes (governance architecture) with what management measures (enterprise outcomes) for a category of AI systems (autonomous, goal-directed agents) that neither field has empirically addressed.
+Computer science has produced governance frameworks for AI agents (Lu et al. 2024; Kolt 2025). Management research has produced empirical evidence that AI capabilities drive business value (Mikalef and Gupta 2021) and that responsible AI governance practices can be taxonomized (Papagiannidis et al. 2025). But few studies bridge agentic governance maturity to firm-level risk and performance outcomes. Vu et al. (2025) come closest but lack quantitative validation and draw from participants with no actual agentic AI experience. Collins et al. (2022) confirm that the "dark side" of AI remains substantially understudied in IS. This is the gap the agentic AI governance research fills: it connects what CS prescribes (governance architecture) with what management measures (enterprise outcomes) for a category of AI systems (autonomous, goal-directed agents) that neither field has yet examined with sufficient empirical grounding.
 
 ## Evidence From Sources
 
@@ -94,7 +94,7 @@ CS governance prescriptions     Management outcome evidence
    for agentic AI                     outcomes
 ```
 
-Kolt defines the governance problem (information asymmetry, discretionary authority, loyalty failures in AI agents). Lu et al. catalogue patterns that address it. Papagiannidis et al. provide the practice taxonomy (structural, relational, procedural). Mikalef and Gupta demonstrate that AI-related organisational constructs can predict firm performance using formative measurement. Collins et al. confirm that nobody has filled the centre of this chain for autonomous AI systems.
+Kolt defines the governance problem (information asymmetry, discretionary authority, loyalty failures in AI agents). Lu et al. catalogue patterns that address it. Papagiannidis et al. provide the practice taxonomy (structural, relational, procedural). Mikalef and Gupta demonstrate that AI-related organisational constructs can predict firm performance using formative measurement. Collins et al. confirm that the centre of this chain remains under-examined for autonomous AI systems.
 
 Vu et al. occupy a partial position: they have the right phenomenon (agentic AI governance) but neither quantitative evidence nor participants with actual experience.
 

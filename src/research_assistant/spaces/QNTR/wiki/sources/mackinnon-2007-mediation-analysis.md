@@ -7,7 +7,7 @@ schema_version: "1.0"
 created: 2026-07-28
 last_updated: 2026-07-28
 originating_space: QNTR
-applicable_to: [term_paper, research_paper, thesis, quantitative_study, literature_review]
+applicable_to: [term_paper, research_paper, thesis, literature_review]
 draws_from: []
 authors: ["MacKinnon, David P.", "Fairchild, Amanda J.", "Fritz, Matthew S."]
 year: 2007

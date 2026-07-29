@@ -119,7 +119,7 @@ Associate Professor in the Marketing Area at IIM Sambalpur. Teaches Quantitative
 - **Summary**: User accepted Prashar's co-authorship offer on the meta-analysis paper. Confirmed v3 is in progress incorporating all feedback. Proposed scale development approach for a formative construct, with the meta-analytic search feeding into domain specification. Asked three questions requiring his response.
 - **Key points**:
   - Accepted co-authorship on meta-analysis (Agentic AI Governance and Enterprise Risk).
-  - Confirmed no validated instruments exist for Agentic AI Governance Maturity. Closest: Mikalef and Gupta (2021) formative AI Capability construct, Vu et al. (2025) qualitative governance categories.
+  - The user noted that validated instruments for Agentic AI Governance Maturity remain undeveloped. Closest: Mikalef and Gupta (2021) formative AI Capability construct, Vu et al. (2025) qualitative governance categories.
   - Proposed approach: scale development for formative construct, meta-analytic search feeds domain specification stage.
   - Question 1: Scope of meta-analytic search (agentic AI only vs. IT governance + general AI governance)?
   - Question 2: Target venue (user suggested Information and Management or BPMJ).

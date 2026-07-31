@@ -116,6 +116,8 @@ Scan all section files for violations of `.kiro/steering/human-authored-writing.
 
 **5d. Em dashes**: zero tolerance. Any occurrence of `—` is a FLAG.
 
+**5e. Absolute-absence phrasing**: run the deterministic gate rather than judging by eye. Execute `scripts/check-absolute-absence.sh <each section file>`; exit 1 (with printed file:line:match) is a FLAG. Do NOT try to count absence violations yourself: a 2026-07-30 experiment found LLM judges conflate the FORBIDDEN universal-negative forms ("no study has", "first to") with the REQUIRED insufficiency framing ("has not yet been applied", "the literature remains limited on") and mis-scored 20/20 documents where the grep found 4. Treat the script's output as authoritative. See `data/wiki/shared/learner/writing-team/eval_calibration.md` (2026-07-30 entry).
+
 For each violation report:
 - Which section
 - Which rule violated (vocabulary, phrase, opener, em dash)

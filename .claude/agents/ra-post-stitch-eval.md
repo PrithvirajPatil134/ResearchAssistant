@@ -98,6 +98,9 @@ Any occurrence = gate failure.
 ### 4. Em dashes
 Grep for the em dash character (—). Any occurrence = gate failure.
 
+### 4b. Absolute-absence phrasing
+Run `scripts/check-absolute-absence.sh <assembled document>`. Exit 1 (prints file:line:match) = gate failure. Do NOT count absence violations by eye and do NOT accept a judge's absence count: a 2026-07-30 experiment found LLM judges conflate the FORBIDDEN forms ("no study has", "first to", "no published X exists") with the REQUIRED insufficiency framing ("has not yet been applied", "the literature remains limited on"), mis-scoring 20/20 docs where the grep found 4. The script is authoritative. See `data/wiki/shared/learner/writing-team/eval_calibration.md` (2026-07-30 entry).
+
 ### 5. Voice consistency
 Read voice.md from the brain package. Sample 3 passages: the opening paragraph, a middle section's opening, and the penultimate paragraph. Check for abrupt formality shifts between them. A shift from academic third-person to casual second-person (or vice versa) = gate failure. Minor register variation within the voice.md specification is acceptable.
 
@@ -167,6 +170,7 @@ Write to: `.kiro/.long-doc/{doc-id}/eval/post_stitch_eval.json`
     "unresolved_exhibit_markers": {"pass": true, "details": ""},
     "banned_vocabulary": {"pass": true, "found": []},
     "em_dashes": {"pass": true, "count": 0},
+    "absolute_absence": {"pass": true, "grep_exit": 0, "matches": []},
     "voice_consistency": {"pass": true, "details": ""},
     "terminology_consistency": {"pass": true, "found": []},
     "word_count": {"pass": true, "target": 0, "actual": 0, "deviation_pct": 0},

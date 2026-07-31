@@ -48,3 +48,20 @@ these specific failure modes.
 **Also confirmed (4th clean application)**: Post-stitch eval built the binary Gate Check 0 checklist before quality scoring; all 5 advisor-guidance items and 12 hard requirements present. Contract-first pattern holding.
 
 ---
+
+## 2026-07-30: LLM-judge cannot reliably score the no-absolute-absence rule — use a grep-gate
+
+**Source**: 20-memo reliability experiment (`data/drafts/_experiments/barneto-memo-variance/`). 20 agents independently wrote the same advisor lit-findings memo from identical source extractions; each was then scored by an independent `ra-content-evaluator`.
+
+**What the eval got wrong**: The evaluators flagged **all 20/20** memos as carrying 1-5 absolute-absence violations each. Direct grep of the strictly-forbidden forms found only **4/20** (memos 04, 10, 13, 20). The judge was miscounting the REQUIRED insufficiency framing ("does not yet exist", "has not yet been applied", "the literature remains limited on") as violations of the rule that mandates exactly that framing. An earlier LLM comparator on the same files erred the other way (said 3/20, missed memo-10). Two LLM passes, two different wrong counts; only the grep survived cross-checking.
+
+**Diagnosis**: The no-absolute-absence clause (`.kiro/steering/no-assumption-rule.md`) is a binary, pattern-matchable distinction (forbidden universal-negative forms vs. permitted insufficiency forms). LLM judges do not hold that line consistently: they conflate the two because both talk about what the literature lacks. This inflated and compressed the `writing_standard` score, which was the only criterion showing spread. Grounding / completeness / coherence scored consistently (clustered ~9) and held up on spot-check; the judge is trustworthy on those.
+
+**Action** (graduate immediately, do not wait for 3 observations — the remedy is deterministic and self-verifying):
+1. Gate absolute-absence with `scripts/check-absolute-absence.sh <file>` (exit 1 = forbidden phrasing present, prints file:line:match). Tested against this experiment's ground truth: catches all 4 true violators, passes memos using permitted insufficiency framing. Run it in pre-stitch and post-stitch instead of asking the judge to count absence violations.
+2. The judge should NOT be asked to produce an absolute-absence count as a scored criterion; if it reports one, treat the grep result as authoritative and the judge's count as advisory only.
+3. General principle: for binary/pattern-matchable rules (em-dash ban, banned-vocabulary list, absolute-absence forms), prefer a deterministic grep-gate; spend the LLM-judge's budget on grounding, completeness, and coherence, which it scores reliably.
+
+**Observations**: 1 (2026-07-30). **Status**: remedy GRADUATED (deterministic + tested); calibration finding logged as 1/3 toward a broader "judge is weak on pattern-rules" pattern. Watch whether banned-vocabulary and em-dash counts show the same judge noise on the next run.
+
+---

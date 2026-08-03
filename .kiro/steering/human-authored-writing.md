@@ -26,7 +26,15 @@ Never use these words or phrases. They appear disproportionately in AI-generated
 
 4. **No formulaic headings**: Use normal-sized headings. Do not make every heading the same font size or follow the same noun-phrase pattern. Vary heading styles naturally.
 
-5. **No announcing structure**: Do not write "This section will discuss..." or "The following analysis presents..." — just present the content directly.
+5. **No announcing structure**: Do not write "This section will discuss..." or "The following analysis presents..." just present the content directly.
+
+6. **No meta-narration or scaffolding leaks** (external/reviewer-facing deliverables): a document a supervisor, committee, editor, or reviewer reads as finished scholarship must never reference how it was produced or who asked for what. Specifically forbidden:
+   - **The reviewer's own instructions narrated back**: "my supervisor asked me to...", "as you suggested on 17 June", "Barneto asked for the spine papers". The supervisor knows what they asked; state the content, not the request. (A self-referencing working note for your own files may do this; a reviewer-facing deliverable may not.)
+   - **Internal planning artifacts**: "the two-page note", "the brain package", "the prior draft", "v1". These are workspace scaffolding, not published sources. Reference only real, citable sources.
+   - **Internal framing tags**: "FD1 tag", "PHENOMENON-EVIDENCE", "METHOD-SPINE", "contract criteria". These are orchestration labels. Convert the *idea* into prose (e.g. "cited for its coding method, not as evidence about AI-era firms") but never print the label.
+   - **Process meta-narration**: "I read X as...", "so I keep this lens at the conceptual level", "as the next section shows", "this memo establishes". Real literature reviews do not narrate the author's own reasoning process; they make the claim. Scan published reviews in the corpus for the register: they assert and cite, they do not describe their own construction.
+
+   Enforced by `scripts/check-meta-narration.sh` for the pattern-matchable subset (tags, advisor references, named artifacts); the fuzzy process-narration forms are a required eval-agent judgment check.
 
 ## Voice and Tone
 

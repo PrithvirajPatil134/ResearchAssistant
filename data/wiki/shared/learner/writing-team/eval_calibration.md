@@ -65,3 +65,22 @@ these specific failure modes.
 **Observations**: 1 (2026-07-30). **Status**: remedy GRADUATED (deterministic + tested); calibration finding logged as 1/3 toward a broader "judge is weak on pattern-rules" pattern. Watch whether banned-vocabulary and em-dash counts show the same judge noise on the next run.
 
 ---
+
+## 2026-08-02: meta-narration / scaffolding leaked into a supervisor-facing deliverable — no rule existed
+
+**Source**: user review of the v2 Barneto memo (`spaces/DBA/output/barneto-litfindings-jul2026_v2.md`).
+
+**What leaked, and why the eval passed it**: The memo (a) narrated the supervisor's own instructions back at him ("My supervisor asked me to name the theoretical framework... offered disruption and decision theory as examples (supervision meeting, 17 June 2026)"; "Barneto asked on 17 June for the short list"), (b) referenced an internal unpublished artifact ("the circularity worry carried from the two-page note"), (c) printed internal orchestration tags in Exhibit 1 ("FD1 tag" column with PHENOMENON-EVIDENCE / METHOD-SPINE values), and (d) used process meta-narration ("I read disruption as...", "so I keep this lens at the conceptual level", "This memo establishes"). The pre/post-stitch evals passed it because NO WRITING RULE FORBADE ANY OF THIS. The eval agents only check rules that exist.
+
+**Root cause (two layers)**:
+1. Missing rule: human-authored-writing.md had no "no meta-narration / no scaffolding leak" clause.
+2. Author-side: the ORCHESTRATOR'S OWN brain-package brief instructed section writers to tag each paper PHENOMENON-EVIDENCE / METHOD-SPINE and render it in Exhibit 1. The internal framing vocabulary from the planning conversation was piped directly into the deliverable. A gate helps, but the deeper fix is: do not author internal jargon (FD-numbers, framing tags) into briefs that section writers copy into prose. Keep framing decisions as *instructions to the writer* ("cite this paper for method only"), never as *labels to print*.
+
+**Action** (graduate immediately, remedy is deterministic + tested):
+1. `scripts/check-meta-narration.sh <file>` gates the pattern-matchable subset: framing tags, advisor-instruction phrasings, internal-artifact names. Tested against the v2 memo: caught all four leak classes.
+2. human-authored-writing.md rule 6 ("No meta-narration or scaffolding leaks") added; pre-stitch check 5f and post-stitch check 4c invoke the gate AND require a fuzzy-form judgment for the process-narration the grep cannot catch.
+3. Brain-assembler / brief-authoring guidance: framing decisions are writer instructions, not printable labels. Never put FD-numbers or PHENOMENON-EVIDENCE/METHOD-SPINE style tags into an exhibit or prose that a reviewer sees.
+
+**Observations**: 1 (2026-08-02). **Status**: gate GRADUATED. Broader lesson (now 2 instances with the 2026-07-30 entry): for reviewer-facing deliverables, binary writing rules (absolute-absence, meta-narration, em-dash, banned-vocab) belong in deterministic grep-gates; the LLM-judge is reserved for fuzzy judgment (process-narration register, voice, argument coherence).
+
+---

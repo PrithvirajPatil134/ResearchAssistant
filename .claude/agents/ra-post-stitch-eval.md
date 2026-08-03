@@ -101,6 +101,9 @@ Grep for the em dash character (—). Any occurrence = gate failure.
 ### 4b. Absolute-absence phrasing
 Run `scripts/check-absolute-absence.sh <assembled document>`. Exit 1 (prints file:line:match) = gate failure. Do NOT count absence violations by eye and do NOT accept a judge's absence count: a 2026-07-30 experiment found LLM judges conflate the FORBIDDEN forms ("no study has", "first to", "no published X exists") with the REQUIRED insufficiency framing ("has not yet been applied", "the literature remains limited on"), mis-scoring 20/20 docs where the grep found 4. The script is authoritative. See `data/wiki/shared/learner/writing-team/eval_calibration.md` (2026-07-30 entry).
 
+### 4c. Meta-narration / scaffolding leaks (external/reviewer-facing deliverables)
+Run `scripts/check-meta-narration.sh <assembled document>`. Exit 1 = gate failure. It catches internal framing tags (FD1, PHENOMENON-EVIDENCE, METHOD-SPINE), the reviewer's own instructions narrated back ("my supervisor asked", "Barneto asked"), and internal-artifact references ("two-page note", "brain package", "prior draft"). ADDITIONALLY judge the fuzzy forms grep cannot catch: process meta-narration ("I read X as...", "so I keep this lens conceptual", "this memo establishes"). A reviewer-facing literature review asserts and cites; it never narrates its own construction or names the reviewer's instructions. See human-authored-writing.md rule 6 and `eval_calibration.md` (2026-08-02 entry).
+
 ### 5. Voice consistency
 Read voice.md from the brain package. Sample 3 passages: the opening paragraph, a middle section's opening, and the penultimate paragraph. Check for abrupt formality shifts between them. A shift from academic third-person to casual second-person (or vice versa) = gate failure. Minor register variation within the voice.md specification is acceptable.
 
@@ -171,6 +174,7 @@ Write to: `.kiro/.long-doc/{doc-id}/eval/post_stitch_eval.json`
     "banned_vocabulary": {"pass": true, "found": []},
     "em_dashes": {"pass": true, "count": 0},
     "absolute_absence": {"pass": true, "grep_exit": 0, "matches": []},
+    "meta_narration": {"pass": true, "grep_exit": 0, "matches": [], "fuzzy_judgment": ""},
     "voice_consistency": {"pass": true, "details": ""},
     "terminology_consistency": {"pass": true, "found": []},
     "word_count": {"pass": true, "target": 0, "actual": 0, "deviation_pct": 0},

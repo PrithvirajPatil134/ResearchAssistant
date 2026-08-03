@@ -118,6 +118,8 @@ Scan all section files for violations of `.kiro/steering/human-authored-writing.
 
 **5e. Absolute-absence phrasing**: run the deterministic gate rather than judging by eye. Execute `scripts/check-absolute-absence.sh <each section file>`; exit 1 (with printed file:line:match) is a FLAG. Do NOT try to count absence violations yourself: a 2026-07-30 experiment found LLM judges conflate the FORBIDDEN universal-negative forms ("no study has", "first to") with the REQUIRED insufficiency framing ("has not yet been applied", "the literature remains limited on") and mis-scored 20/20 documents where the grep found 4. Treat the script's output as authoritative. See `data/wiki/shared/learner/writing-team/eval_calibration.md` (2026-07-30 entry).
 
+**5f. Meta-narration / scaffolding leaks** (for external/reviewer-facing deliverables): run `scripts/check-meta-narration.sh <each section file>`; exit 1 is a FLAG. It catches internal framing tags (FD1, PHENOMENON-EVIDENCE, METHOD-SPINE), the reviewer's own instructions narrated back ("my supervisor asked", "Barneto asked", "as you suggested"), and internal-artifact references ("two-page note", "brain package", "prior draft"). ADDITIONALLY judge the fuzzy forms the grep cannot catch: process meta-narration ("I read X as...", "so I keep this lens conceptual", "this memo establishes", "as the next section shows"). A literature review asserts and cites; it does not narrate its own construction. See human-authored-writing.md rule 6 and `eval_calibration.md` (2026-08-02 entry).
+
 For each violation report:
 - Which section
 - Which rule violated (vocabulary, phrase, opener, em dash)

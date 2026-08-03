@@ -10,7 +10,7 @@ maturity: working
 tags: [supervisor-candidate, instructor, research-methodology, dba-programme, bordeaux, irgo, ue2]
 schema_version: "1.0"
 created: 2026-06-02
-last_updated: 2026-06-17
+last_updated: 2026-07-29
 originating_space: DBA
 applicable_to: [thesis]
 draws_from: []
@@ -28,6 +28,18 @@ cross_space_presence:
   - space: CW
     present: no
 ---
+
+[Last communication: 2026-06-17 — First supervision meeting — supervision live; July literature-findings deliverable OWED]
+
+## Status (as of 2026-07-29)
+
+- Supervision confirmed and active since 2026-06-10; first meeting held 2026-06-17. [Source: data/drafts/ide_session_2026-06-17.md]
+- **Owed to Barneto**: the 5-6 page literature findings deliverable set for the 3rd week of July 2026. A v1 draft was produced 2026-07-16 (`spaces/DBA/output/barneto-litfindings-jul2026_v1.md`, passed all eval gates), but the workspace has no record of it being sent and no record of a July meeting having occurred. Treated as OPEN. The user has directed an expansion of v1 into a thorough literature review before it goes to Barneto, pending full-text retrieval of the paywalled spine papers (priority list held in this session).
+- The 2026-06-10 supervision-acceptance email is SUPERSEDED (see `communication/email_to_prof_barneto_supervision_acceptance_20260610.md`); it is not an open action.
+
+## Open Questions to Raise with Barneto (when there is something to show)
+
+- **Living literature review under a fast-moving field.** The thesis studies the generative-AI transition, an area where relevant A*/A papers keep publishing (Alekseeva 2026, Albert 2026, McElheran 2024 are all recent, and more are expected during the DBA timeline). Question for Barneto: how should the literature review handle sources that appear after the review is drafted. Options to discuss: a stated literature cut-off date; a rolling update commitment before the December 2026 defense; or a "since this review was compiled" addendum. Raise this once there is a concrete draft in front of him, not as an abstract methodology question. [Noted 2026-08-02 from user direction during v2 memo revision.]
 
 ## Role
 

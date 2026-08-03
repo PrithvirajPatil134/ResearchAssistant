@@ -84,3 +84,6 @@ data/wiki/.obsidian/cache/
 
 # Obsidian scratch/base files (not knowledge content)
 *.base
+
+# Spine-paper PDFs: copyrighted, 19MB, re-downloadable via _DOWNLOAD_CHECKLIST.md (tracked)
+src/research_assistant/spaces/DBA/knowledge/thesis-spine-papers/*.pdf

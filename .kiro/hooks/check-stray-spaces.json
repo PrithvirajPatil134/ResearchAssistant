@@ -1,0 +1,15 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Guard Against Stray spaces/ Tree",
+      "description": "On every user message, verifies the repo-root 'spaces' entry is the canonical symlink (spaces -> src/research_assistant/spaces) and not a real directory. Catches the recurring bug where an agent follows the docs' shorthand 'spaces/{SPACE}/output/...' literally and creates a stray, git-ignored tree at the repo root. Fails loudly with remediation steps.",
+      "trigger": "UserPromptSubmit",
+      "action": {
+        "type": "command",
+        "command": "bash scripts/check-stray-spaces.sh 2>&1 || true"
+      },
+      "enabled": true
+    }
+  ]
+}

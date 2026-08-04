@@ -33,8 +33,15 @@ Never use these words or phrases. They appear disproportionately in AI-generated
    - **Internal planning artifacts**: "the two-page note", "the brain package", "the prior draft", "v1". These are workspace scaffolding, not published sources. Reference only real, citable sources.
    - **Internal framing tags**: "FD1 tag", "PHENOMENON-EVIDENCE", "METHOD-SPINE", "contract criteria". These are orchestration labels. Convert the *idea* into prose (e.g. "cited for its coding method, not as evidence about AI-era firms") but never print the label.
    - **Process meta-narration**: "I read X as...", "so I keep this lens at the conceptual level", "as the next section shows", "this memo establishes". Real literature reviews do not narrate the author's own reasoning process; they make the claim. Scan published reviews in the corpus for the register: they assert and cite, they do not describe their own construction.
+   - **Exercise / assignment self-narration**: "the dimensions are candidates, offered for a co-author's challenge", "the more I work with it the more the method holds", "these are the calls I put to you". A deliverable does not describe its own purpose or the task that produced it. Make the claim, pose the question; do not frame the frame.
 
-   Enforced by `scripts/check-meta-narration.sh` for the pattern-matchable subset (tags, advisor references, named artifacts); the fuzzy process-narration forms are a required eval-agent judgment check.
+   Enforced by `scripts/check-meta-narration.sh` for the pattern-matchable subset (tags, advisor references incl. named-advisor + first-person forms, named artifacts, stock process/exercise phrasings); the fuzzy forms that do not use stock phrasing are a required eval-agent judgment check. The `writing-gate.sh` PostToolUse hook runs this gate automatically on every write to `output/`, `communication/`, `feedback/`, `assignment/`, or `workspace/`.
+
+7. **Audience and register consistency** (decide the reader before the first sentence, then never break the voice): every deliverable has exactly one intended reader-role, and the voice must hold to it end to end.
+   - **A document addressed TO a person** (uses "you") must never (a) refer to that same person in the third person ("Prashar and I agreed" inside a doc Prashar reads — write "we agreed" or drop it), (b) narrate that person's own instructions back at them ("you pointed me to Sheth"), or (c) describe the exercise they set up. The reader already knows what they asked and why; give them the content.
+   - **A standalone scholarly artifact** (framework, review, paper section) uses no second-person "you" at all and does not address any individual. It asserts and cites.
+   - **The tell of a broken register**: a document that is *about* a person in some sentences and *to* that person in others. That means a private working note got welded into a reader-facing deliverable. Split them: the artifact stays impersonal; the ask goes in a separate cover note or email.
+   - When a request bundles both ("draft the dimensions and a note asking him to challenge them"), produce **two files**: the impersonal artifact and the second-person cover note. Do not fuse them.
 
 ## Voice and Tone
 

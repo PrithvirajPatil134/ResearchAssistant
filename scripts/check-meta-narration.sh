@@ -9,10 +9,20 @@
 # exhibit. None of these belong in a document a human reviewer reads as finished
 # scholarship. No existing writing rule caught them because none banned them.
 #
-# This catches the PATTERN-MATCHABLE subset. Fuzzy process meta-narration
-# ("I read X as...", "so I keep this lens conceptual", "as the next section
-# shows") is a judgment call the eval agent must still review; grep cannot own
-# that. See .kiro/steering/human-authored-writing.md "No meta-narration".
+# WIDENED (2026-08-03): the Prashar candidate-dimensions doc leaked a SECOND
+# class the original patterns missed — a document written TO the co-author that
+# (a) narrated his own instructions back at him with verbs outside the list
+# ("You pointed me to Sheth"), (b) referred to him in the third person inside a
+# doc he is the reader of ("Prashar and I agreed"), and (c) narrated the
+# exercise itself ("the dimensions are candidates, offered for a co-author's
+# challenge", "the more I work with it the more the method holds"). Added the
+# second-person-instruction verbs, the "<Name> and I <verb>" form, and a
+# process/framing-narration tier.
+#
+# This catches the PATTERN-MATCHABLE subset. Fuzzy process meta-narration that
+# does not use these stock phrasings is still a judgment call the eval agent
+# must review; grep cannot own all of it. See
+# .kiro/steering/human-authored-writing.md "No meta-narration".
 #
 # Usage: scripts/check-meta-narration.sh <file> [file...]
 # Exit: 0 clean, 1 = leak found (prints file:line:match).
@@ -23,13 +33,24 @@ set -euo pipefail
 TAGS='FD[0-9]|PHENOMENON-EVIDENCE|METHOD-SPINE|brain package|brain-package|framing decision|framing-decision|contract criteria|hard requirement'
 
 # (2) Supervisor / advisor relationship references (do not narrate the advisor's
-#     instructions back into a document the advisor reads as scholarship):
-ADVISOR='my supervisor|the supervisor asked|supervision meeting|Barneto asked|as (my |the )?(advisor|supervisor)|you (asked|suggested|offered|named)|per your|as you (asked|requested|suggested)'
+#     instructions back into a document the advisor reads as scholarship).
+#     Widened verb set (pointed/told/wanted/asked/suggested/offered/named/
+#     mentioned/flagged/directed) + "you pointed me", "as you pointed".
+ADVISOR='my supervisor|the supervisor asked|supervision meeting|Barneto asked|as (my |the )?(advisor|supervisor)|you (pointed|asked|suggested|offered|named|told|wanted|mentioned|flagged|directed|said)|(pointed|steered) me (to|toward)|per your|as you (asked|requested|suggested|pointed|mentioned|flagged)'
+
+# (2b) Third-person reference to the named reader inside a doc they will read.
+#     "<Capitalized Name> and I <agreed/decided/...>" is the tell that a working
+#     note about the advisor got welded into a doc addressed to the advisor.
+ADVISOR_3P='[A-Z][a-z]+ and I (agreed|decided|discussed|settled|chose|aligned)|as [A-Z][a-z]+ (and I )?(agreed|suggested|noted|proposed)'
 
 # (3) Internal-artifact references (unpublished scaffolding docs):
-ARTIFACTS='two-page note|two-pager|the brain|prior draft|v1 draft|earlier draft|our earlier|this memo establishes|in this memo|carried (over )?from the'
+ARTIFACTS='two-page note|two-pager|the brain|prior draft|v1 draft|earlier draft|our earlier|this memo establishes|in this memo|carried (over )?from the|in the last draft|than it was in the'
 
-PATTERN="$TAGS|$ADVISOR|$ARTIFACTS"
+# (4) Process / exercise self-narration (describing the deliverable's own purpose
+#     or the author's working process, rather than making the scholarly claim):
+PROCESS='offered for (a |the )?(co-author|reviewer|supervisor).{0,20}(challenge|review)|the dimensions are candidates|offered (them )?for .{0,15}challenge|the more I (work|worked) with it|before the frame is committed|these are the (exact )?(judgments|calls)|the (four )?calls I am least sure of|I put to you|where you can weigh in|for you to challenge'
+
+PATTERN="$TAGS|$ADVISOR|$ADVISOR_3P|$ARTIFACTS|$PROCESS"
 
 if [ "$#" -eq 0 ]; then echo "usage: $0 <file> [file...]" >&2; exit 2; fi
 

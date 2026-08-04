@@ -10,7 +10,7 @@ maturity: working
 tags: [supervisor-candidate, instructor, research-methodology, dba-programme, bordeaux, irgo, ue2]
 schema_version: "1.0"
 created: 2026-06-02
-last_updated: 2026-07-29
+last_updated: 2026-08-03
 originating_space: DBA
 applicable_to: [thesis]
 draws_from: []
@@ -20,6 +20,8 @@ mentions_in_sources:
 mentions_in_syntheses: []
 mentions_in_communications:
   - communication/email_prof_herrbach_reply_decline_forward_20260609
+  - communication/email_to_prof_barneto_supervision_acceptance_20260610
+  - communication/email_to_prof_barneto_litfindings_review_20260803
 cross_space_presence:
   - space: QNTR
     present: no
@@ -29,17 +31,19 @@ cross_space_presence:
     present: no
 ---
 
-[Last communication: 2026-06-17 — First supervision meeting — supervision live; July literature-findings deliverable OWED]
+[Last communication: 2026-08-03 — Literature findings sent (Google Doc, comment access) — awaiting his inline feedback]
 
-## Status (as of 2026-07-29)
+## Status (as of 2026-08-03)
 
 - Supervision confirmed and active since 2026-06-10; first meeting held 2026-06-17. [Source: data/drafts/ide_session_2026-06-17.md]
-- **Owed to Barneto**: the 5-6 page literature findings deliverable set for the 3rd week of July 2026. A v1 draft was produced 2026-07-16 (`spaces/DBA/output/barneto-litfindings-jul2026_v1.md`, passed all eval gates), but the workspace has no record of it being sent and no record of a July meeting having occurred. Treated as OPEN. The user has directed an expansion of v1 into a thorough literature review before it goes to Barneto, pending full-text retrieval of the paywalled spine papers (priority list held in this session).
+- **Literature-findings deliverable: SENT 2026-08-03.** The v3 memo (`output/barneto-litfindings-jul2026_v3.md`, ~3000 words / ~7pp) was sent to Barneto as a Google Doc link with comment access, chosen for asynchronous review across the time-zone gap. [Source: `communication/email_to_prof_barneto_litfindings_review_20260803.md`]
+  - v3 was built on nine full-text spine papers (v1 had run on abstracts) and revised against user review feedback. It corrects three fidelity errors from v1 (revolutionary/nonrevolutionary transformation vs the 1985 reorientation/convergence lineage; Zahra & Covin continuous posture scale not binary; Lee binary dummy not five-way), frames the design as a deductive archival theory-test (not a case study, not theory-building), and removed meta-narration / scaffolding leaks. Passed the eval gates plus the absolute-absence and meta-narration grep-gates.
+- **Open / awaiting**: Barneto's comments on the Google Doc. Next action is on his side.
 - The 2026-06-10 supervision-acceptance email is SUPERSEDED (see `communication/email_to_prof_barneto_supervision_acceptance_20260610.md`); it is not an open action.
 
-## Open Questions to Raise with Barneto (when there is something to show)
+## Open Questions with Barneto
 
-- **Living literature review under a fast-moving field.** The thesis studies the generative-AI transition, an area where relevant A*/A papers keep publishing (Alekseeva 2026, Albert 2026, McElheran 2024 are all recent, and more are expected during the DBA timeline). Question for Barneto: how should the literature review handle sources that appear after the review is drafted. Options to discuss: a stated literature cut-off date; a rolling update commitment before the December 2026 defense; or a "since this review was compiled" addendum. Raise this once there is a concrete draft in front of him, not as an abstract methodology question. [Noted 2026-08-02 from user direction during v2 memo revision.]
+- **Living literature review under a fast-moving field** (RAISED 2026-08-03, awaiting his answer). The thesis studies the generative-AI transition, where relevant A*/A papers keep publishing (Alekseeva 2026, Albert 2026, McElheran 2024 are all recent, more expected during the DBA timeline). Question put to him in the 2026-08-03 email: how should the review handle sources that appear after it is drafted. Options offered: a stated cut-off date; a rolling update before the December 2026 defense; or a "since this review was compiled" addendum. [Raised in `communication/email_to_prof_barneto_litfindings_review_20260803.md`; noted 2026-08-02 from user direction.]
 
 ## Role
 

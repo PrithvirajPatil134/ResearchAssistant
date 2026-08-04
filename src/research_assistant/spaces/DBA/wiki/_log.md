@@ -4,6 +4,33 @@ Append-only chronological record of wiki operations.
 
 ---
 
+## 2026-08-03 — Barneto literature-findings deliverable sent + progress recorded
+
+**Operator**: IDE orchestrator (Claude Code)
+
+### What happened
+
+- The July literature-findings deliverable was completed (v3, `output/barneto-litfindings-jul2026_v3.md`, ~3000 words) and SENT to Prof. Barneto on 2026-08-03 as a Google Doc link with comment access, chosen for asynchronous review across the time-zone difference.
+- v3 was rebuilt on nine full-text spine papers (v1 had relied on abstracts) and revised against user review feedback: three fidelity corrections applied, design reframed as a deductive archival theory-test, meta-narration / scaffolding leaks removed. Passed all eval gates plus the absolute-absence and meta-narration grep-gates.
+
+### Pages Created
+
+1. `communication/email_to_prof_barneto_litfindings_review_20260803.md` — the sent email (Google Doc review request).
+
+### Pages Updated
+
+1. `entities/prof-barneto.md` — Last-communication line, Status section (deliverable SENT, awaiting his comments), open-question marked RAISED, frontmatter (last_updated, mentions_in_communications).
+
+### Supporting artifacts (committed separately, this session)
+
+- `output/barneto-litfindings-jul2026_v3.md` (deliverable) + `_v1` / `_v2_superseded` (version trail).
+- `data/summaries/thesis-fulltext-extractions.md` — page-cited methodology extractions for the nine spine papers.
+- `knowledge/thesis-spine-papers/_DOWNLOAD_CHECKLIST.md` — retrieval tracker (PDFs gitignored, re-downloadable).
+
+### Next action
+
+On Barneto's side: his inline comments on the Google Doc.
+
 ## 2026-06-18 — Marketing & Commerce Module Methods Ingest
 
 **Manifest ID**: `20260618-070130-marketing-methods`

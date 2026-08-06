@@ -20,6 +20,13 @@
 # dimensions are candidates, offered for a co-author's challenge") — none caught.
 # Now the hook actually invokes check-meta-narration.sh + check-absolute-absence.sh
 # and surfaces their output, and the path filter includes communication/.
+#
+# NOTE (2026-08-05): check-meta-narration.sh self-detects mode from the path
+# (communication/ + *email*/*reply* => correspondence, else scholarship), so a
+# genuine second-person email is NOT flagged for "you suggested" / "for you to
+# challenge" (correct register in a letter); only the universal tag/artifact
+# leaks are enforced there. Scholarship files (output/) still get full register
+# enforcement. This hook does not need to pass --mode; the gate handles it.
 
 set -euo pipefail
 

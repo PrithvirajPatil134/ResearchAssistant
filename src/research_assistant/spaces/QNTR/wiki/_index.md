@@ -1,7 +1,7 @@
 # QNTR Wiki Index
 
 **Space**: QNTR (Quantitative Research Methods)
-**Last updated**: 2026-07-28 (auto-rebuilt)
+**Last updated**: 2026-08-05
 **Schema**: [`_schema.md`](./_schema.md)
 **Log**: [`_log.md`](./_log.md)
 
@@ -106,6 +106,7 @@ _No comparison pages yet._
 
 _Populated by ingest and workflow runs. Most recent 10 entries._
 
+- 2026-08-05: `entities/prof-prashar.md` updated: candidate-dimensions v3 shared as Google Doc (`communication/email_prashar_candidate_dimensions_shared_20260805.md`); 06-27 user-owed action resolved, now Prashar-owed
 - 2026-05-07: `entities/prof-priyanka-suresh.md` created (Batch 2 ingest)
 - 2026-05-07: `syntheses/agentic-ai-governance-term-paper.md` created (Batch 2 ingest)
 - 2026-05-07: `entities/prof-prashar.md` updated with May 3 feedback (Batch 2 ingest)

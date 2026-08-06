@@ -11,7 +11,7 @@ maturity: working
 tags: [advisor, qntr-mentor, methodology-guidance, term-paper-reviewer, scale-development]
 schema_version: "1.0"
 created: 2026-05-03
-last_updated: 2026-07-28
+last_updated: 2026-08-05
 originating_space: QNTR
 target_path: src/research_assistant/spaces/QNTR/wiki/entities/prof-prashar.md
 applicable_to: [term_paper, research_paper, thesis]
@@ -145,6 +145,12 @@ Associate Professor in the Marketing Area at IIM Sambalpur. Teaches Quantitative
 - **Status**: Replied. No action required from Prashar.
 - **Source**: [`communication/email_prashar_reply_sounds_like_a_plan_20260627.md`](../../communication/email_prashar_reply_sounds_like_a_plan_20260627.md)
 
+### 2026-08-05 : Email sent : Candidate dimensions shared as Google Doc for comment
+
+- **Summary**: Delivered the candidate-dimensions note (v3) as a Google Doc with commenter access, closing the 2026-06-27 user-owed action. Asked for in-Doc comments on four open judgment calls (multiplicity as one dimension or two; speed as a fifth dimension vs. intensifier; whether six governance domains is the right cut; the thin agentic-specific field evidence). Proposed the path forward: once the dimensions are agreed, use the frame as the coding scheme for the review corpus and build the Han et al. (2017) gap table Prashar requested in May, then develop a fuller draft for his review before arranging a call. No call proposed yet, by the user's direction.
+- **Status**: Sent. Ball is in Prashar's court (comments on the dimensions + agreement on the sequence).
+- **Source**: [`communication/email_prashar_candidate_dimensions_shared_20260805.md`](../../communication/email_prashar_candidate_dimensions_shared_20260805.md); shared content `output/qntr-candidate-dimensions-prashar-jul2026_v3.md`
+
 ## Relationship to Research
 
 Primary advisor for the Agentic AI Governance term paper (QNTR) and confirmed co-author on a meta-analysis paper targeting the relationship between Agentic AI governance and Enterprise Risk. His May 3 feedback is the current revision guide for v3. The co-authored paper will follow a scale development approach for a formative construct, with the meta-analytic search feeding into domain specification. Key open areas: scope of meta-analytic search, target venue, collaboration format.
@@ -158,14 +164,15 @@ Primary advisor for the Agentic AI Governance term paper (QNTR) and confirmed co
 
 ## Open Threads
 
-- **[2026-06-27, USER-OWED]** Draft the first set of candidate dimensions from the gathered literature (Sheth 2011 style) and send to Prashar to challenge. He approved the plan ("Sounds like a plan") on 2026-06-27. Nothing is owed by Prashar. Feeder summaries in place: `data/summaries/technology_adoption_models_review.md`, `data/summaries/sheth_2011_framework_method_analysis.md`. Build broad enough to also feed the DBA thesis coding framework without surfacing that to Prashar.
+- **[2026-08-05, PRASHAR-OWED]** Candidate-dimensions note (v3) shared as a Google Doc on 2026-08-05. Awaiting his in-Doc comments on the four open judgment calls and a word on whether the proposed sequence (code the corpus against the agreed frame, then build the Han et al. gap table, then a fuller draft) works. No call proposed until after his comments, per user direction. Next user action is gated on his response.
+- **[2026-06-27, RESOLVED into above]** Draft the first set of candidate dimensions (Sheth 2011 style) and send to Prashar to challenge. Delivered 2026-08-05 (v3, `output/qntr-candidate-dimensions-prashar-jul2026_v3.md`). The frame is built broad enough to also feed the DBA thesis coding framework without surfacing that to Prashar.
 - **[2026-05-25, RESOLVED into above]** Systematic review pivot approved; scale-development track closed. TAM-positioning and Sheth-style dimensional framework confirmed as the method; punctuated equilibrium theory is the fallback framework base.
 - **[2026-05-03]** Term paper grade/evaluation pending separately from the research direction feedback.
 - **[2026-05-03]** Faculty recommendation follow-up: check Nandy and Majhi profiles at https://iimsambalpur.ac.in/all-faculty/.
 
 ## Provenance
 
-- **last_updated**: 2026-07-28
+- **last_updated**: 2026-08-05
 - **source files**:
   - `src/research_assistant/spaces/QNTR/persona.yaml` (identity, expertise)
   - `src/research_assistant/spaces/QNTR/communication/email_prof_prashar_submission_date_20260502.md` (May 2 email)

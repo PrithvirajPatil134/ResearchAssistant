@@ -101,6 +101,7 @@ Works cited above, in full where published details are available:
 - Abou Ali, M., Dornaika, F., & Charafeddine, J. (2025). Agentic AI: a comprehensive survey of architectures, applications, and future directions. *Artificial Intelligence Review*.
 - Bayram, F., & Ahmed, B. S. (2024). Towards Trustworthy Machine Learning in Production: An Overview of the Robustness in MLOps Approach. *ACM Computing Surveys*.
 - Berente, N., Gu, B., Recker, J., & Santhanam, R. (2021). Managing Artificial Intelligence. *MIS Quarterly*, 45(3), 1433-1450.
+- Brown, A. E., & Grant, G. G. (2005). Framing the Frameworks: A Review of IT Governance Research. *Communications of the Association for Information Systems*, 15.
 - Eulerich, M., Waddoups, N., Wagener, M., & Wood, D. A. (2024). The Dark Side of Robotic Process Automation. SSRN working paper.
 - Haase, J., Kremser, W., Leopold, H., Mendling, J., Onnasch, L., & Plattfaut, R. (2024). Interdisciplinary Directions for Researching the Effects of Robotic Process Automation and Large Language Models on Business Processes. *Communications of the Association for Information Systems*, 54, 579-604.
 - Herath Pathirannehelage, S., Shrestha, Y. R., & von Krogh, G. (2024). Design principles for artificial intelligence-augmented decision making: An action design research study. *European Journal of Information Systems*.
@@ -111,8 +112,4 @@ Works cited above, in full where published details are available:
 - Rinta-Kahila, T., Someh, I., Gillespie, N., Indulska, M., & Gregor, S. (2021). Algorithmic decision-making and system destructiveness: A case of automatic debt recovery. *European Journal of Information Systems*.
 - Sapkota, R., Roumeliotis, K. I., & Karkee, M. (2025). AI Agents vs. Agentic AI: A Conceptual Taxonomy, Applications and Challenges. *Information Fusion*.
 - Sheth, J. N. (2011). Impact of Emerging Markets on Marketing: Rethinking Existing Perspectives and Practices. *Journal of Marketing*, 75(4), 166-182.
-
-The two IT-governance baseline references come from the technology-adoption review, which captured author, year, and venue but not full titles. They are left as sourced rather than completed from memory:
-
-- Weill, P., & Ross, J. W. (2004). IT Governance. Book. [Full title and publisher not in the loaded sources.]
-- Brown, A. E., & Grant, G. G. (2005). *Communications of the AIS*. [Title not in the loaded sources.]
+- Weill, P., & Ross, J. W. (2004). *IT Governance*. Harvard Business School Press.

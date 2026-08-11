@@ -15,6 +15,11 @@
 #   3. Heuristic pre-check output
 #   4. Run eval (heuristic scoring)
 #   5. Pass → done. Fail → retry once with feedback. Fail again → escalate.
+#   5b. Devil's-advocate gate (ra-post-stitch-eval): deterministic gate scripts
+#       as hard blocks + one adversarial agent pass that surfaces the strongest
+#       challenge. Mirrors the long-doc post-stitch gate for the short workflows.
+#       Toggle with DEVILS_ADVOCATE=0. Deterministic-gate failure blocks; the
+#       agent's fail verdict flags the status and surfaces notes.
 #   6. Log A/B comparison entry.
 #   7. Hard fallback to kiro-cli on hard failures.
 
@@ -293,9 +298,120 @@ if [ "$PRECHECK_PASS" -eq 1 ] && [ "$EVAL_PASS" -eq 0 ] && [ -n "$EVAL_REVISION_
   rm -f "$REVISION_FILE"
 fi
 
+# --- Step 5b: Devil's-advocate gate ---------------------------------------
+# Bring the long-doc post-stitch gate to the short workflows. Two layers:
+#   (a) deterministic gate scripts (check-absolute-absence, check-meta-narration)
+#       — authoritative HARD blocks per the no-assumption / human-authored rules.
+#   (b) ra-post-stitch-eval — one adversarial agent pass that surfaces the
+#       strongest challenge a reviewer would raise. Its "fail" verdict flags the
+#       status; its devil's-advocate notes are always surfaced (non-blocking).
+# Runs only when we have a real deliverable that cleared pre-check. Skips the raw
+# CLI log (EVAL_TARGET == OUTPUT_FILE means no deliverable was found). Toggle off
+# with DEVILS_ADVOCATE=0. All infra failures degrade gracefully (never block on a
+# broken tool — that would be an unsourced "file is bad" claim).
+DEVILS_ADVOCATE="${DEVILS_ADVOCATE:-1}"
+DA_STATUS="skipped"
+DA_GATE_ISSUES=""
+DA_NOTES_FILE=""
+
+if [ "$DEVILS_ADVOCATE" = "1" ] && [ "$PRECHECK_PASS" -eq 1 ] \
+   && [ -f "$EVAL_TARGET" ] && [ "$EVAL_TARGET" != "$OUTPUT_FILE" ]; then
+  echo "[claude-dispatch] Running devil's-advocate gate on ${EVAL_TARGET}..."
+  DA_STATUS="pass"
+
+  # (a) Deterministic gates — hard blocks. Exit 1 = violation found.
+  if [ -x "${SCRIPTS_DIR}/check-absolute-absence.sh" ]; then
+    if ! ABS_OUT=$(bash "${SCRIPTS_DIR}/check-absolute-absence.sh" "$EVAL_TARGET" 2>&1); then
+      DA_STATUS="fail"
+      DA_GATE_ISSUES="${DA_GATE_ISSUES}absolute-absence phrasing; "
+      echo "[claude-dispatch]   GATE FAIL (absolute-absence):" >&2
+      printf '%s\n' "$ABS_OUT" | sed 's/^/[claude-dispatch]     /' >&2
+    fi
+  fi
+  if [ -x "${SCRIPTS_DIR}/check-meta-narration.sh" ]; then
+    if ! META_OUT=$(bash "${SCRIPTS_DIR}/check-meta-narration.sh" "$EVAL_TARGET" 2>&1); then
+      DA_STATUS="fail"
+      DA_GATE_ISSUES="${DA_GATE_ISSUES}meta-narration/scaffolding leak; "
+      echo "[claude-dispatch]   GATE FAIL (meta-narration):" >&2
+      printf '%s\n' "$META_OUT" | sed 's/^/[claude-dispatch]     /' >&2
+    fi
+  fi
+
+  # (b) Adversarial agent pass — surfaces the strongest challenge. One call, no
+  # retry: this is a critique layer, not a rewrite loop. Verdict flags status;
+  # notes always surface. Degrades to gate-only if the agent path fails.
+  DA_AGENT_ID="${AGENT_ID}-devils-advocate"
+  DA_AGENT_OUT="/tmp/${DA_AGENT_ID}.out"
+  DA_NOTES_FILE="/tmp/${DA_AGENT_ID}-notes.json"
+  DA_PROMPT_FILE="/tmp/${DA_AGENT_ID}-prompt.md"
+  rm -f "$DA_NOTES_FILE" "${WORKSPACE_ROOT}/.kiro/.gpu-agent-done/${DA_AGENT_ID}.done"
+
+  cat > "$DA_PROMPT_FILE" <<DA_EOF
+# Devil's Advocate Review (short-workflow deliverable)
+
+You are the devil's advocate (ra-post-stitch-eval) evaluating a completed
+deliverable from the "${WORKFLOW_NAME}" workflow. Your job is to find the real
+weaknesses a reviewer, advisor, or careful reader would find. Do not rubber-stamp.
+
+## Original task
+${TASK_NAME}
+
+## Deliverable to evaluate
+Read: ${EVAL_TARGET}
+
+## Writing / sourcing standards to hold it to
+Read: .kiro/steering/human-authored-writing.md
+Read: .kiro/steering/no-assumption-rule.md
+
+## Your task
+1. Verify every substantive claim traces to a source per the no-assumption rule.
+   List any claim that does not (these are the highest-priority findings).
+2. Produce the devil's advocate analysis: the single strongest argument against
+   the deliverable's central point, its weakest section with a concrete fix
+   achievable from sources already present, the strongest missing counterargument,
+   and any tone risk (quote 10-30 words).
+3. Set verdict = "fail" if there are unsourced claims or the central point does
+   not hold up; otherwise "pass" (notes still required on a pass).
+
+## Write your verdict + analysis as JSON to: ${DA_NOTES_FILE}
+{
+  "verdict": "pass|fail",
+  "unsourced_claims": ["..."],
+  "devils_advocate": {
+    "strongest_argument_against": "...",
+    "weakest_section": {"section": "...", "why": "...", "suggested_fix": "..."},
+    "missing_counterargument": "...",
+    "tone_risk": "..."
+  }
+}
+DA_EOF
+
+  DA_START=$(date +%s)
+  bash "${SCRIPTS_DIR}/spawn-gpu-agent.sh" "$DA_AGENT_ID" "$DA_AGENT_OUT" \
+    --agent ra-post-stitch-eval --allowed-tools "Read,Bash,Glob,Grep,Write" \
+    --prompt-file "$DA_PROMPT_FILE" || true
+  DA_END=$(date +%s)
+  RUNTIME=$((RUNTIME + DA_END - DA_START))
+
+  if [ -f "$DA_NOTES_FILE" ]; then
+    DA_VERDICT=$(python3 -c "import json,sys; print(json.load(open('${DA_NOTES_FILE}')).get('verdict','unknown'))" 2>/dev/null || echo "unknown")
+    DA_UNSOURCED=$(python3 -c "import json,sys; print(len(json.load(open('${DA_NOTES_FILE}')).get('unsourced_claims',[])))" 2>/dev/null || echo "0")
+    if [ "$DA_VERDICT" = "fail" ]; then
+      DA_STATUS="fail"
+      DA_GATE_ISSUES="${DA_GATE_ISSUES}adversarial verdict=fail (${DA_UNSOURCED} unsourced claim(s)); "
+    fi
+    echo "[claude-dispatch]   Devil's advocate verdict: ${DA_VERDICT} (${DA_UNSOURCED} unsourced claim(s))"
+  else
+    echo "[claude-dispatch]   Devil's advocate agent produced no notes JSON; gate-scripts result stands (DA_STATUS=${DA_STATUS})."
+  fi
+  rm -f "$DA_PROMPT_FILE"
+fi
+
 # --- Step 6: Determine final status ---
 if [ "$PRECHECK_PASS" -eq 0 ] && [ "$FALLBACK_TRIGGERED" -eq 0 ]; then
   FINAL_STATUS="hard_fail"
+elif [ "$DA_STATUS" = "fail" ]; then
+  FINAL_STATUS="devils_advocate_fail"
 elif [ "$EVAL_PASS" -eq 1 ]; then
   FINAL_STATUS="pass"
 else
@@ -336,9 +452,9 @@ if [ -f "$SENTINEL_FILE" ]; then
   # provisional "awaiting_eval" status left by the deferred inner spawn.
   SENTINEL_CONTENT=$(cat "$SENTINEL_FILE")
   UPDATED_SENTINEL=$(printf '%s' "$SENTINEL_CONTENT" | sed 's/}$//' | sed 's/"status": "awaiting_eval"/"status": "'"$FINAL_STATUS"'"/')
-  FINAL_SENTINEL="$(printf '%s,\n  "evaluation_score": %s,\n  "eval_passed": %s,\n  "retry_count": %s,\n  "fallback_triggered": %s,\n  "final_status": "%s",\n  "runtime_sec": %s\n}\n' \
+  FINAL_SENTINEL="$(printf '%s,\n  "evaluation_score": %s,\n  "eval_passed": %s,\n  "retry_count": %s,\n  "fallback_triggered": %s,\n  "devils_advocate_status": "%s",\n  "final_status": "%s",\n  "runtime_sec": %s\n}\n' \
     "$UPDATED_SENTINEL" "$EVAL_SCORE" "$EVAL_PASS" "$RETRY_COUNT" \
-    "$FALLBACK_TRIGGERED" "$FINAL_STATUS" "$RUNTIME")"
+    "$FALLBACK_TRIGGERED" "$DA_STATUS" "$FINAL_STATUS" "$RUNTIME")"
   if [ "$SENTINEL_V2" = "1" ] && command -v sentinel_write_atomic >/dev/null 2>&1; then
     sentinel_write_atomic "$SENTINEL_FILE" "$FINAL_SENTINEL"
     _cd_final_written=1
@@ -390,4 +506,8 @@ echo "[claude-dispatch]   Status: ${FINAL_STATUS}"
 echo "[claude-dispatch]   Eval Score: ${EVAL_SCORE}"
 echo "[claude-dispatch]   Retry Count: ${RETRY_COUNT}"
 echo "[claude-dispatch]   Fallback: ${FALLBACK_TRIGGERED}"
+echo "[claude-dispatch]   Devil's advocate: ${DA_STATUS}${DA_GATE_ISSUES:+ (${DA_GATE_ISSUES})}"
+if [ -n "$DA_NOTES_FILE" ] && [ -f "$DA_NOTES_FILE" ]; then
+  echo "[claude-dispatch]   Devil's advocate notes: ${DA_NOTES_FILE}"
+fi
 echo "[claude-dispatch]   Runtime: ${RUNTIME}s"
